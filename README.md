@@ -6,7 +6,7 @@ When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-lan
 
 ## Preliminary infos:
 
-1. This readme.txt follow the rules of developpers described [here](https://wordpress.org/plugins/about/)
+1. This readme.txt follow the rules of developers described [here](https://wordpress.org/plugins/about/)
 1. Do not forgot to [validate](https://wordpress.org/plugins/about/validator/) the text before commit.
 
 Thanks for your contribution.
