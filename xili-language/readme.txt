@@ -199,25 +199,23 @@ IDs of all types of post (post, page, CPT) are listed in Translation box (second
 If your theme follow the WP core rules (like in Twenty Twelve) with rtl.css file, RTL languages are well displayed.
 
 = Where can I see websites using this plugin ? =
-
-dev.xiligroup.com [here](http://dev.xiligroup.com/?p=187 "why xili-language ?") and examples child theme below:
-
-Twenty Ten [2010](http://multilingual.wpmu.xilione.com/)
-
-Twenty Eleven [2011](http://2011.wpmu.xilione.com/)
-
-Twenty Twelve [2012](http://2012.wpmu.xilione.com/)
-
-Responsive [responsive](http://childxili.wpmu.xilione.com/)
-
-Twenty Thirteen [2013](http://2013.extend.xiligroup.org/)
+Twenty Fifteen [2015](http://2015.extend.xiligroup.org/)
 
 Twenty Fourteen [2014](http://2014.extend.xiligroup.org/)
 
-Twenty Fifteen [2015](http://2015.extend.xiligroup.org/)
+Twenty Thirteen [2013](http://2013.extend.xiligroup.org/)
 
+Responsive [responsive](http://childxili.wpmu.xilione.com/)
 
-And as you can see in [stats](http://wordpress.org/extend/plugins/xili-language/stats/), thousand of sites use xili-language.
+Twenty Twelve [2012](http://2012.wpmu.xilione.com/)
+
+Twenty Eleven [2011](http://2011.wpmu.xilione.com/)
+
+Twenty Ten [2010](http://multilingual.wpmu.xilione.com/)
+
+dev.xiligroup.com [here](http://dev.xiligroup.com/?p=187 "why xili-language ?") and examples child theme below:
+
+And as you can see in [stats](http://wordpress.org/extend/plugins/xili-language/stats/), thousand of sites use xili-language (Stats in March 2015 are not good and must be fixed due to bad versioning sorting).
 
 = For commercial websites, is it possible to buy support ? =
 Yes, use contact form [here](http://dev.xiligroup.com/?page_id=10). Multiple commercial theme were customized for clients using multilingual CMS.
