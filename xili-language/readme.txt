@@ -3,8 +3,8 @@ Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: theme,post,plugin,posts,page,category,admin,multilingual, bilingual, taxonomy,dictionary,.mo file,.po file,localization, widget, language, international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack
 Requires at least: 4.0.0
-Tested up to: 4.2-alpha
-Stable tag: 2.16.2
+Tested up to: 4.2-beta2
+Stable tag: 2.16.4
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -24,8 +24,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 
 * xili-language plugin works on Wordpress installation in mono (standalone) or on one site belonging to a multisite (network) install.
 
-= Version 2.16.2 =
-* Last Updated 2015-02-28
+= Version 2.16.4 =
+* Last Updated 2015-03-22
 * W A R N I N G - see [tab and chapters in changelog](http://wordpress.org/extend/plugins/xili-language/changelog/)
 
 = Prequisite =
@@ -279,7 +279,18 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 15. Since 2.12.0, Authoring settings (Custom post types, bookmarks) (rules propagation of post features) when creating translated posts are ajustable through the 5th settings tab.
 
 == Changelog ==
+= version 2.16.4 (2015-03-22) =
+* intermediate version before 2.17 for WP 4.2 (tested with beta2) - used with WP 4.1.x
+* custom_xili_flag for admin side (admin side flag are uploadable - no need to take attention to name or type (.png, .jpg, gif)
+* custom_xili_flag (frontend): if not ready or declared in customised theme, search in subfolder theme/images/flags (only .png)
+* better selection of active widgets (new Categories widget with good counting if language selection must be enabled in 5th tab)
+* improved permalink class (View term links in admin side)
+* improved code in core query
 
+= version 2.16.3 (2015-03-06) =
+* fixes warning of archives link w/o perma
+* widget archives filtered if curlang
+* add xili_Widget_Categories class (need registering by author)
 = version 2.16.2 (2015-02-28) =
 * fixes warning if dropdown categories,
 * improves translation
@@ -580,7 +591,7 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 20150228 - MS - dev.xiligroup.com
+© 20150322 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.
