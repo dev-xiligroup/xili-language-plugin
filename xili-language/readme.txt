@@ -3,8 +3,8 @@ Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: theme,post,plugin,posts,page,category,admin,multilingual, bilingual, taxonomy,dictionary,.mo file,.po file,localization, widget, language, international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack
 Requires at least: 4.0.1
-Tested up to: 4.2-RC1
-Stable tag: 2.17.0
+Tested up to: 4.2
+Stable tag: 2.17.1
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -26,8 +26,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](http://wordpress.org/extend/plugins/xili-language/changelog/) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 
-= Version 2.17.0 =
-* Last Updated 2015-04-17
+= Version 2.17.1 =
+* Last Updated 2015-04-24
 * W A R N I N G - see [tab and chapters in changelog](http://wordpress.org/extend/plugins/xili-language/changelog/)
 
 = Prequisite =
@@ -284,7 +284,12 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 15. Since 2.12.0, Authoring settings (Custom post types, bookmarks) (rules propagation of post features) when creating translated posts are ajustable through the 5th settings tab.
 
 == Changelog ==
-
+= version 2.17.1 (2015-04-24) =
+* tested with WP 4.2
+* detect pre-registered xili-widgets in theme
+* online help updated (flags)
+* adds get_the_archive_description filter [twenty-fifteen-xili example theme](http://2015.extend.xiligroup.org) dont need child archive.php
+* (security) fixes
 = version 2.17.0 (2015-04-17) =
 * tested with WP 4.2-RC1
 * tested with WP JSON REST API version 1.2.1 - [see tests for Webapp with Framework7](https://github.com/dev-xiligroup/framework7)
@@ -606,7 +611,7 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 20150417 - MS - dev.xiligroup.com
+© 20150424 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.
