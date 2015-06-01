@@ -1,8 +1,10 @@
 # xili-language-plugin
 multilingual plugin for WordPress since 2009
 
-The readme file is now the only file of plugin opened for GitHub contributors to improve this content in english.
+The readme file is now one of the files of plugin opened for GitHub contributors to improve this content in english.
 When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-language/), the text is divided in tabs.
+
+The other files are available for comments or fixes. Only the version in [WordPress xili-language repository](https://wordpress.org/plugins/xili-language/) is for use.
 
 ## Preliminary infos:
 

@@ -1,0 +1,57 @@
+/*** style xili-language admin - xl-style.css - updated 2.8.2 ***/
+/*** updated 2.16.4 - leaved as example but not used by default if not style file in another place (theme or plugins/xilidev-libraries/) ***/
+/** the new way now is able to use admin_custom_xili_flag from media library*/
+
+/*** === xili-language === ***/
+/*** Contributors: michelwppi, MS dev.xiligroup.com ***/
+/*** Donate link: http://dev.xiligroup.com/ ***/
+
+/* .postsbody tr > th span { display:inline-block; text-indent:-9999px ; height: 20px; } // inside plugin function print_styles_cpt_edit */
+
+tr.lang-en_us th { background: transparent url('flags/en_us.png') no-repeat 60% center; }
+tr.lang-fr_fr th { background: transparent url('flags/fr_fr.png') no-repeat 60% center ; }
+tr.lang-es_es th { background: transparent url('flags/es_es.png') no-repeat 60% center ;}
+tr.lang-it_it th { background: transparent url('flags/it_it.png') no-repeat 60% center ;}
+tr.lang-de_de th { background: transparent url('flags/de_de.png') no-repeat 60% center ;}
+tr.lang-pt_pt th { background: transparent url('flags/pt_pt.png') no-repeat 60% center ;}
+tr.lang-ru_ru th { background: transparent url('flags/ru_ru.png') no-repeat 60% center ;}
+tr.lang-zh_cn th { background: transparent url('flags/zh_cn.png') no-repeat 60% center ;}
+tr.lang-ar_ar th { background: transparent url('flags/ar_ar.png') no-repeat 60% center ;}
+tr.lang-ja th { background: transparent url('flags/ja.png') no-repeat 60% center ;}
+
+
+span.translated-in a { display:inline-block; text-indent:-9999px; width:25px; border:0px solid red;}
+div.taxinmos span[class|="lang"] { display:inline-block; text-indent:-9999px; width:20px; border:0px solid red; }
+fieldset.taxinmos span[class|="lang"] { display:inline-block; text-indent:-9999px; width:20px; border:0px solid red; }
+
+span.translated-in a.lang-en_us { background: transparent url('flags/en_us.png') no-repeat 50% center ; }
+span.translated-in a.lang-fr_fr { background: transparent url('flags/fr_fr.png') no-repeat 50% center ; }
+span.translated-in a.lang-es_es { background: transparent url('flags/es_es.png') no-repeat 50% center ;}
+span.translated-in a.lang-it_it { background: transparent url('flags/it_it.png') no-repeat 50% center ;}
+span.translated-in a.lang-de_de { background: transparent url('flags/de_de.png') no-repeat 50% center ;}
+span.translated-in a.lang-pt_pt { background: transparent url('flags/pt_pt.png') no-repeat 50% center ;}
+span.translated-in a.lang-ru_ru { background: transparent url('flags/ru_ru.png') no-repeat 50% center ;}
+span.translated-in a.lang-zh_cn { background: transparent url('flags/zh_cn.png') no-repeat 50% center ;}
+span.translated-in a.lang-ar_ar { background: transparent url('flags/ar_ar.png') no-repeat 50% center ;}
+span.translated-in a.lang-ja { background: transparent url('flags/ja.png') no-repeat 50% center ;}
+
+
+/** do not modify - will be overwritten during plugin's update - use it as example **/
+
+/** copy xili-css folder in your current theme folder and  move the flags in your current theme /images sub-folder **/
+
+/* ---current theme folder---/xili-css/ */
+/* ---current theme folder---/images/flags/ - as in twentyeleven theme example to be shared by frontend */
+
+/* don't forget to change path of flags if xl-style.css is in sub-folder xili-css of current theme as below commented lines */
+
+/* tr.lang-fr_fr th { background: transparent url('../images/flags/fr_fr.png') no-repeat 60% center ; } */
+
+/* span.translated-in a.lang-fr_fr { background: transparent url('../images/flags/fr_fr.png') no-repeat 50% center ; } */
+
+/* because (if you choose) flags are in the images/flags sub-folder of current theme folder */
+
+/** another alternative place **/
+
+/* ---plugins folder---/xilidev-libraries/xili-css/ */
+/* ---plugins folder---/xilidev-libraries/xili-css/flags */
