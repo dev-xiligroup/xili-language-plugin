@@ -42,6 +42,7 @@
  * 2015-03-23 - 2.16.4 - enable new admin_custom_xili_flag - detect in media library before than in other places (plugin, theme) as before
  * 2015-04-18 - 2.16.6 - clean code for older version option 3.8
  * 2015-04-24 - 2.17.1 - esc_html for add_query_arg - detect pre-registered widgets - Online help updated (flags) - fixes propagation
+ * 2015-06-01 - 2.18.1 - fixes, improves media editing page (cloning part)
  *
  * @package xili-language
  */
@@ -57,6 +58,7 @@ class xili_language_admin extends xili_language {
 	var $style_message = '';
 	var $wikilink = 'http://wiki.xiligroup.org';
 	var $fourteenlink = 'http://2014.extend.xiligroup.org';
+	var $repositorylink = 'https://wordpress.org/plugins/xili-language/';
 	var $parent = null;
 	var $news_id = 0; //for multi pointers
 	var $news_case = array();
@@ -4860,25 +4862,19 @@ class xili_language_admin extends xili_language {
 			echo '.action {width: 120px;}'."\n";
 
 			echo '.inputid {width: 55px; font-size:90%}'."\n";
-			$lang = $this->get_post_language( $post->ID ) ; //slug
+
+			$flag_uri = $this->flag_in_title_input ( $post->ID, $insert_flags ); // 2.18.1
+			if ( $flag_uri ) {
+				echo '#titlewrap input {background-image : url('. $flag_uri . '); background-position :98.5% center; background-repeat : no-repeat; }'."\n";
+			}
+
+			echo '.postsbody tr > th span { display:inline-block; height: 20px; }'."\n";
+			$listlanguages = $this->get_listlanguages();
 			if ( $this->style_folder == get_stylesheet_directory_uri() ) {
 				$folder_url = $this->style_folder . '/images/flags/' ;
 			} else {
 				$folder_url = $this->style_folder . '/xili-css/flags/' ;
 			}
-			$flag_id = $this->get_flag_series ( $lang, 'admin' );
-				if ( $flag_id != 0 ) {
-				    $flag_uri = wp_get_attachment_url( $flag_id ) ;
-					$ok = true;
-			} else {
-				$flag_uri = $folder_url . $lang .'.png';
-				$ok = file_exists( $this->style_flag_folder_path . $lang .'.png' );
-			}
-			if ( $lang && $insert_flags && $ok ) {
-				echo '#titlewrap input {background : url('. $flag_uri . ') 98.5% center no-repeat !important; }'."\n";
-			}
-			echo '.postsbody tr > th span { display:inline-block; height: 20px; }'."\n";
-			$listlanguages = $this->get_listlanguages();
 			foreach ($listlanguages as $language) {
 				$ok = false;
 				$flag_id = $this->get_flag_series ( $language->slug, 'admin' );
@@ -4902,6 +4898,39 @@ class xili_language_admin extends xili_language {
 
 			if ( $this->exists_style_ext && $insert_flags ) wp_enqueue_style( 'xili_language_stylesheet' );
 
+		} else if ( $type == 'attachment' ) { // 2.18.1
+			$insert_flags = ( $this->xili_settings['external_xl_style'] == "on" );
+			echo '<!---- xl css ----->'."\n";
+			echo '<style type="text/css" media="screen">'."\n";
+			$flag_uri = $this->flag_in_title_input ( $post->ID, $insert_flags );
+			if ( $flag_uri ) {
+				echo '#titlewrap input {background-image : url('. $flag_uri . '); background-position :98.5% center; background-repeat : no-repeat; }'."\n";
+				echo '#attachment_caption, #attachment_alt, #attachment_content {background-image : url('. $flag_uri . '); background-position :98.5% center; background-repeat : no-repeat; }'."\n";
+			}
+			echo '</style>'."\n";
+		}
+	}
+
+	// used in cpt and attachment
+	function flag_in_title_input ( $post_id, $insert_flags ) {
+		$lang = $this->get_post_language( $post_id ) ; //slug
+		if ( $this->style_folder == get_stylesheet_directory_uri() ) {
+			$folder_url = $this->style_folder . '/images/flags/' ;
+		} else {
+			$folder_url = $this->style_folder . '/xili-css/flags/' ;
+		}
+		$flag_id = $this->get_flag_series ( $lang, 'admin' );
+		if ( $flag_id != 0 ) {
+			$flag_uri = wp_get_attachment_url( $flag_id ) ;
+			$ok = true;
+		} else {
+			$flag_uri = $folder_url . $lang .'.png';
+			$ok = file_exists( $this->style_flag_folder_path . $lang .'.png' );
+		}
+		if ( $lang && $insert_flags && $ok ) {
+			return $flag_uri;
+		} else {
+			return false;
 		}
 	}
 
@@ -5209,21 +5238,20 @@ class xili_language_admin extends xili_language {
 
 		$listlanguages = $this->get_listlanguages () ;
 		// get_language
-		if ( '' != $attachment_post_language ) { // impossible to change if assigned
+		if ( '' != $attachment_post_language ) { // impossible to change if already assigned
 			$name = $this->langs_slug_name_array[$attachment_post_language];
 			$fullname = $this->langs_slug_fullname_array[$attachment_post_language];
 			$form_fields['attachment_post_language'] = array(
 				'label'      => __('Language', 'xili-language'),
 				'input'      => 'html',
-				'html'       => "<strong>$fullname</strong> ($name)<input type='hidden' name='attachments[$attachment_id][attachment_post_language]' value='" . $attachment_post_language . "' /><br />",
+				'html'       => "<hr /><strong>$fullname</strong> ($name)<input type='hidden' name='attachments[$attachment_id][attachment_post_language]' value='" . $attachment_post_language . "' /><br />",
 				'helps'      => __('Language of the file caption and description.', 'xili-language')
 			);
 
 		} else { // selector
 
-			$html_input = '<select name="attachments['.$attachment_id.'][attachment_post_language]" ><option value="undefined">'.__('Choose…','xili-language').'</option>';
+			$html_input = '<hr /><select name="attachments['.$attachment_id.'][attachment_post_language]" ><option value="undefined">'.__('Choose…','xili-language').'</option>';
 			foreach ($listlanguages as $language) {
-				//$selected = (''!=$attachment_post_language && $language->slug == $attachment_post_language) ? 'selected=selected' : '';
 				$selected = selected ( (''!=$attachment_post_language && $language->slug == $attachment_post_language), true, false );
 				$html_input .= '<option value="'.$language->slug.'" '.$selected.'>'.$language->description.' ('.$language->name.')</option>';
 			}
@@ -5245,12 +5273,60 @@ class xili_language_admin extends xili_language {
 
 		if ( '' != $attachment_post_language && $clone ) { // only in media edit not in media-upload
 
+
+
+			$result = $this->translated_in ( $attachment_id, 'link', 'edit_attachment' );
+
+			$trans = $this->translated_in ( $attachment_id, 'array');
+			$html_input = '<hr />';
+			if ( $result == '' ) {
+				$html_input .= __('not yet translated', 'xili-language') ;
+				$label = __('No clone', 'xili-language');
+				$helps = __('You must create a clone in other language if necessary.', 'xili-language');
+			} else {
+				$html_input .= __('Title, caption and description are already available in language', 'xili-language');
+				$html_input .= '&nbsp;:&nbsp;<span class="translated-in">' . $result .'</span><br />';
+				$label = __('Clones', 'xili-language');
+				$helps = __('A clone of attachment contains the same image but not the same editable texts.', 'xili-language');
+			}
+
+			$form_fields['infos_about_clones'] = array(
+					'label'      => $label,
+					'input'      => 'html',
+					'html'       => $html_input,
+					'helps'      => $helps
+
+				);
+			$html_input = '<hr />';
+			$html_input .= '<input type="hidden" id="xl_post_parent" name="xl_post_parent" value="'. $post->post_parent . '" />';
+
+			$select_options = "";
+			foreach ($listlanguages as $language) {
+				if ( $language->slug != $attachment_post_language && !isset ($trans[$language->slug] )) {
+					$select_options .= '<option value="'.$language->slug.'" >'.$language->description.' ('.$language->name.')</option>';
+				}
+			}
+			if ( $select_options ) {
+				$html_input .= '<br />';
+				$html_input .= '<select name="attachments['.$attachment_id.'][create_clone_attachment_with_language]" ><option value="undefined">'.__('Select…','xili-language').'</option>';
+
+				$html_input .= $select_options . '</select>';
+
+				$form_fields['create_clone_attachment_with_language'] = array(
+					'label'      => __('Create clone in language', 'xili-language'),
+					'input'      => 'html',
+					'html'       => $html_input,
+					'helps'      => sprintf(__('Select a language, and after clicking the button %s : A clone with same file will be created to translate title, caption, alt text and description.', 'xili-language'), '<strong>'.__('Update').'</strong>' )
+
+				);
+			}
+
 			if ( $post->post_parent > 0 ) {
-				$html_input = '<strong>'.sprintf( '%s:&nbsp;',__('attached to','xili-language')).get_the_title ( $post->post_parent ).'</strong>';
+				$html_input = '<hr /><strong>'.sprintf( '%s:&nbsp;',__('attached to','xili-language')).get_the_title ( $post->post_parent ).'</strong>';
 				$html_input .='&nbsp;&nbsp;<a href="post.php?post='.$post->post_parent.'&action=edit" title="'.__('Edit').'" >'.__('Edit').'</a>';
 				$helps = __('This titled post above has this media as attachment.', 'xili-language');
 			} else {
-				$html_input = '<strong>'.__( 'not attached to a post.' , 'xili-language').'</strong>';
+				$html_input = '<hr /><strong>'.__( 'not attached to a post.' , 'xili-language').'</strong>';
 				$helps = __('In the Media Library table, it is possible to attach a media to a post.', 'xili-language');
 			}
 
@@ -5259,36 +5335,6 @@ class xili_language_admin extends xili_language {
 				'input'      => 'html',
 				'html'       => $html_input,
 				'helps'      => $helps
-			);
-
-			$result = $this->translated_in ( $attachment_id, 'link', 'post' );
-
-			$trans = $this->translated_in ( $attachment_id, 'array');
-			$html_input = '<br />';
-			if ( $result == '' ) {
-				$html_input .= __('not yet translated', 'xili-language') ;
-			} else {
-				$html_input .= __('Title, caption and description are already translated in', 'xili-language');
-				$html_input .= '&nbsp;:&nbsp;<span class="translated-in">' . $result .'</span><br />';
-			}
-
-			$html_input .= '<input type="hidden" id="xl_post_parent" name="xl_post_parent" value="'. $post->post_parent . '" />';
-
-
-			$html_input .= '<br /><select name="attachments['.$attachment_id.'][create_clone_attachment_with_language]" ><option value="undefined">'.__('Select…','xili-language').'</option>';
-			foreach ($listlanguages as $language) {
-				if ( $language->slug != $attachment_post_language && !isset ($trans[$language->slug] )) {
-					$selected = '' ;
-					$html_input .= '<option value="'.$language->slug.'" '.$selected.'>'.$language->description.' ('.$language->name.')</option>';
-				}
-			}
-			$html_input .= '</select>';
-			$form_fields['create_clone_attachment_with_language'] = array(
-				'label'      => __('Create clone in language', 'xili-language'),
-				'input'      => 'html',
-				'html'       => $html_input,
-				'helps'      => __('Selection of the language of a linked cloned attachment (with same file).', 'xili-language')
-
 			);
 
 			$form_fields['_final'] = '<small>© xili-language v.'.XILILANGUAGE_VER .'</small>';
@@ -5355,7 +5401,6 @@ class xili_language_admin extends xili_language {
 
 			$html_input = '<select name="attachments['.$post->ID.'][attachment_post_language]" ><option value="undefined">'.__('Choose…','xili-language').'</option>';
 			foreach ($listlanguages as $language) {
-				//$selected = (''!=$attachment_post_language && $language->slug == $attachment_post_language) ? 'selected=selected' : '';
 				$selected = selected ( ( ''!=$attachment_post_language && $language->slug == $attachment_post_language ), true, false );
 				$html_input .= '<option value="'.$language->slug.'" '.$selected.'>'.$language->description.' ('.$language->name.')</option>';
 			}
@@ -5363,11 +5408,22 @@ class xili_language_admin extends xili_language {
 			echo  $html_input;
 
 		} else {
-			if ( '' != $attachment_post_language ) { // impossible to change if assigned
+			if ( '' != $attachment_post_language ) { // impossible to change if already assigned
 				$name = $this->langs_slug_name_array[$attachment_post_language];
 				$fullname = $this->langs_slug_fullname_array[$attachment_post_language];
 				$html = '<p>' . __('This media is assigned to a language', 'xili-language') . '</p>';
 				$html .= "<p><strong>$fullname</strong> ($name)<input type='hidden' name='attachments[{$post->ID}][attachment_post_language]' value='" . $attachment_post_language . "' /></p>";
+			// more infos
+
+				$result = $this->translated_in ( $post->ID, 'link', 'edit_attachment', '<br/>' );
+
+				if ( $result == '' ) {
+					$html .= __('not yet translated', 'xili-language') ;
+				} else {
+					$html .= __('This media has already clone(s) for translation in', 'xili-language');
+					$html .= '&nbsp;:&nbsp;<br /><span class="translated-in">' . $result .'</span><br />';
+				}
+
 			} else {
 				$html = '<p>' . __('This media is not assigned to a language, see column on left under description textarea...', 'xili-language') . '</p>';
 			}
@@ -5576,8 +5632,8 @@ class xili_language_admin extends xili_language {
 				'content'	=>$help	));
 	}
 
-	// attachment_fields_to_save apply_filters('attachment_fields_to_save', $post, $attachment);
-
+	// attachment_fields_to_save
+	// call by apply_filters('attachment_fields_to_save', $post, $attachment);
 	function set_attachment_fields_to_save ( $post, $attachment ) {
 		global $wpdb;
 
@@ -5593,12 +5649,16 @@ class xili_language_admin extends xili_language {
 		if ( isset($attachment['create_clone_attachment_with_language']) && $attachment['create_clone_attachment_with_language'] != 'undefined' ){
 
 			$clone['post_title'] = sprintf(__('Translate in %2$s: %1$s', 'xili-language'),$clone['post_title'], $attachment['create_clone_attachment_with_language'] );
+			if ( $clone['post_content'] ) $clone['post_content'] = sprintf(__('Translate: %1$s', 'xili-language'),$clone['post_content'] );
+			if ( $clone['post_excerpt'] ) $clone['post_excerpt'] = sprintf(__('Translate: %1$s', 'xili-language'),$clone['post_excerpt'] );
 
 			$parent_id = $post['xl_post_parent']; // 2.8.4.2 hidden input
 
 			$linked_parent_id = xl_get_linked_post_in ( $parent_id, $attachment['create_clone_attachment_with_language'] );
 			$clone['post_parent'] = $linked_parent_id; // 0 if unknown linked id of parent in assigned language
+			$clone['guid'] = $post['attachment_url']; // 2.18.1 - the URI of media and not URI of attachment itself
 
+			// now clones
 			$cloned_attachment_id = wp_insert_post( $clone );
 			// clone post_meta
 			$data = get_post_meta( $post['ID'], '_wp_attachment_metadata', true );
@@ -5606,7 +5666,7 @@ class xili_language_admin extends xili_language {
 			$data_alt = get_post_meta( $post['ID'], '_wp_attachment_image_alt', true );
 			update_post_meta( $cloned_attachment_id, '_wp_attachment_metadata', $data);
 			update_post_meta( $cloned_attachment_id, '_wp_attached_file', $data_file);
-			if ( '' != $data_alt ) update_post_meta( $cloned_attachment_id, '_wp_attachment_image_alt', $data_alt);
+			if ( '' != $data_alt ) update_post_meta( $cloned_attachment_id, '_wp_attachment_image_alt', sprintf(__('Translate: %1$s', 'xili-language'), $data_alt ));
 			// set language and links of cloned of current
 			update_post_meta( $cloned_attachment_id, QUETAG.'-'.$attachment['attachment_post_language'], $post['ID'] );
 			wp_set_object_terms( $cloned_attachment_id, $attachment['create_clone_attachment_with_language'], TAXONAME );
@@ -5622,7 +5682,8 @@ class xili_language_admin extends xili_language {
 				}
 			}
 			// set links of current to cloned
-			update_post_meta( $post['ID'], QUETAG.'-'.$attachment['create_clone_attachment_with_language'], $cloned_attachment_id );
+
+			update_post_meta( (int) $post['ID'], QUETAG.'-'.$attachment['create_clone_attachment_with_language'], $cloned_attachment_id );
 			if ( $already_linked != array() ) {
 				foreach ( $already_linked as $key => $id ) {
 					update_post_meta( $post['ID'], QUETAG.'-'.$key, $id );
@@ -5633,6 +5694,7 @@ class xili_language_admin extends xili_language {
 
 		return $post;
 	}
+
 	// called before deleting attachment by do_action( 'delete_attachment'
 	function if_cloned_attachment ( $post_ID ) {
 		global $wpdb;
@@ -5645,8 +5707,9 @@ class xili_language_admin extends xili_language {
 				if ( array() != $linked_list ) {
 					$this->dont_delete_file = true;
 					// update meta in linked attachments
-					foreach ( $linked_list as $lang_slug => $linked_id ) {
-						delete_post_meta ( $linked_id, QUETAG.'-'.$attachment_post_language );
+					// a:1:{s:5:"en_us";a:3:{s:7:"post_ID";s:4:"8537";s:4:"name";s:5:"en_US";s:11:"description";s:7:"english";}}
+					foreach ( $linked_list as $lang_slug => $linked_array ) {
+						delete_post_meta ( $linked_array['post_ID'], QUETAG.'-'.$attachment_post_language ); // 2.18.1
 					}
 				} else {
 					$this->dont_delete_file = false;
@@ -5773,7 +5836,7 @@ class xili_language_admin extends xili_language {
 	 * @since 2.5
 	 *
 	 */
-	function translated_in ( $post_ID, $mode = 'link', $type = 'post' ) {
+	function translated_in ( $post_ID, $mode = 'link', $type = 'post', $separator = ' ' ) {
 
 		$curlang = $this->get_cur_language( $post_ID ) ; // array
 		$listlanguages = $this->get_listlanguages () ;
@@ -5786,17 +5849,21 @@ class xili_language_admin extends xili_language {
 						if ( $linepost ) {
 							switch ( $mode ) {
 								case 'link' :
-									if ( $type == 'post' ) {
+									$detail = false;
+									$title_type = $type;
+									if ( $type == 'post' || $type == 'edit_attachment') {
 										$link = 'post.php?post='.$linepost->ID.'&action=edit';
+										if ( $type == 'edit_attachment' ) $detail = true;
+										if ( $type == 'edit_attachment' ) $title_type = 'attachment';
 									} elseif ( $type == 'attachment') {
-										$link = 'media.php?attachment_id='.$linepost->ID.'&action=edit';
+										$link = 'media.php?attachment_id='.$linepost->ID.'&action=edit'; // not used (small settings screen)
 									}
-
-									$title = sprintf ( __( 'link to edit %s %d in %s', 'xili-language' ), $type, $linepost->ID, $language->description );
-									$trans[] = sprintf( __('<a href="%1$s" title="%2$s" class="lang-%4$s" >%3$s</a>','xili-language'), $link, $title, $language->name, $language->slug );
+									$a_content = ( $detail )  ? $language->description. ' (' . $language->name .')' : $language->name ;
+									$title = sprintf ( __( 'link to edit %1$s %3$d in %2$s', 'xili-language' ), $title_type, $language->description, $linepost->ID );
+									$trans[] = sprintf( '<a href="%1$s" title="%2$s" class="lang-%4$s" >%3$s</a>', $link, $title, $a_content, $language->slug ); // no localization 2.18.1
 								break;
 								case 'array' :
-									$trans[$language->slug] = array ( 'post_ID'=>$linepost->ID, 'name'=>$language->name, 'description'=>$language->description );
+									$trans[$language->slug] = array ( 'post_ID' => $linepost->ID, 'name' => $language->name, 'description' => $language->description );
 								break;
 
 							}
@@ -5807,7 +5874,7 @@ class xili_language_admin extends xili_language {
 
 		if ( $mode == 'array' ) return $trans;
 
-		$list = implode (' ', $trans ) ;
+		$list = implode ($separator, $trans ) ;
 		return $list;
 	}
 
@@ -6737,6 +6804,7 @@ class xili_language_admin extends xili_language {
 				'<li><em>' . __('If after changing or removing menu, you see - unavailable menu - in Menu list insertion point box, you must remove this insertion point and create a new one with new menus.','xili-language') . '</em></li>' .
 
 				'</ul>'.
+				'<p>' . sprintf(__('%sMost recent infos about xili-language trilogy%s','xili-language'), '<a href="'.$this->fourteenlink.'" target="_blank">' , '</a>' ) . '</p>'.
 				'<p>' . sprintf(__('<a href="%s" target="_blank">Xili Wiki Documentation</a>','xili-language'), $wikilink ) . '</p>' ;
 
 			$screen->add_help_tab( array(
@@ -6746,8 +6814,22 @@ class xili_language_admin extends xili_language {
 		));
 
 		}
+		if ( $screen->id == 'attachment' ) { // 2.18.1
+			$more_infos =
+				'<p><strong>' . __('About multilingual features:', 'xili-language') . '</strong></p>' .
+				'<ul>' .
+				'<li>' . __('With media attachment, in multilingual context, it is possible to clone an attachment with the same media. The file is not duplicated. Title, Legend, Alt text can be written in each language.','xili-language') . '</li>' .
+				'<li><em>' . sprintf(__('Fields under the description are available to assign and clone. A side box %s contain also infos and links to go to another clone in other languages.','xili-language'), '<strong>' . __( 'Multilingual informations', 'xili-language') . '</strong>' ) . '</em></li>' .
+				'</ul>'.
+				'<p>' . sprintf(__('%sXili-language Plugin Documentation in WP repository%s','xili-language'), '<a href="'.$this->repositorylink .'" target="_blank">', '</a>' ). '</p>' .
+				'<p>' . sprintf(__('%sMost recent infos about xili-language trilogy%s','xili-language'), '<a href="'.$this->fourteenlink.'" target="_blank">' , '</a>' ) . '</p>' ;
 
-
+				$screen->add_help_tab( array(
+				'id'      => 'more-media-infos',
+				'title'   => sprintf( __('About %s multilingual features', 'xili-language'), '[©xili]'),
+				'content' => $more_infos,
+			));
+		}
 		if ( in_array ( $screen->id , array ('settings_page_language_page', 'settings_page_language_front_set', 'settings_page_language_expert', 'settings_page_language_files', 'settings_page_author_rules', 'settings_page_language_support') ) ) {
 
 			$page_title[ 'settings_page_language_page' ] = __( 'Languages list', 'xili-language' ) ;
