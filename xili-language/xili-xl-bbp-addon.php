@@ -479,9 +479,10 @@ function xili_xl_bbp_get_WPLANG () {
 
 // bbPress admin Language (user locale)
 function xili_xl_bbp_lang_init ( ) {
-	if ( is_admin() )
-		//add_filter( 'bbpress_locale', 'xili_bbp_admin_side_locale', 10); // obsolete in 2.2
+	if ( is_admin() ) {
+		//add_filter( 'bbpress_locale', 'xili_bbp_admin_side_locale', 10, 2); // obsolete in 2.2
 		add_filter( 'plugin_locale', 'xili_bbp_admin_side_locale', 10, 2);
+	}
 }
 
 function xili_bbp_admin_side_locale ( $locale = 'en_US', $domain = 'bbpress' ) {

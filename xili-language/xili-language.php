@@ -11,7 +11,7 @@ Text Domain: xili-language
 Domain Path: /languages/
 */
 
-# updated 150618 - 2.18.2 - fixes
+# updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1
 # updated 150601 - 2.18.1 - fixes, improves media editing page (cloning part, admin side)
 # updated 150508 - 2.18.0 - integration of xl-bbp-addon, fixes/adds menu-item-has-children class in menus selector, fixes propagation options
 
@@ -541,7 +541,9 @@ class xili_language {
 		// to translate inside content according current post language - 2.12.0
 		add_shortcode ( 'xili18n', array(&$this,'xili18n_shortcode' ) );
 		// to display part of content according current language - 2.13.3
-		add_shortcode ( 'xili-show-if', array(&$this,'xili_content_if_shortcode' ) );
+		add_shortcode ( 'xili-show-if', array(&$this, 'xili_content_if_shortcode' ) );
+		// insert link to linked post in other language - 2.18.2
+		add_shortcode ( 'linked-post-in', array(&$this, 'build_linked_posts_shortcode') );
 
 		// to return URI of flag assigned to a language
 		add_shortcode ( 'xili-flag', array(&$this,'xili_multilingual_flag' ) );
@@ -713,15 +715,40 @@ class xili_language {
 		//$this->xili_test_lang_perma (); // not detected in WP hook - 2.16.6
 		if ( $this->lang_perma ) {
 			// obsolete
-			register_taxonomy( TAXONAME, $post_type_array, array('hierarchical' => false, 'label' => false, 'rewrite' => false , 'update_count_callback' => array(&$this, '_update_post_lang_count'), 'show_ui' => false, '_builtin' => false, 'query_var' => QUETAG ));
+			register_taxonomy( TAXONAME, $post_type_array, array(
+				'hierarchical' => false,
+				'label' => false,
+				'rewrite' => false ,
+				'update_count_callback' => array( &$this, '_update_post_lang_count' ),
+				'show_ui' => false,
+				'_builtin' => false,
+				'query_var' => QUETAG,
+				'show_in_nav_menus' => false
+				) );
+
 			$this->lpr = "-"; // 2.3.2
 
 		} else {
-			add_filter('query_vars', array(&$this,'keywords_addQueryVar')); // now in taxonomy decl. // 2.1.1
-			register_taxonomy( TAXONAME, $post_type_array, array('hierarchical' => false, 'label' => false, 'rewrite' => false , 'update_count_callback' => array(&$this, '_update_post_lang_count'), 'show_ui' => false, '_builtin' => false ));
+			add_filter( 'query_vars', array( &$this, 'keywords_addQueryVar') ); // now in taxonomy decl. // 2.1.1
+			register_taxonomy( TAXONAME, $post_type_array, array(
+				'hierarchical' => false,
+				'label' => false,
+				'rewrite' => false ,
+				'update_count_callback' => array( &$this, '_update_post_lang_count' ),
+				'show_ui' => false,
+				'_builtin' => false,
+				'show_in_nav_menus' => false
+				) );
 		}
 
-		register_taxonomy( TAXOLANGSGROUP, 'term', array('hierarchical' => false, 'update_count_callback' => '', 'show_ui' => false, 'label'=>false, 'rewrite' => false, '_builtin' => false ));
+		register_taxonomy( TAXOLANGSGROUP, 'term', array(
+			'hierarchical' => false,
+			'update_count_callback' => '',
+			'show_ui' => false, 'label'=>false,
+			'rewrite' => false,
+			'_builtin' => false,
+			'show_in_nav_menus' => false
+			) );
 
 		$this->authorized_taxonomies = $this->authorized_custom_taxonomies ( $post_type_array );
 
@@ -2586,7 +2613,7 @@ class xili_language {
 	 */
 	function one_text ( $value ){
 		if ('' != $value)
-			return __($value, $this->thetextdomain);
+			return __( $value, $this->thetextdomain );
 		else
 			return $value;
 	}
@@ -3432,7 +3459,15 @@ class xili_language {
 	 * @ since 1.8.5
 	 */
 	function add_link_taxonomy () {
-		register_taxonomy( 'link_'.TAXONAME, 'link', array('hierarchical' => false, 'label' => false, 'rewrite' => false, 'update_count_callback' => array(&$this,'_update_link_lang_count'), 'show_ui' => false, '_builtin' => false ));
+		register_taxonomy( 'link_'.TAXONAME, 'link', array(
+			'hierarchical' => false,
+			'label' => false,
+			'rewrite' => false,
+			'update_count_callback' => array( &$this, '_update_link_lang_count' ),
+			'show_ui' => false,
+			'_builtin' => false,
+			'show_in_nav_menus' => false
+			) );
 
 	}
 	// count update
@@ -4396,6 +4431,51 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 		}
 		return '';
 	}
+
+	/**
+	 * Shortcode inside post content
+	 * [linked-post-in lang="fr_fr"]Voir cet article[/linked-post-in]
+	 *
+	 */
+	function build_linked_posts_shortcode( $atts, $content = null) {
+		global $post;
+		extract( shortcode_atts( array(
+			'lang' => '',
+			'title' => '',
+			'context' => 'linktitle' // for adapt translation
+			), $atts));
+
+		$language = xiliml_get_language( $lang ); /* test if lang is available */
+
+		if ( $language !== false) {
+			$otherpost = $this->linked_post_in( $post->ID, $language->slug );
+		}
+
+		if ( $otherpost ) {
+			if ('' == $title) {
+				$obj_lang = xiliml_get_lang_object_of_post( $otherpost );
+				if ( false !== $obj_lang ) {
+					$description = $obj_lang->description;
+					if ( $context ) {
+						$text_title = translate_with_gettext_context( 'A similar post in %s', $context , $this->thetextdomain ) ;
+						$language_name = translate_with_gettext_context( $description, $context, $this->thetextdomain ) ;
+					} else {
+						$text_title = translate( 'A similar post in %s', $this->thetextdomain ) ;
+						$language_name = translate( $description, $this->thetextdomain ) ;
+					}
+					$title = esc_html( sprintf (   $text_title  ,  $language_name ) ) ;
+				} else {
+					$title = esc_html( __( 'Error with target post #', 'xili-language' ) ) . $otherpost;
+				}
+			}
+			$output = '<a href="' . get_permalink($otherpost) . '" title="' . $title . '">' . $content . '</a>';
+			/* this link above can be enriched by image or flag inside $content */
+		} else {
+			$output = '<a href="#" title="' . __('Error: other post not present !!!', 'xili-language') . '">' . $content . '</a>';
+		}
+		return $output;
+	}
+
 
 	/**
 	 * SHORTCODE: return URI of flag in a language

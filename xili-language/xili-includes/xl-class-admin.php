@@ -43,6 +43,7 @@
  * 2015-04-18 - 2.16.6 - clean code for older version option 3.8
  * 2015-04-24 - 2.17.1 - esc_html for add_query_arg - detect pre-registered widgets - Online help updated (flags) - fixes propagation
  * 2015-06-01 - 2.18.1 - fixes, improves media editing page (cloning part)
+ * 2015-06-25 - 2.18.2 - add display link in languages of post table
  *
  * @package xili-language
  */
@@ -4076,7 +4077,7 @@ class xili_language_admin extends xili_language {
 	 * private functions for admin page : the language example list
 	 * @since 1.6.0
 	 */
-	function example_langs_list($language_name, $state) {
+	function example_langs_list( $language_name, $state ) {
 
 		/* reduce list according present languages in today list */
 		if ($state != 'delete' && $state != 'edit') {
@@ -4572,7 +4573,7 @@ class xili_language_admin extends xili_language {
 		<tbody id='the-linked' class='postsbody'>
 		<?php
 		foreach ( $listlanguages as $language ) {
-			$otherpost = $this->linked_post_in( $post_ID, $language->slug ) ;
+			$otherpost = $this->linked_post_in( $post_ID, $language->slug );
 
 			$checkpostlang = ( ''!= $postlang ) ? $postlang : $defaultlanguage ; // according author language
 			$checked = checked( $checkpostlang, $language->slug, false );
@@ -4589,6 +4590,7 @@ class xili_language_admin extends xili_language {
 
 			if ( $otherpost && $language->slug != $postlang ) {
 				$linepost = $this->temp_get_post ( $otherpost );
+				$display_link = sprintf('<a href="%s" title="%s" target="_blank" >' . $otherpost . '</a>', get_permalink($otherpost), __('Display this post', 'xili-language') ); // 2.18.2
 
 				if ( $linepost ) {
 
@@ -4596,11 +4598,10 @@ class xili_language_admin extends xili_language {
 
 						$edit = __( 'uneditable', 'xili-language' );
 					} else {
-						$edit = sprintf( ' <a href="%s" title="link to:%d">%s</a> ', 'post.php?post='.$otherpost.'&action=edit', $otherpost, __('Edit') );
+						$edit = sprintf( ' <a href="%s" title="link to:%d">%s</a> ', 'post.php?post=' . $otherpost . '&action=edit', $otherpost, __('Edit') );
 					}
 
-
-					echo '<tr'.$tr_class.'><th title="'.$language->description.'" >&nbsp;'.$language_name .'</th><td>'.$otherpost.'</td><td>'.$linepost->post_title
+					echo '<tr'.$tr_class.'><th title="'.$language->description.'" >&nbsp;'.$language_name .'</th><td>'.$display_link.'</td><td>'.$linepost->post_title
 
 					.'</td><td>';
 
@@ -4608,26 +4609,26 @@ class xili_language_admin extends xili_language {
 						case 'private':
 							_e('Privately Published');
 							break;
-							case 'publish':
-								_e('Published');
-								break;
-							case 'future':
-								_e('Scheduled');
-								break;
-							case 'pending':
-								_e('Pending Review');
-								break;
-							case 'trash':
-								_ex('Trash' ,'post');
-								break;
-							case 'draft':
-							case 'auto-draft':
-								_e('Draft');
-								break;
+						case 'publish':
+							_e('Published');
+							break;
+						case 'future':
+							_e('Scheduled');
+							break;
+						case 'pending':
+							_e('Pending Review');
+							break;
+						case 'trash':
+							_ex('Trash' ,'post');
+							break;
+						case 'draft':
+						case 'auto-draft':
+							_e('Draft');
+							break;
 					}
 
 					echo '</td><td>'
-					.$edit
+					. $edit
 					.'</td></tr>';
 
 				} else {
@@ -4644,6 +4645,7 @@ class xili_language_admin extends xili_language {
 				}
 
 			} elseif ( $language->slug == $postlang) {
+
 
 				echo '<tr class="editing lang-'.$language->slug.'" ><th>'.$checkline.'</th><td>'.$post_ID.'</td><td>'
 				.$post->post_title
