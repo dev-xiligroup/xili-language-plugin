@@ -311,6 +311,7 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 * add link in post edit to view
 * add shortcode [linked-post-in] as `[linked-post-in lang="fr_fr"]Voir cet article[/linked-post-in]`
 * pre-tests with WP 4.3-beta1: fixes for WP Theme Customizer Menus
+* ready to translate theme_mob values (like in config.xml)
 
 = version 2.18.1 (2015-06-01) =
 * fixes, improves media editing page (cloning part, admin side)

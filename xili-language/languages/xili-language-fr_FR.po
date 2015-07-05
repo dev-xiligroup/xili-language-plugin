@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xili_language\n"
 "Report-Msgid-Bugs-To: http://dev.xiligroup.com/\n"
-"POT-Creation-Date: 2015-06-25 16:26:01+00:00\n"
-"PO-Revision-Date: 2015-06-25 18:28+0100\n"
+"POT-Creation-Date: 2015-07-05 17:51:27+00:00\n"
+"PO-Revision-Date: 2015-07-05 19:55+0100\n"
 "Last-Translator: dev.xiligroup <contact@xiligroup.com>\n"
 "Language-Team: dev.xiligroup.com <contact@xiligroup.com>\n"
 "Language: fr_FR\n"
@@ -2540,7 +2540,7 @@ msgstr "cocher en :"
 
 #: xili-includes/xl-class-admin.php:4737 xili-includes/xl-class-admin.php:5984
 #: xili-includes/xl-class-admin.php:6028 xili-includes/xl-class-admin.php:6516
-#: xili-language.php:4026
+#: xili-language.php:4091
 msgid "undefined"
 msgstr "non définie"
 
@@ -3226,28 +3226,28 @@ msgstr "Eléments à retenir"
 msgid "For more information"
 msgstr "Pour plus d'informations"
 
-#: xili-language.php:747
+#: xili-language.php:775
 msgid "Nav to home"
 msgstr "Lien vers l’accueil"
 
-#: xili-language.php:747
+#: xili-language.php:775
 msgid "Links redirect to home."
 msgstr "Les liens redirigent vers l’accueil"
 
-#: xili-language.php:748
+#: xili-language.php:776
 msgid "Nav to home (w/o cur lang.)"
 msgstr "Lien vers l’accueil (sans la langue active)"
 
-#: xili-language.php:748 xili-language.php:751
+#: xili-language.php:776 xili-language.php:779
 msgid "Current language is not inserted and links redirect to home."
 msgstr ""
 "La langue active n'est pas insérée et les liens redirigents vers l'accueil."
 
-#: xili-language.php:749
+#: xili-language.php:777
 msgid "Nav to Singular (w/o cur lang.)"
 msgstr "Lien vers page seule (sans la langue active.)"
 
-#: xili-language.php:749 xili-language.php:753
+#: xili-language.php:777 xili-language.php:781
 msgid ""
 "Current language is not inserted and links redirect to post or page if "
 "exists in other languages."
@@ -3255,24 +3255,24 @@ msgstr ""
 "La langue active n'est pas insérée dans le menu et les liens redirigent vers "
 "la page ou l'article s'il existe dans les autres langages."
 
-#: xili-language.php:750
+#: xili-language.php:778
 msgid "Nav Menu"
 msgstr "Menu de navigation"
 
-#: xili-language.php:750
+#: xili-language.php:778
 msgid "List of all languages are inserted and links redirect to home."
 msgstr ""
 "La liste des langues est insérée et les liens redirigent vers l'accueil"
 
-#: xili-language.php:751
+#: xili-language.php:779
 msgid "Nav Menu (w/o current lang.)"
 msgstr "Menu de Navigation (sans la langue active)"
 
-#: xili-language.php:752
+#: xili-language.php:780
 msgid "Nav Menu Singular"
 msgstr "Menu de navigation, mode page seule"
 
-#: xili-language.php:752
+#: xili-language.php:780
 msgid ""
 "List of all languages are inserted and links redirect to post or page if "
 "exists in other languages."
@@ -3280,17 +3280,17 @@ msgstr ""
 "La liste des langues est insérée et les liens redirigent vers la page ou "
 "l'article s'il existe dans les autres langages."
 
-#: xili-language.php:753
+#: xili-language.php:781
 msgid "Nav Menu Singular (w/o current lang.)"
 msgstr "Menu de navigation Page seule (sans la langue active.)"
 
-#: xili-language.php:754
+#: xili-language.php:782
 msgid "Nav Menu Singular (w/o curr. lang and if exists)"
 msgstr ""
 "Menu de navigation Page seule (sans la langue active et si la page liée "
 "existe)"
 
-#: xili-language.php:754
+#: xili-language.php:782
 msgid ""
 "Current language is not inserted and links appears and redirect to post or "
 "page if exists in other languages."
@@ -3298,51 +3298,47 @@ msgstr ""
 "La langue courante n’apparait pas dans le menu. Seulement si le lien existe "
 "vers la page dans l’autre langue existe, l’élément menu apparaît."
 
-#: xili-language.php:895
+#: xili-language.php:923
 msgid "A term with the name provided already exists."
 msgstr "Un terme existe déjà."
 
-#: xili-language.php:1159
+#: xili-language.php:1187
 msgid "Please translate in %s:"
 msgstr "A traduire en %s :"
 
-#: xili-language.php:3288
+#: xili-language.php:3345
 msgid "no load_theme_textdomain in functions.php"
 msgstr "pas de load_theme_textdomain dans functions.php"
 
-#: xili-language.php:3354
+#: xili-language.php:3411
 msgid "language items added"
 msgstr "Une nouvelle langue a été ajoutée"
 
-#: xili-language.php:3356
+#: xili-language.php:3413
 msgid "seems to be set"
 msgstr "semble être réglé"
 
-#: xili-language.php:4161
+#: xili-language.php:4226
 msgid "All"
 msgstr "Tous"
 
-#: xili-language.php:4261
+#: xili-language.php:4326
 msgid "Uncategorized"
 msgstr "Non classé"
 
-#: xili-language.php:4430
-msgid "A similar post in %s"
-msgstr "Un article similaire en %s"
-
-#: xili-language.php:4435
+#: xili-language.php:4500
 msgid "Error with target post #"
 msgstr "Erreur avec le post cible n°"
 
-#: xili-language.php:4441
+#: xili-language.php:4506
 msgid "Error: other post not present !!!"
 msgstr "Erreur : l’autre post n’est pas présent !!!"
 
-#: xili-language.php:4672
+#: xili-language.php:4737
 msgid "Menu with flags"
 msgstr "Menu avec drapeaux"
 
-#: xili-language.php:4673
+#: xili-language.php:4738
 msgid ""
 "If checked and if flag images available  for each language in Medias table, "
 "navigation menu item will display image instead language name."
@@ -3350,7 +3346,7 @@ msgstr ""
 "Si coché, et si une image drapeau est associée à chaque langue dans la "
 "bibliothèque média, ces drapeaux vont remplacer le nom de la langue."
 
-#: xili-language.php:4674
+#: xili-language.php:4739
 msgid ""
 "If theme contains flags and if these flags are well registered inside args "
 "of “custom_xili_flag” theme_support function, a default flag is used for the "
@@ -3361,11 +3357,11 @@ msgstr ""
 "sont utilisés s'il n'y en a pas dans la bibliothèque. Ils sont signalés par "
 "un *."
 
-#: xili-language.php:4675
+#: xili-language.php:4740
 msgid "Navigation menu selector"
 msgstr "sélecteur du menu de navigation"
 
-#: xili-language.php:4676
+#: xili-language.php:4741
 msgid ""
 "The css navigation menu selector (default as in twentyfourteen bundled "
 "theme)."
@@ -3373,47 +3369,47 @@ msgstr ""
 "Le sélecteur principal pour le menu (par défaut comme dans le thème "
 "twentyfourteen)."
 
-#: xili-language.php:4677
+#: xili-language.php:4742
 msgid "li:hover selector"
 msgstr "sélecteur li:hover"
 
-#: xili-language.php:4678
+#: xili-language.php:4743
 msgid "The css navigation menu selector when mouse is hover li."
 msgstr ""
 "Le sélecteur li dans la css pour le menu quand la souris est dessus (hover)."
 
-#: xili-language.php:4679
+#: xili-language.php:4744
 msgid "a selector"
 msgstr "sélecteur a"
 
-#: xili-language.php:4680
+#: xili-language.php:4745
 msgid "The css navigation menu selector (a) where flag is in background."
 msgstr ""
 "Le sélecteur (a) dans la css pour le menu avec le drapeau en arrière plan."
 
-#: xili-language.php:4681
+#: xili-language.php:4746
 msgid "a:hover selector"
 msgstr "sélecteur a:hover"
 
-#: xili-language.php:4682
+#: xili-language.php:4747
 msgid "The css navigation menu (a) selector when mouse moves hover)."
 msgstr ""
 "Le sélecteur (a) dans la css pour le menu quand la souris est dessus (hover)."
 
 #. translators: 'rtl' or 'ltr'. This sets the text direction for WordPress.
-#: xili-language.php:5023
+#: xili-language.php:5088
 msgid "Language or taxonomy language not available"
 msgstr "La langue ou la taxinomie langage est introuvable."
 
-#: xili-language.php:5511 xili-language.php:5533
+#: xili-language.php:5576 xili-language.php:5598
 msgid "delete if you add manually another menu item"
 msgstr "Supprimer en cas d'ajout manuel d'un autre item menu"
 
-#: xili-language.php:6069 xili-language.php:6081
+#: xili-language.php:6134 xili-language.php:6146
 msgid "Installation of xili-language is not completed."
 msgstr "L'installation de xili-language est incomplète."
 
-#: xili-language.php:6071
+#: xili-language.php:6136
 msgid ""
 "This xili-language version (%s) need PHP Version more than %s; installed "
 "release is %s."
@@ -3421,14 +3417,14 @@ msgstr ""
 "Cette version de xili-language (%s) nécessite la version  PHP > %s; La "
 "version PHP installée : %s."
 
-#: xili-language.php:6073
+#: xili-language.php:6138
 msgid ""
 "Find a server with PHP Version to more %s or use xili-language version less "
 "or equal to %s"
 msgstr ""
 "Trouver un serveur avec un PHP > %s ou utiliser xili-language version =< %s"
 
-#: xili-language.php:6083
+#: xili-language.php:6148
 msgid ""
 "This xili-language version (%s) need WordPress Version more than %s; "
 "installed release is %s."
@@ -3436,7 +3432,7 @@ msgstr ""
 "Cette version de xili-language (%s) nécessite la version  WordPress > %s; La "
 "version installée : %s."
 
-#: xili-language.php:6085
+#: xili-language.php:6150
 msgid ""
 "Upgrade WordPress Version to more %s or use xili-language version less than "
 "%s"
@@ -3444,12 +3440,15 @@ msgstr ""
 "Mettre à jour la version WordPress > %s ou utiliser xili-language version < "
 "%s"
 
-#: xili-language.php:6098
+#: xili-language.php:6163
 msgid ""
 "Installation of both xili-language AND bbPress need addon file in good place."
 msgstr ""
 "L'installation de xili-language et bbPress nécessite un fichier d'ajouts au "
 "bon endroit."
+
+#~ msgid "A similar post in %s"
+#~ msgstr "Un article similaire en %s"
 
 #~ msgid ""
 #~ "Selection of the language of a linked cloned attachment (with same file)."

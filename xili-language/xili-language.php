@@ -11,7 +11,7 @@ Text Domain: xili-language
 Domain Path: /languages/
 */
 
-# updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1
+# updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1, ready to translate theme_mod values
 # updated 150601 - 2.18.1 - fixes, improves media editing page (cloning part, admin side)
 # updated 150508 - 2.18.0 - integration of xl-bbp-addon, fixes/adds menu-item-has-children class in menus selector, fixes propagation options
 
@@ -247,6 +247,7 @@ class xili_language {
 							'xili_WP_Widget_Recent_Comments' => array( 'value' => 'enabled', 'name' => 'Recent Comments list'),
 							'xili_Widget_Categories' =>  array( 'value' => '', 'name' => 'Categories' ));
 
+	var $theme_mod_to_be_filtered = array(); // array of theme_mod to be filtered - 2.18.2
 
 	public function __construct( $locale_method = false, $show = false, $class_admin = false ) {
 
@@ -551,6 +552,8 @@ class xili_language {
 		add_action ( 'wp_head', array(&$this,'insert_xili_flag_css_in_header' ), 12 ); // 2.15 after bundled old version
 
 		add_action ( 'after_setup_theme', array(&$this,'bundled_themes_support_flag' ), 12 ); // bundled themes
+		// used if config.xml set an array of theme_mod values - 2.18.2
+		add_action ( 'after_setup_theme', array(&$this,'theme_mod_create_filters' ), 13 ); // if array theme_mod_to_be_filtered set before
 
 	}
 
@@ -2602,6 +2605,36 @@ class xili_language {
 		$query = new WP_Query( $args );
 
 		return $query->found_posts;
+	}
+
+	/**
+	 * Prepare filter for selected theme_mod...
+	 *
+	 * @since 2.18.2
+	 *
+	 */
+	function theme_mod_create_filters (){
+		$curtheme = get_option ('stylesheet'); // both child or not
+		if ( ! is_admin() && $this->theme_mod_to_be_filtered ) {
+			foreach ( $this->theme_mod_to_be_filtered[$curtheme] as $config_name ) {
+				$filtername = 'theme_mod_' . $config_name;
+				add_filter ( $filtername, array(&$this, 'one_text' ) );
+			}
+		}
+	}
+
+	/**
+	 * callable by theme to populate theme_mod filter array
+	 *
+	 * @see example in latest version of twentyfifteen-xili child theme
+	 * @since 2.18.2
+	 *
+	 */
+	function set_theme_mod_to_be_filtered ( $theme_mod_index ) {
+		if ( $theme_mod_index && is_string( $theme_mod_index ) ) {
+			$curtheme = get_option ( 'stylesheet' );
+			$this->theme_mod_to_be_filtered[$curtheme][] = $theme_mod_index;
+		}
 	}
 
 	/**
