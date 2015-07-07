@@ -5,12 +5,14 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.18.2-beta
+Version: 2.19.1-beta
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
+# updated 150705 - 2.19.0 - Stable version
 # updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1, ready to translate theme_mod values
 # updated 150601 - 2.18.1 - fixes, improves media editing page (cloning part, admin side)
 # updated 150508 - 2.18.0 - integration of xl-bbp-addon, fixes/adds menu-item-has-children class in menus selector, fixes propagation options
@@ -105,7 +107,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.18.2-beta'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.19.1'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');

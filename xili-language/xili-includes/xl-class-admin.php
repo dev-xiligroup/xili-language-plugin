@@ -44,6 +44,7 @@
  * 2015-04-24 - 2.17.1 - esc_html for add_query_arg - detect pre-registered widgets - Online help updated (flags) - fixes propagation
  * 2015-06-01 - 2.18.1 - fixes, improves media editing page (cloning part)
  * 2015-06-25 - 2.18.2 - add display link in languages of post table
+ * 2015-07-07 - 2.19.1 - fixes (3pepe3)
  *
  * @package xili-language
  */
@@ -78,6 +79,8 @@ class xili_language_admin extends xili_language {
 
 	var $flag_theme_page;  // used by add_menu
 	var $custom_xili_flags = array('custom_xili_flag', 'admin_custom_xili_flag' ); // 2.16.4
+
+	var $local_textdomain_loaded = array(); // to avoid multiple loading file...
 
 
 	/**
@@ -538,12 +541,20 @@ class xili_language_admin extends xili_language {
 
 	}
 
+	/**
+	 * add theme local-xx_YY.mo file to translate
+	 *
+	 *
+	 */
 	function add_local_text_domain_file ( $locale ) {
 		$theme_textdomain = the_theme_domain();
 		$langfolder = $this->xili_settings['langs_folder'];
 		$langfolder = ($langfolder == "/") ? "" : $langfolder;
 		$theme_dir = get_stylesheet_directory();
-		if (! ( $loaded = load_textdomain( $theme_textdomain, "{$theme_dir}{$langfolder}/local-{$locale}.mo" ) ) ) {
+		$file = "{$theme_dir}{$langfolder}/local-{$locale}.mo";
+		if ( in_array ( $file, $this->local_textdomain_loaded ) ) return ; // thanks to 3pepe3
+		$this->local_textdomain_loaded[] = $file;
+		if (! ( $loaded = load_textdomain( $theme_textdomain, $file ) ) ) {
 			load_textdomain( $theme_textdomain, WP_LANG_DIR . "/themes/local-{$theme_textdomain}-{$locale}.mo" );
 		}
 	}
