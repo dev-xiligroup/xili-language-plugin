@@ -2429,7 +2429,11 @@ class xili_language {
 					}
 					if ( $do_it ) {
 						$lang = str_replace( '_', '-', $language->name );
-						$hreflang = ( $this->lang_perma ) ? str_replace ( '%lang%', $language->slug, $currenturl ) : $currenturl.QUETAG."=".$language->slug ;
+						$hreflang = ( $this->lang_perma ) ? str_replace ( '%lang%', $language->slug, $currenturl ) :
+							add_query_arg( array(
+    							QUETAG => $language->slug,
+    							), $currenturl
+							);
 						printf ( '<link rel="alternate" hreflang="%s" href="%s" />'."\n", $lang, $hreflang ) ;
 					}
 				}
@@ -2456,6 +2460,7 @@ class xili_language {
 	 * @updated 2.11.1
 	 * @updated 2.11.2
 	 * @updated 2.16.4
+	 * @updated w/o ? at end - 2.19.3
 	 */
 	function current_url ( $lang_perma ) {
 		// to create your own rules to build current url of language switcher in your own context
@@ -2522,12 +2527,11 @@ class xili_language {
 				$currenturl = get_bloginfo('url').'/%lang%/';
 			}
 		} else {
-			$permalink = get_option('permalink_structure'); /* 1.6.0 */
-			$sep = ('' == $permalink) ? "&amp;" : "?" ;
+
 			if ( is_category() ) {
 				$catcur = xiliml_get_category_link(); // w/o default filter
 
-				$currenturl = $catcur.$sep;
+				$currenturl = $catcur ;
 
 			} else if ( $this->authorized_taxonomies && is_tax ( $this->authorized_taxonomies ) ) {
 					$termlink = get_bloginfo('url'); // 2.16.4
@@ -2543,13 +2547,13 @@ class xili_language {
 						continue;
 					}
 				}
-				$currenturl = $termlink.$sep;
+				$currenturl = $termlink ;
 
 			} else if ( is_archive() ) {
 
 				$post_type = get_post_type();
 				if ( is_post_type_archive ( $post_type ) && isset($wp_query->query_vars['post_type']) ) {
-					$currenturl = ( get_post_type_archive_link($post_type)) ? get_post_type_archive_link($post_type).$sep : get_bloginfo('url').'/?' ;
+					$currenturl = ( get_post_type_archive_link($post_type)) ? get_post_type_archive_link($post_type) : get_bloginfo('url') ;
 				} else if ( is_date() ) {
 					global $wp_query;
 					$result = '';
@@ -2562,10 +2566,13 @@ class xili_language {
 						$result = get_year_link($date_array['year'] ) ;
 					}
 					if ( $result ) { // thanks to Vladimir N.
-						$currenturl = $result . $sep;
+						$currenturl = $result ;
 					} else {
 						if (isset($date_array['m'])){
-							$currenturl = get_bloginfo('url') .'/?m=' . $date_array['m'] . $sep;
+							$currenturl = add_query_arg( array(
+    							'm' => $date_array['m'],
+    							), get_bloginfo('url')
+							);
 						} else {
 							$currenturl = get_bloginfo('url');
 						}
@@ -2573,15 +2580,15 @@ class xili_language {
 
 
 				} else if ( has_post_format($format) && isset($wp_query->query_vars['post_format']) ) {
-					$currenturl = get_post_format_link ($format).$sep;
+					$currenturl = get_post_format_link ($format) ;
 				} else {
-					$currenturl = get_bloginfo('url').'/?';
+					$currenturl = get_bloginfo('url') ;
 				}
 			} else if ( has_post_format($format) && isset($wp_query->query_vars['post_format']) ) { // in initial query
-				$currenturl = get_post_format_link ($format).$sep;
+				$currenturl = get_post_format_link ($format) ;
 
 			} else {
-				$currenturl = get_bloginfo('url').'/?';
+				$currenturl = get_bloginfo('url') ;
 			}
 		}
 		return $currenturl;
@@ -2892,7 +2899,7 @@ class xili_language {
 		extract( $this->get_archives_called, EXTR_SKIP );
 		if ( isset( $lang ) && '' != $lang ) {
 			$permalink = get_option('permalink_structure');
-			$sep = ('' == $permalink) ? "&amp;".QUETAG."=" : "?".QUETAG."=";
+			$sep = ( '' == $permalink ) ? "&amp;".QUETAG."=" : "?".QUETAG."=";
 			if ($format != 'option' && $format != 'link' && $type != 'postbypost' && $type != 'alpha') {
 				/* text extract */
 				$i = preg_match_all("/'>(.*)<\/a>/Ui", $link_html, $matches,PREG_PATTERN_ORDER);
@@ -3588,7 +3595,11 @@ class xili_language {
 					$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
 					$class = ' class="lang-'.$language->slug.'"';
 
-					$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
+					$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
+						add_query_arg( array(
+    							QUETAG => $language_qv,
+    							), $currenturl
+							);
 
 					$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'. __( $language->description, $this->thetextdomain ) .'</a>'.$after;
 				}
@@ -3613,7 +3624,11 @@ class xili_language {
 						$link = $this->link_of_linked_post ( get_option( 'page_for_posts' ) , $language->slug ) ;
 						$title = sprintf (__($this->xili_settings['list_link_title']['latest_posts'], the_theme_domain()), _x($language->description, 'linktitle', $this->thetextdomain) ) ;
 					} else {
-						$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
+						$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
+							add_query_arg( array(
+    							QUETAG => $language_qv,
+    							), $currenturl
+							);
 						$title = sprintf (__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x($language->description, 'linktitle', $this->thetextdomain ) ) ;
 					}
 
@@ -3626,28 +3641,32 @@ class xili_language {
 			if ( $lang_perma ) {
 				$currenturl = get_bloginfo('url').'/%lang%/';
 			} else {
-				$currenturl = get_bloginfo('url').'/?';
+				$currenturl = get_bloginfo('url') ;
 			}
-				foreach ($listlanguages as $language) {
+			foreach ($listlanguages as $language) {
 
-					if ( ! ( $option == 'navmenu-a' && $language->slug == the_curlang() ) ) { // 2.8.4.3
-						$language_qv = $this->lang_slug_qv_trans ( $language->slug );
-						$display = ( $hidden && ( $this->xili_settings['lang_features'][$language->slug]['hidden'] == 'hidden' ) ) ? false : true ;
-						if ( $display ) {
-							if ($language->slug != the_curlang() ) {
-								$class = " class='menu-item menu-item-type-custom lang-".$language->slug."'";
-							} else {
-								$class = " class='menu-item menu-item-type-custom lang-".$language->slug." current-lang current-menu-item'";
-							}
-							$beforee = (substr($before,-1) == '>') ? str_replace('>',' '.$class.' >' , $before ) : $before ;
-
-
-							$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
-
-							$a .= $beforee .'<a href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ).'" >'. __( $language->description, $this->thetextdomain ) . '</a>' . $after;
+				if ( ! ( $option == 'navmenu-a' && $language->slug == the_curlang() ) ) { // 2.8.4.3
+					$language_qv = $this->lang_slug_qv_trans ( $language->slug );
+					$display = ( $hidden && ( $this->xili_settings['lang_features'][$language->slug]['hidden'] == 'hidden' ) ) ? false : true ;
+					if ( $display ) {
+						if ($language->slug != the_curlang() ) {
+							$class = " class='menu-item menu-item-type-custom lang-".$language->slug."'";
+						} else {
+							$class = " class='menu-item menu-item-type-custom lang-".$language->slug." current-lang current-menu-item'";
 						}
+						$beforee = (substr($before,-1) == '>') ? str_replace('>',' '.$class.' >' , $before ) : $before ;
+
+
+						$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
+						add_query_arg( array(
+							QUETAG => $language_qv,
+							), $currenturl
+						);
+
+						$a .= $beforee .'<a href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ).'" >'. __( $language->description, $this->thetextdomain ) . '</a>' . $after;
 					}
 				}
+			}
 
 		} elseif ( in_array ( $option, array ( 'navmenu-1', 'navmenu-1a', 'navmenu-1ao' ) ) ) {	// 2.1.1 and single
 
@@ -3681,13 +3700,21 @@ class xili_language {
 							} else {
 								$this->doing_list_language = $language->slug;
 								$currenturl = $this->current_url ( $lang_perma ); // 2.5
-								$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
+								$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
+									add_query_arg( array(
+	    								QUETAG => $language_qv,
+	    								), $currenturl
+									);
 								$title = sprintf ( __($this->xili_settings['list_link_title']['post_selected'], the_theme_domain()), _x($language->description, 'linktitle', $this->thetextdomain ) ) ;
 							}
 
 							$beforee = (substr($before,-1) == '>') ? str_replace('>',' '.$class.' >' , $before ) : $before ;
 							if ( $link ) {
-								$a .= $beforee .'<a href="'.$link.'" title="'. esc_attr( $title ) .'" >'. __($language->description, $this->thetextdomain ) .'</a>'.$after;
+								if ( $link ) {
+									$a .= $beforee
+									. '<a href="' . apply_filters ('xiliml_language_list_link', $link, $option, $language->slug, $language_qv ) . '" title="'. esc_attr( $title ) . '" >'
+									.  __( $language->description, $this->thetextdomain ) . '</a>' . $after;
+								}
 							}
 						}
 					}
@@ -3695,11 +3722,7 @@ class xili_language {
 				$this->doing_list_language = false;
 
 		} else {	/* current list only root */
-			if ( $lang_perma ) {
-				$currenturl = get_bloginfo('url').'/%lang%/';
-			} else {
-				$currenturl = get_bloginfo('url').'/?';
-			}
+
 			foreach ($listlanguages as $language) {
 				$language_qv = $this->lang_slug_qv_trans ( $language->slug );
 				$display = ( $hidden && ( $this->xili_settings['lang_features'][$language->slug]['hidden'] == 'hidden' ) ) ? false : true ;
@@ -3711,7 +3734,11 @@ class xili_language {
 						$class = " class='lang-".$language->slug." current-lang'";
 					}
 
-					$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
+					$link = ( $lang_perma ) ? str_replace ( '%lang%', $language_qv, get_bloginfo('url').'/%lang%/' ) :
+					add_query_arg( array(
+    								QUETAG => $language_qv,
+    								), get_bloginfo('url')
+								);
 
 					$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
 					$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'. __( $language->description, $this->thetextdomain ) .'</a>' . $after;
@@ -3935,24 +3962,33 @@ class xili_language {
 								if ( $link = xili_tidy_tag_in_other_lang("format=term_link&lang=".$language->name.$q )) {
 									$title = xili_tidy_tag_in_other_lang("format=term_name&lang=".$language->name.$q );
 								} else {
-									$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
+									$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
+										add_query_arg( array(
+	    									QUETAG => $language_qv,
+	    									), $currenturl
+										);
+
 									$title = sprintf ( __($this->xili_settings['list_link_title']['post_selected'], the_theme_domain()), _x($language->description, 'linktitle', $this->thetextdomain ) ) ;
 								}
 
 							} else {
-								$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
-
+								$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
+									add_query_arg( array(
+		    							QUETAG => $language_qv,
+		    							), $currenturl
+									);
+								$link = apply_filters ('xiliml_language_list_menu_link', $link, $type, $language->slug, $language_qv ); // 2.19.3
 								$title = sprintf ( __($this->xili_settings['list_link_title']['post_selected'], the_theme_domain()), _x($language->description, 'linktitle', $this->thetextdomain ) ) ;
 							}
 							$this->doing_list_language = false;
 
 						} else { // 'navmenu', 'navmenu-a'
-							if ( $this->lang_perma ) {
-								$currenturl = get_bloginfo('url').'/%lang%/';
-							} else {
-								$currenturl = get_bloginfo('url').'/?';
-							}
-							$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG."=".$language_qv ;
+
+							$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, get_bloginfo('url').'/%lang%/' ) :
+							add_query_arg( array(
+    							QUETAG => $language_qv,
+    							), get_bloginfo('url')
+							);
 							$title = esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) );
 						}
 
@@ -4064,13 +4100,13 @@ class xili_language {
 		if ( $targetpost && 'publish' == get_post_status( $targetpost ) ) { // 2.15.4
 			return get_permalink( $targetpost );
 		} else {
-			if ( $this->lang_perma ) {
-				$currenturl = get_bloginfo('url').'/%lang%/';
-			} else {
-				$currenturl = get_bloginfo('url') . '/?';
-			}
+
 			$language_qv = $this->lang_slug_qv_trans ( $lang_slug );
-			$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) : $currenturl.QUETAG . '=' . $language_qv ;
+			$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, get_bloginfo('url').'/%lang%/' ) :
+			add_query_arg( array(
+    								QUETAG => $language_qv,
+    								), get_bloginfo('url')
+								); ;
 			return $link ;
 		}
 	}
@@ -5386,7 +5422,7 @@ function xiliml_recent_comments( $number = 5 ) {
  * @param name (fr_FR) or slug (fr_fr)
  * @return false or full language object (example ->description = full as set in admin UI)
  */
-function xiliml_get_language( $lang_nameorslug="" ) {
+function xiliml_get_language( $lang_nameorslug = "" ) {
 	$language = term_exists( $lang_nameorslug, TAXONAME );
 	if ( $language && !is_wp_error( $language ) ) { // 2.19.3 - if taxonomy not declared (function called too soon)
 		return get_term( $language['term_id'], TAXONAME, OBJECT, 'edit' );
@@ -5541,6 +5577,10 @@ function xl_get_linked_post_in ( $fromID, $lang, $info = 'id' ) {
 				case 'permalink';
 					$output = get_permalink( $otherpost );
 					break;
+				case 'postname'; // 2.19.3
+					$post = get_post($otherpost);
+					$output = $post->post_name ;
+					break;
 			}
 		} else {
 			switch ( $info ) {
@@ -5552,6 +5592,9 @@ function xl_get_linked_post_in ( $fromID, $lang, $info = 'id' ) {
 					break;
 				case 'permalink';
 					$output = '#';
+					break;
+				case 'postname';
+					$output = '';
 					break;
 			}
 
@@ -5762,12 +5805,10 @@ function xili_nav_page_home_item( $item_output, $item, $depth, $args ) {
 	if ( $item->url == get_option('siteurl').'/' ) { // page or list
 		$curlang = $xili_language->curlang ;
 
-		if ( $xili_language->lang_perma ) { // 2.9.22
-			$currenturl = get_option('siteurl').'/%lang%/';
-		} else {
-			$currenturl = get_option('siteurl').'/?'.QUETAG."=";
-		}
-		$link = ( $xili_language->lang_perma ) ? str_replace ( '%lang%', $xili_language->lang_slug_qv_trans ( $curlang ), $currenturl ) : $currenturl.$curlang ;
+		$link = ( $xili_language->lang_perma ) ? str_replace ( '%lang%', $xili_language->lang_slug_qv_trans ( $curlang ), get_option('siteurl').'/%lang%/' ) :
+		add_query_arg( array(
+    		QUETAG => $curlang,
+    	), get_option('siteurl') ) ;
 
 		$attributes  = ! empty( $item->attr_title ) ? ' title="'	. __( esc_attr( $item->attr_title ), $xili_language->thetextdomain ) .'"' : ''; //
 		$attributes .= ! empty( $item->target )		? ' target="'	. esc_attr( $item->target ) .'"' : '';
