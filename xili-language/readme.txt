@@ -3,8 +3,8 @@ Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: theme,post,plugin,posts,page,category,admin,multilingual, bilingual, taxonomy,dictionary,.mo file,.po file,localization, widget, language, international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack
 Requires at least: 4.0.1
-Tested up to: 4.2.2
-Stable tag: 2.19.0
+Tested up to: 4.3
+Stable tag: 2.19.3
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/extend/plugins/xili-language/changelog/) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.19.1 =
-* Last Updated 2015-07-07
+= Version 2.19.3 =
+* Last Updated 2015-08-16
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -308,11 +308,19 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 15. Since 2.12.0, Authoring settings (Custom post types, bookmarks) (rules propagation of post features) when creating translated posts are ajustable through the 5th settings tab.
 
 == Changelog ==
-= version 2.19.0 (2015-07-05) =
+
+= version 2.19.3 (2015-08-16) =
+* tests with WP 4.3-RC2 and WooCommerce 2.4.4 (kit)
+* limitations with WP 4.3-RC2: don't use new theme customizer to set dynamic menus with insertion points. Bundled theme translations need to be updated (ex. 2015 v1.3)
+* fixes `show_in_nav_menus` param
+* add param `show_in_rest` for REST API plugin
+
+= version 2.19.0 (2015-07-05) 2.19.1 (2015-07-08) =
 * add link in post edit to view
 * add shortcode [linked-post-in] as `[linked-post-in lang="fr_fr"]Voir cet article[/linked-post-in]`
 * ready to translate theme_mob values (like in config.xml) see multilingual child theme twentyfifteen-xili example
 * pre-tests with WP 4.3-beta1: fixes for WP Theme Customizer Menus
+* fixes
 
 = version 2.18.1 (2015-06-01) =
 * fixes, improves media editing page (cloning part, admin side)
@@ -650,7 +658,7 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 20150705 - MS - dev.xiligroup.com
+© 20150816 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.

@@ -45,6 +45,7 @@
  * 2015-06-01 - 2.18.1 - fixes, improves media editing page (cloning part)
  * 2015-06-25 - 2.18.2 - add display link in languages of post table
  * 2015-07-07 - 2.19.1 - fixes (3pepe3)
+ * 2015-08-15 - 2.19.3 - fixes messages for mo file like arq.mo (3) or haw_US.mo (5) - PolyGlots teams
  *
  * @package xili-language
  */
@@ -59,6 +60,7 @@ class xili_language_admin extends xili_language {
 	var $style_flag_folder_path = ''; // where are flags
 	var $style_message = '';
 	var $wikilink = 'http://wiki.xiligroup.org';
+	var $glotpresslink = 'https://make.wordpress.org/polyglots/teams/'; // 2.19.3
 	var $fourteenlink = 'http://2014.extend.xiligroup.org';
 	var $repositorylink = 'https://wordpress.org/plugins/xili-language/';
 	var $parent = null;
@@ -989,7 +991,7 @@ class xili_language_admin extends xili_language {
 				$pointer_text = '<h3>' . esc_js( __( 'xili-language updated', 'xili-language') ) . '</h3>';
 				$pointer_text .= '<p>' . esc_js( sprintf( __( 'xili-language was updated to version %s', 'xili-language' ) , XILILANGUAGE_VER) ). '</p>';
 
-				$pointer_text .= '<p>' . esc_js( sprintf( __( 'This version %1$s now includes plugin xl-bbp-addon plugin and several improvements (See details in %3$s). This version %1$s is tested with %2$s. ','xili-language' ) , XILILANGUAGE_VER, XILILANGUAGE_WP_TESTED, '<a href="http://wordpress.org/plugins/xili-language/changelog/" title="'.$changelog.'" >'.$changelog.'</a>' ) ). '</p>';
+				$pointer_text .= '<p>' . esc_js( sprintf( __( 'This version %1$s is tested with %2$s. (See details in %3$s) ','xili-language' ) , XILILANGUAGE_VER, XILILANGUAGE_WP_TESTED, '<a href="http://wordpress.org/plugins/xili-language/changelog/" title="'.$changelog.'" >'.$changelog.'</a>' ) ). '</p>';
 
 				$pointer_text .= '<p>' . esc_js( sprintf( __( 'Previous version %s includes improvements in image as flag management and detection. Admin side flags are now uploadable in Media Libray. See also %s.','xili-language' ) , XILILANGUAGE_VER, '<a href="http://wordpress.org/plugins/xili-language/changelog/" title="'.$changelog.'" >'.$changelog.'</a>') ). '</p>';
 
@@ -4001,7 +4003,7 @@ class xili_language_admin extends xili_language {
 			</tr>
 			<tr>
 				<th scope="row" valign="middle" align="right"><label for="language_name"><?php _e('ISO Name', 'xili-language') ?></label>:&nbsp;</th>
-				<td ><input name="language_name" id="language_name" type="text" value="<?php echo esc_attr($language->name); ?>" size="10" <?php if($action=='delete') echo 'disabled="disabled"' ?> />  <small>(<?php printf( __("two or five chars like 'ja' or 'zh_TW', see %s docs", 'xili-language'), '<a href="'.$this->wikilink.'" target="_blank" >wiki</a>'); ?>)</small></td>
+				<td ><input name="language_name" id="language_name" type="text" value="<?php echo esc_attr($language->name); ?>" size="10" <?php if($action=='delete') echo 'disabled="disabled"' ?> />  <small>(<?php printf( __("two, three or five (six) chars like 'ja', 'bal' or 'zh_TW' (haw_US), see %s docs", 'xili-language'), '<a href="'.$this->glotpresslink.'" target="_blank" >WP Polyglots Page</a>'); ?>)</small></td>
 			</tr>
 
 			<?php if ( $this->alias_mode ) { // 2.8.2
@@ -4367,14 +4369,14 @@ class xili_language_admin extends xili_language {
 			$message = '<em>'.__('in WP_LANG_DIR/themes', 'xili-language').'</em>'; // not used
 
 		} else {
-			if ( strlen($shortfilename)!=5 && strlen($shortfilename) != 2 ) {
+			if ( !in_array ( strlen($shortfilename), array ( 2, 3, 5, 6 ) ) ) { // 2.19.3 for file like kab.mo or haw_US.mo
 				if ( false === strpos( $shortfilename, 'local-' ) ) {
 					$message = $alert;
 				} else {
 					$message = '<em>'.__("Site's values",'xili-language').'</em>';
 				}
 
-			} else if ( false === strpos( $shortfilename, '_' ) && strlen($shortfilename) == 5 ) {
+			} else if ( false === strpos( $shortfilename, '_' ) && in_array ( strlen($shortfilename) , array ( 5, 6 ) ) ) {
 				$message = $alert;
 			} else {
 				$message = '';

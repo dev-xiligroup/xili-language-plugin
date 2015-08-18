@@ -5,12 +5,14 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.19.1-beta
+Version: 2.19.3
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 150816 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
+# updated 150717 - 2.19.2 - add show in REST param
 # updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
 # updated 150705 - 2.19.0 - Stable version
 # updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1, ready to translate theme_mod values
@@ -107,11 +109,11 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.19.1'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.19.3'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
-define('XILILANGUAGE_WP_TESTED', '4.2.2 Powell'); /* 2.17.1 - used in version pointer infos */
+define('XILILANGUAGE_WP_TESTED', '4.3'); /* 2.17.1 - used in version pointer infos */
 define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 
 
@@ -742,7 +744,8 @@ class xili_language {
 				'update_count_callback' => array( &$this, '_update_post_lang_count' ),
 				'show_ui' => false,
 				'_builtin' => false,
-				'show_in_nav_menus' => false
+				'show_in_nav_menus' => false,
+				'show_in_rest' => true // 2.19.2 - tested with REST API beta3
 				) );
 		}
 
@@ -1686,16 +1689,22 @@ class xili_language {
 						$thereqtagids[] = $this->langs_ids_array[$reqtag];
 					}
 					$wherereqtag = implode(", ", $thereqtagids);
-
+					$need_join = true;
+					$where .= " AND xtt.taxonomy = '".TAXONAME."' ";
+					$where .= " AND xtt.term_id = $wherereqtag ";
 				} else { /* only one lang */
 					$query_object->query_vars[QUETAG] = sanitize_term_field('slug', $query_object->query_vars[QUETAG], 0, 'post_tag', 'db');
 					$reqtag = $query_object->query_vars[QUETAG];
-					$wherereqtag = $this->langs_ids_array[ $this->lang_qv_slug_trans($reqtag) ];
-					if ( isset( $wp_query->query_vars['json_route']) ) $wp_query->query_vars[QUETAG] = $reqtag; // json 2.16.6 -
+					if ( isset ( $this->langs_ids_array[ $this->lang_qv_slug_trans($reqtag) ] ) ) { // 2.19.3
+						$need_join = true;
+						$wherereqtag = $this->langs_ids_array[ $this->lang_qv_slug_trans($reqtag) ];
+						if ( isset( $wp_query->query_vars['json_route']) ) $wp_query->query_vars[QUETAG] = $reqtag; // json 2.16.6 -
+						$where .= " AND xtt.taxonomy = '".TAXONAME."' ";
+						$where .= " AND xtt.term_id = $wherereqtag ";
+					} else {
+						$need_join = false;
+					}
 				}
-				$need_join = true;
-				$where .= " AND xtt.taxonomy = '".TAXONAME."' ";
-				$where .= " AND xtt.term_id = $wherereqtag ";
 
 			} else { // is_home and page
 
@@ -2065,7 +2074,7 @@ class xili_language {
 					$ok = 1 ;
 				} else if ( $this->xili_settings['domains'][$domain] == 'renamed' ) {
 					$ok = 2 ;
-				} else if ( $this->xili_settings['domains'][$domain] == 'filter' ) {
+				} else if ( $this->xili_settings['domains'][$domain] == 'filter' ) { // recommanded for WooCommerce
 					$ok = 3; // filter mode
 				}
 			} //else {
@@ -5379,7 +5388,7 @@ function xiliml_recent_comments( $number = 5 ) {
  */
 function xiliml_get_language( $lang_nameorslug="" ) {
 	$language = term_exists( $lang_nameorslug, TAXONAME );
-	if ($language) {
+	if ( $language && !is_wp_error( $language ) ) { // 2.19.3 - if taxonomy not declared (function called too soon)
 		return get_term( $language['term_id'], TAXONAME, OBJECT, 'edit' );
 	} else {
 		return false;
