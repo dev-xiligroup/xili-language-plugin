@@ -11,7 +11,7 @@ Text Domain: xili-language
 Domain Path: /languages/
 */
 
-# updated 150816 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
+# updated 150818 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
 # updated 150717 - 2.19.2 - add show in REST param
 # updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
 # updated 150705 - 2.19.0 - Stable version
@@ -113,7 +113,7 @@ define('XILILANGUAGE_VER', '2.19.3'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
-define('XILILANGUAGE_WP_TESTED', '4.3'); /* 2.17.1 - used in version pointer infos */
+define('XILILANGUAGE_WP_TESTED', '4.3 Billie'); /* 2.17.1 - used in version pointer infos */
 define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 
 
@@ -2534,7 +2534,7 @@ class xili_language {
 				$currenturl = $catcur ;
 
 			} else if ( $this->authorized_taxonomies && is_tax ( $this->authorized_taxonomies ) ) {
-					$termlink = get_bloginfo('url'); // 2.16.4
+					$termlink = trailingslashit(get_bloginfo('url'));  // 2.16.4
 				foreach ( $this->authorized_taxonomies as $taxonomy_tested ) {
 					if (is_tax ( $taxonomy_tested )) {
 
@@ -2571,10 +2571,10 @@ class xili_language {
 						if (isset($date_array['m'])){
 							$currenturl = add_query_arg( array(
     							'm' => $date_array['m'],
-    							), get_bloginfo('url')
+    							), trailingslashit(get_bloginfo('url'))
 							);
 						} else {
-							$currenturl = get_bloginfo('url');
+							$currenturl = trailingslashit(get_bloginfo('url'));
 						}
 					}
 
@@ -2582,13 +2582,13 @@ class xili_language {
 				} else if ( has_post_format($format) && isset($wp_query->query_vars['post_format']) ) {
 					$currenturl = get_post_format_link ($format) ;
 				} else {
-					$currenturl = get_bloginfo('url') ;
+					$currenturl = trailingslashit(get_bloginfo('url')) ;
 				}
 			} else if ( has_post_format($format) && isset($wp_query->query_vars['post_format']) ) { // in initial query
 				$currenturl = get_post_format_link ($format) ;
 
 			} else {
-				$currenturl = get_bloginfo('url') ;
+				$currenturl = trailingslashit(get_bloginfo('url')) ;
 			}
 		}
 		return $currenturl;
