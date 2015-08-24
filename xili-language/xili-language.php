@@ -409,7 +409,7 @@ class xili_language {
 
 		$this->is_permalink = ( '' == get_option( 'permalink_structure' ) ) ? false : true; // 2.8.4
 
-		add_action( 'plugins_loaded', array(&$this,'init_plugin_textdomain'), 11 ); // 2.8.10 - class for theme-xili
+		add_action( 'plugins_loaded', array(&$this,'init_plugin_textdomain'), 12 ); // 2.8.10 - class for theme-xili - 12 for plugin BackWPup
 		add_action( 'init', array(&$this,'init_theme_textdomain'), 9 );
 		add_action( 'init', array(&$this,'init_and_register_language_post_taxonomy'), 9 );
 
