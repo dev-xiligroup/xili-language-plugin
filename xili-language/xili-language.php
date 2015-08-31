@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.19.3
+Version: 2.20.0
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 150820 - 2.20.0 - WP 4.3 is finally shipped - add "alternate x-default" - includes now files and functions from 201x-xili themes examples
 # updated 150818 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
 # updated 150717 - 2.19.2 - add show in REST param
 # updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
@@ -109,7 +110,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.19.3'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.20.0'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -392,7 +393,14 @@ class xili_language {
 				$this->xili_settings['version'] = '2.16';
 				$this->xili_settings['specific_widget'] = $this->xili_widgets; // 2.16.4
 			}
-			if ( ! isset ( $this->xili_settings['version'] ) || $this->xili_settings['version'] != '2.16') { // repair or restart from new
+			// 2.20
+			if ( version_compare( $this->xili_settings['version'], '2.17', '<') ) {
+				$this->xili_settings['version'] = '2.17';
+				$lang_perma_state = 'updated';
+				$this->xili_settings['lang_permalink'] = $lang_perma_state; // 2.20
+				update_option('xili_language_settings', $this->xili_settings);
+			}
+			if ( ! isset ( $this->xili_settings['version'] ) || $this->xili_settings['version'] != '2.17') { // repair or restart from new
 				$this->initial_settings ();
 				update_option('xili_language_settings', $this->xili_settings);
 			}
@@ -409,8 +417,8 @@ class xili_language {
 
 		$this->is_permalink = ( '' == get_option( 'permalink_structure' ) ) ? false : true; // 2.8.4
 
-		add_action( 'plugins_loaded', array(&$this,'init_plugin_textdomain'), 12 ); // 2.8.10 - class for theme-xili - 12 for plugin BackWPup
-		add_action( 'init', array(&$this,'init_theme_textdomain'), 9 );
+		add_action( 'init', array(&$this,'init_plugin_textdomain'), 10 ); // 2.20  changed to init
+		add_action( 'init', array(&$this,'init_theme_textdomain'), 10 ); // 2.20  changed to 10
 		add_action( 'init', array(&$this,'init_and_register_language_post_taxonomy'), 9 );
 
 		add_action( 'init', array(&$this,'init_vars'), 9 ); //2.8.4 level 9 - these previous lines - to be before XD 130122
@@ -558,7 +566,9 @@ class xili_language {
 		add_action ( 'after_setup_theme', array(&$this,'bundled_themes_support_flag' ), 12 ); // bundled themes
 		// used if config.xml set an array of theme_mod values - 2.18.2
 		add_action ( 'after_setup_theme', array(&$this,'theme_mod_create_filters' ), 13 ); // if array theme_mod_to_be_filtered set before
-
+		//
+		if ( $this->xili_settings['lang_permalink'] == 'updated' ) // 2.20
+			add_action ( 'after_setup_theme', array(&$this,'update_lang_permalink' ), 13 );
 	}
 
 	/**
@@ -610,8 +620,24 @@ class xili_language {
 				'langs_group_id' => 0,
 				'langs_group_tt_id'=> 0, // 2.15.1
 				'languages_list' => array(), // 2.15.2
-				'specific_widget' => $this->xili_widgets // 2.16.4
+				'specific_widget' => $this->xili_widgets, // 2.16.4
+				'lang_permalink' => '' // 2.20
 		);
+	}
+
+	// updated only 2.20 - after_theme_setup
+	function update_lang_permalink () {
+		$lang_perma_state = '';
+		if ( function_exists('get_theme_xili_options') ) { // in theme-multilingual-classes.php ( required 201x-xili functions.php )
+			$xili_theme_options = get_theme_xili_options();
+			if ( isset( $xili_theme_options['perma_ok'] ) ) {
+				if ( $xili_theme_options['perma_ok'] ) {
+				$lang_perma_state = 'perma_ok';
+				}
+			}
+		}
+		$this->xili_settings['lang_permalink'] = $lang_perma_state; // 2.20
+		update_option('xili_language_settings', $this->xili_settings);
 	}
 
 	/* first activation of plugin */
@@ -1026,14 +1052,11 @@ class xili_language {
 			if ( $this->alias_mode ) {
 				$short = ( isset ( $this->xili_settings['lang_features'][$key]['alias'] ) ) ? $this->xili_settings['lang_features'][$key]['alias'] : $key ;
 				$langs_slug_shortqv[$key] = $short;
+
 				if ( '' != $short ) {
 					$langs_shortqv_slug[$short] = $key;
 				}
-			} else {
-				if ( isset( $this->xili_settings['lang_features'][$key]['alias'] ) ) {
-					unset ( $this->xili_settings['lang_features'][$key]['alias'] ); // need to be rebuilt when theme changed w/o alias mode
-					$do = true;
-				}
+
 			}
 		}
 
@@ -1059,7 +1082,7 @@ class xili_language {
 			update_option( 'xili_language_settings', $this->xili_settings );
 		}
 		// 2.9.21 - 22
-		if ( $flush == 'edited' && $this->is_permalink ) flush_rewrite_rules( false );
+		if ( $flush == 'edited' && $this->is_permalink ) flush_rewrite_rules( false ); // false = no .htaccess
 	}
 
 	/**
@@ -2437,7 +2460,9 @@ class xili_language {
 						printf ( '<link rel="alternate" hreflang="%s" href="%s" />'."\n", $lang, $hreflang ) ;
 					}
 				}
-
+			}
+			if ( is_front_page() ) {
+				printf ( '<link rel="alternate" hreflang="%s" href="%s" />'."\n", 'x-default', trailingslashit(get_bloginfo('url')) ) ;
 			}
 		} elseif ( is_singular() ) {
 			$listlanguages = $this->get_listlanguages();
@@ -2534,7 +2559,7 @@ class xili_language {
 				$currenturl = $catcur ;
 
 			} else if ( $this->authorized_taxonomies && is_tax ( $this->authorized_taxonomies ) ) {
-					$termlink = trailingslashit(get_bloginfo('url'));  // 2.16.4
+					$termlink = trailingslashit(get_bloginfo('url')); // 2.16.4
 				foreach ( $this->authorized_taxonomies as $taxonomy_tested ) {
 					if (is_tax ( $taxonomy_tested )) {
 
@@ -6004,7 +6029,7 @@ if ( !is_admin() ) {
 function xili_language_trans_slug_qv ( $lang_slug ) {
 	global $xili_language;
 
-	if ( isset ( $_POST['language_alias'] ) )
+	if ( isset ( $_POST['language_alias'] ) ) // called in add or edit new languages
 		$xili_language->xili_settings = get_option('xili_language_settings'); // need update !
 
 	$short = ( isset ( $xili_language->xili_settings['lang_features'][$lang_slug]['alias'] ) ) ? $xili_language->xili_settings['lang_features'][$lang_slug]['alias'] : $lang_slug ;
@@ -6035,7 +6060,7 @@ function xili_language_start () {
 
 		// new sub-folder since 2.6
 		require_once ( plugin_dir_path( __FILE__ ) . 'xili-includes/xili-language-widgets.php' );
-
+		require_once ( plugin_dir_path( __FILE__ ) . 'xili-includes/theme-multilingual-classes.php' ); // since 2.20.0
 		/**
 	 	 * instantiation of xili_language class
 	 	 *
@@ -6069,7 +6094,11 @@ function xili_language_start () {
 	}
 }
 
-function permalink_init () {
+/**
+ * called by add_action( 'plugins_loaded', 'permalink_init', 1);
+ *
+ */
+function xili_permalink_init () {
 	if ( get_option('permalink_structure') ) {
 		$plugin_path = dirname(__FILE__) ;
 		require_once( $plugin_path . '/xili-includes/xili-permalinks-class.php' );
@@ -6078,11 +6107,45 @@ function permalink_init () {
 	}
 }
 
+/**
+ * Add rules and add_permastruct of lang
+ * Incorporate rules with previous settings in 201x-xili bundled themes
+ *
+ */
 function xl_permalinks_theme () {
 
-	if ( function_exists ( 'xl_permalinks_init' ) ) xl_permalinks_init();
+	$xili_language_settings = get_option('xili_language_settings');
+ 	if ( function_exists ( 'xl_permalinks_init' ) && !isset ( $xili_language_settings['lang_permalink'] ) ) {
+ 		 	xl_permalinks_init();
+ 	} else if ( function_exists ( 'xl_permalinks_init' ) && isset ( $xili_language_settings['lang_permalink'] ) &&  $xili_language_settings['lang_permalink']  != 'perma_ok' ) {
+ 		remove_filter ( 'alias_rule', 'xili_language_trans_slug_qv' ) ;  // now managed by plugin and not 201x-xili themes
+ 		// this function is in themes/theme-x/functions-xili/multilingual-permalinks.php required if option perma_ok
+ 		// back compatibility 2.20
+ 	} else {
+ 		global $XL_Permalinks_rules;
 
+		$ok = ( isset ( $xili_language_settings['lang_permalink'] ) && $xili_language_settings['lang_permalink'] == 'perma_ok' ) ? true : false ;
+		if ( $ok && get_option('permalink_structure') && class_exists('XL_Permalinks_rules') ) {
+
+			// back compatibility 2.20
+			if ( !has_filter ( 'alias_rule', 'xili_language_trans_slug_qv' ) ) // if old xili-theme
+				add_filter ( 'alias_rule', 'xili_language_trans_slug_qv' ) ; // alias insertion
+
+			$XL_Permalinks_rules = new XL_Permalinks_rules ();
+
+			add_permastruct ( 'language', '%lang%', true, 1 );
+			add_permastruct ( 'language', '%lang%', array('with_front' => false) );
+		}
+ 	}
 }
+
+/**
+ * xili-language is constructed only via plugins_loaded - not when plugin file is loaded
+ *
+ */
+add_action( 'plugins_loaded', 'xili_permalink_init', 1);
+add_action( 'plugins_loaded', 'xili_language_start', 13 ); // before xili-dictionary (20) and xili_tidy_tags (15) - 2.7.1
+
 
 /**
  * Detect older plugin xili-xl-bbp-addon.php until 1.7.1
@@ -6098,10 +6161,6 @@ function xili_xl_old_bbp_addon_remove () {
 	}
 }
 add_action( 'admin_init', 'xili_xl_old_bbp_addon_remove' );
-
-add_action( 'plugins_loaded', 'permalink_init', 1);
-add_action( 'plugins_loaded', 'xili_language_start', 13 ); // before xili-dictionary (20) and xili_tidy_tags (15) - 2.7.1
-
 
 
 // new bbPress api since 2.18

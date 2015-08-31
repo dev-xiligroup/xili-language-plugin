@@ -10,6 +10,7 @@
  * xl 2.9.30 - 2013-12-10 - Option for WP 3.8 style
  * xl 2.12 - propagations moved to xl-class-admin - tmc v.1.4
  * xl 2.15 - updated message - tmc v.1.5 - flag options unvisible if theme_supports...
+ * xl 2.20 - error when get_current_screen not applicable / now required when instancing
  */
 
 if ( ! class_exists ( 'xili_language_theme_options' ) ) {
@@ -674,23 +675,40 @@ if ( ! class_exists ( 'xili_language_theme_options_admin' ) ) {
 				}
 
 			// Permalinks option
-			$xili_functionsfolder = get_stylesheet_directory() . '/functions-xili' ;
-			if ( file_exists( $xili_functionsfolder . '/multilingual-permalinks.php') && $xili_language->is_permalink ) {
+			$language_xili_settings = get_option('xili_language_settings');
+			if ( $xili_language->is_permalink && version_compare( $language_xili_settings['version'], '2.17', '>=') ) {
+
 				add_settings_section( 'xili_option_section_7', '<hr />' .__( 'Permalinks for languages', $this->admin_ui_domain ), array( $this, 'xili_display_one_section' ), $this->settings_name );
+				$field_args = array(
+						'option_name' => $this->settings_name,
+						'title'		=> __('Activate Permalinks', $this->admin_ui_domain),
+						'type'      => 'message',
+						'id'        => 'perma_ok',
+						'desc'      => sprintf(__('Now, language in permalink is set in language settings page %s', $this->admin_ui_domain), '<a href="options-general.php?page=language_expert" >'.__('here', 'xili-language') . '</a>'),
+						'class'     => 'css_class permalinks-set'
+						);
+				add_settings_field( $field_args['id'], $field_args['title'] , array( $this, 'xili_display_one_setting') , $this->settings_name, 'xili_option_section_7', $field_args );
 
-			$field_args = array(
-				'option_name' => $this->settings_name,
-				'title'		=> __('Activate Permalinks', $this->admin_ui_domain),
-				'type'      => 'checkbox',
-				'id'        => 'perma_ok',
-				'name'      => 'perma_ok',
-				'desc'      => __('If checked, xili-language incorporate language in permalinks... (premium services for donators, see docs)', $this->admin_ui_domain),
-				'std'       => '1', // like via customizer
-				'label_for' => 'perma_ok',
-				'class'     => 'css_class permalinks-set'
-				);
-			add_settings_field( $field_args['id'], $field_args['title'] , array( $this, 'xili_display_one_setting') , $this->settings_name, 'xili_option_section_7', $field_args );
+			} else {
+				$xili_functionsfolder = get_stylesheet_directory() . '/functions-xili' ;
 
+				if ( file_exists( $xili_functionsfolder . '/multilingual-permalinks.php') && $xili_language->is_permalink ) {
+					add_settings_section( 'xili_option_section_7', '<hr />' .__( 'Permalinks for languages', $this->admin_ui_domain ), array( $this, 'xili_display_one_section' ), $this->settings_name );
+
+					$field_args = array(
+						'option_name' => $this->settings_name,
+						'title'		=> __('Activate Permalinks', $this->admin_ui_domain),
+						'type'      => 'checkbox',
+						'id'        => 'perma_ok',
+						'name'      => 'perma_ok',
+						'desc'      => __('If checked, xili-language incorporate language in permalinks... (premium services for donators, see docs)', $this->admin_ui_domain),
+						'std'       => '1', // like via customizer
+						'label_for' => 'perma_ok',
+						'class'     => 'css_class permalinks-set'
+						);
+					add_settings_field( $field_args['id'], $field_args['title'] , array( $this, 'xili_display_one_setting') , $this->settings_name, 'xili_option_section_7', $field_args );
+
+				}
 			}
 
 		}
@@ -915,31 +933,35 @@ if ( ! class_exists ( 'xili_language_theme_options_admin' ) ) {
 
 
 			$screen = get_current_screen();
-			if ( version_compare( $wp_version, '3.7.9', '<') ) {
-				$triangle = admin_url( '/images/arrows-dark-vs.png' );
-			} else {
-				$triangle = admin_url( '/images/arrows-2x.png' );
-			}
 
-			if ( $screen->id == $this->xili_theme_page ) {
-				echo "<!---- xl css --->\n";
-				echo '<style type="text/css" media="screen">'."\n";
-				echo ".menu_locations { display:block; margin-left:20px !important; } \n";
-				echo ".outlined { border:1px #666 solid !important; } \n";
-				echo ".header-imgs { display:inline-block; vertical-align:middle; } \n";
+			if ( $screen ) { // if applicable (error if WooCommerce Wizard)
 				if ( version_compare( $wp_version, '3.7.9', '<') ) {
-					echo "h3+p span.triangle { float:left; width:20px; height:20px; background-repeat:no-repeat; background-image: url($triangle); background-position:0 -106px; } \n";
+					$triangle = admin_url( '/images/arrows-dark-vs.png' );
 				} else {
-
-					echo "h3+p span.triangle { float:left; width:35px; height:30px; background-repeat:no-repeat; background-image: url($triangle); background-position:0 -215px; } \n";
+					$triangle = admin_url( '/images/arrows-2x.png' );
 				}
 
-				echo "h3+p:hover, p.ui-state-active { background-color: #f5f5f5;} \n";
-				echo "h3+p { outline:0; background-color: #ffffff; overflow:hidden;} \n";
+				if ( $screen->id == $this->xili_theme_page ) {
+					echo "<!---- xl css --->\n";
+					echo '<style type="text/css" media="screen">'."\n";
+					echo ".menu_locations { padding-left:20px; } \n";
+					echo "input.menu_locations { margin-left:20px !important; } \n"; // 2.20
+					echo ".outlined { border:1px #666 solid !important; } \n";
+					echo ".header-imgs { display:inline-block; vertical-align:middle; } \n";
+					if ( version_compare( $wp_version, '3.7.9', '<') ) {
+						echo "h3+p span.triangle { float:left; width:20px; height:20px; background-repeat:no-repeat; background-image: url($triangle); background-position:0 -106px; } \n";
+					} else {
 
-				echo "p.ui-state-active span.triangle { background-position:0 0} \n";
+						echo "h3+p span.triangle { float:left; width:35px; height:30px; background-repeat:no-repeat; background-image: url($triangle); background-position:0 -215px; } \n";
+					}
 
-				echo '</style>'."\n";
+					echo "h3+p:hover, p.ui-state-active { background-color: #f5f5f5;} \n";
+					echo "h3+p { outline:0; background-color: #ffffff; overflow:hidden;} \n";
+
+					echo "p.ui-state-active span.triangle { background-position:0 0} \n";
+
+					echo '</style>'."\n";
+				}
 			}
 
 		}
@@ -991,5 +1013,4 @@ function get_theme_xili_options() {
 	global $xili_language_theme_options ;
 	return get_option( $xili_language_theme_options->settings_name, $xili_language_theme_options->get_default_theme_xili_options() );
 }
-
 ?>

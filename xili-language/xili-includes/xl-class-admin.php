@@ -1803,12 +1803,21 @@ class xili_language_admin extends xili_language {
 
 			case 'updatespecials':
 				check_admin_referer( 'xili-language-expert' );
+				$special_msg = array();
+				// here (and not theme options) 2.20
+				$lang_permalink = ( isset($_POST['lang_permalink'] ) ) ? $_POST['lang_permalink'] : "perma_not";
+				if ( $lang_permalink != $this->xili_settings['lang_permalink']) {
+					$this->xili_settings['lang_permalink'] = $lang_permalink;
+					$special_msg[] = sprintf(__('Language beginning permalink: %s ', 'xili-language'), $this->xili_settings['lang_permalink']);
+				}
+
 				/* force rules flush - 2.1.1 */
 				if ( isset($_POST['force_permalinks_flush'] ) && $_POST['force_permalinks_flush'] == 'enable' ) {
 					$this->get_lang_slug_ids('edited'); // if list need refresh - 2013-11-24
-
+					$special_msg[] = __('permalinks flushed', 'xili-language');
 				}
 				/* domains switching settings 1.8.7 */
+				$temp_domains_settings = $this->xili_settings['domains'] ;
 				foreach ( $this->xili_settings['domains'] as $domain => $state ) {
 					if ( isset( $_POST['xili_language_domains_'.$domain] ) ) {
 						$this->xili_settings['domains'][$domain] = $_POST['xili_language_domains_'.$domain];
@@ -1820,16 +1829,25 @@ class xili_language_admin extends xili_language {
 						unset ( $this->xili_settings['domains'][$domain] ); // for unactivated plugin
 					}
 				}
-				// 2.4.0
-				$this->xili_settings['wp_locale'] = ( isset($_POST['xili_language_wp_locale'] ) ) ? $_POST['xili_language_wp_locale'] : "db_locale";
+				if ( $temp_domains_settings != $this->xili_settings['domains'] ) {
+					$special_msg[] = ' ' . __('Domains switching settings changed', 'xili-language');
+				}
+				$temp_wp_locale = ( isset($_POST['xili_language_wp_locale'] ) ) ? $_POST['xili_language_wp_locale'] : "db_locale";
+				if ( $temp_wp_locale != $this->xili_settings['wp_locale'] ) {
+					$this->xili_settings['wp_locale'] = $temp_wp_locale;
+					$special_msg[] = sprintf(__('Locale changed: %s', 'xili-language'), $this->xili_settings['wp_locale']);
+				}
+
 
 				/* UPDATE OPTIONS */
 				update_option('xili_language_settings', $this->xili_settings);
 				/* messages */
-				$optionmessage .= " - ".sprintf(__("Options are updated %s ",'xili-language'), $this->xili_settings['wp_locale']);
+				if ( $special_msg )
+					$optionmessage .= " - ".sprintf(__("Options are updated ( %s )",'xili-language'), implode (' & ', $special_msg ) );
+				else
+					$optionmessage .= " - " . __('no change', 'xili-language');
 
 				$msg = 1;
-
 				break;
 
 			case 'jetpack_fc_enable':
@@ -3376,12 +3394,30 @@ class xili_language_admin extends xili_language {
 	 */
 	function on_sidebox_for_specials ( $data ) {
 
-		$xili_language_lang_perma = ( has_filter ( 'term_link', 'insert_lang_4cat' ) ) ? true : false ;
-		if ( $xili_language_lang_perma ) { // to force permalinks flush ?>
+		if ( get_option('permalink_structure') ) {
+			// back compat
+			if ( $this->xili_settings['lang_permalink'] == 'perma_ok' ) {
+				$lang_perma_state = 'perma_ok';
+			} else {
+				$lang_perma_state = '';
+			}
+
+			?>
 
 			<fieldset class="box"><legend><?php _e('Permalinks rules', 'xili-language'); ?></legend>
+
+			<label for="lang_permalink" class="selectit"><input id="lang_permalink" name="lang_permalink" type="checkbox" <?php checked ( $lang_perma_state, 'perma_ok'); ?> value="perma_ok" />
+			&nbsp;<?php _e( 'Permalinks for languages', 'xili-language'); ?></label>
+
+			<p><small><em><?php _e('If checked, xili-language incorporate language (or alias) at the begining of permalinks... (premium services for donators, see docs)', 'xili-language'); ?></em></small><p>
+			<?php // to force permalinks flush  ?>
 			<label for="force_permalinks_flush" class="selectit"><input id="force_permalinks_flush" name="force_permalinks_flush" type="checkbox" value="enable" /> <?php _e('force permalinks flush', 'xili-language'); ?></label>
 			</fieldset>
+			<div class='submit'>
+				<input id='updatespecials' name='updatespecials' type='submit' tabindex='6' value="<?php _e('Update','xili-language') ?>" />
+			</div>
+			<div class='clearb1'>&nbsp;</div>
+
 		<?php } ?>
 
 		<fieldset class="box"><legend><?php _e('Translation domains settings', 'xili-language'); ?></legend><p>
