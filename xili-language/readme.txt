@@ -312,8 +312,9 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 = version 2.20.0 (2015-08-31) =
 * now includes special optional functions provided in example themes (201x-xili child series) to insert language at beginning for the permalink. Options are now in expert tab. (These functions were reserved formerly for donators and contributors)
 
-> If using or customizing 201x-xili child-theme series: it fully recommanded to (re)visit and verify languages list and permalink settings page (flush fired).
+> If using or customizing 201x-xili child-theme series: it is fully recommanded to (re)visit and verify languages list and permalink settings page (flush fired).
 
+* first tests with twentysixteen new theme v 0.1 (see https://github.com/dev-xiligroup/twentysixteen-xili)
 * tests with WP 4.3 shipped
 * add "alternate x-default" in head
 * notices, fixes with WooCommerce wizard

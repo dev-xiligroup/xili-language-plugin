@@ -11,7 +11,7 @@ Text Domain: xili-language
 Domain Path: /languages/
 */
 
-# updated 150820 - 2.20.0 - WP 4.3 is finally shipped - add "alternate x-default" - includes now files and functions from 201x-xili themes examples
+# updated 150820 - 2.20.0 - WP 4.3 is finally shipped - add "alternate x-default" - includes now files and functions from 201x-xili themes examples - pre-tests with twentysixteen
 # updated 150818 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
 # updated 150717 - 2.19.2 - add show in REST param
 # updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
@@ -4797,6 +4797,12 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				$default['css_li_a'] = 'text-indent:30px; width:100%; background:transparent no-repeat 0 16px; margin:0;' ;
 				$default['css_li_a_hover'] = 'background: no-repeat 0 17px !important;' ;
 				break;
+			case 'twentysixteen' :
+				$default['css_ul_nav_menu'] = 'ul.primary-menu' ;
+				$default['css_li_hover'] = 'background-color:#f5f5f5;' ;
+				$default['css_li_a'] = 'text-indent:-9999px; width:10px; background:transparent no-repeat center 16px; margin:0;';
+				$default['css_li_a_hover'] = 'background: no-repeat center 17px !important;';
+				break;
 			case 'twentyfourteen' :
 			
 			default:
@@ -4826,11 +4832,11 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	function bundled_themes_support_flag () {
 		$current_parent_theme = get_option ('template') ;
 		$current_theme = get_option ('stylesheet') ;
-		if ( in_array( $current_parent_theme , array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen' ) ) ) {
+		if ( in_array( $current_parent_theme , array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen' ) ) ) {
 			add_theme_support ( 'custom_xili_flag' ); // same name as used in context of image
 		}
 
-		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili' ) ) ) {
+		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili' ) ) ) {
 			xili_xl_error_log ('*********** bundled_themes_support_flag for '. $current_theme );
 			remove_theme_support ( 'custom_xili_flag' ) ;
 			$args = array();
