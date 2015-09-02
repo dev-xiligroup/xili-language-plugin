@@ -1010,7 +1010,11 @@ if ( ! class_exists ( 'xili_language_theme_options_admin' ) ) {
  *
  */
 function get_theme_xili_options() {
-	global $xili_language_theme_options ;
-	return get_option( $xili_language_theme_options->settings_name, $xili_language_theme_options->get_default_theme_xili_options() );
+	global $xili_language_theme_options ; // instanciated in child theme (see bundled 201x example)
+	// thanks to support forums contributors // 2.20.1
+	if ( class_exists ('xili_language_theme_options') && method_exists ( $xili_language_theme_options, 'get_default_theme_xili_options') ) {
+		return get_option( $xili_language_theme_options->settings_name, $xili_language_theme_options->get_default_theme_xili_options() );
+	}
+	return array();
 }
 ?>
