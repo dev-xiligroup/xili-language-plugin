@@ -161,7 +161,8 @@ class xili_language_admin extends xili_language {
 		add_action( 'after_plugin_row', array( &$this, 'more_plugin_row' ), 10, 3);				// class WP_Plugins_List_Table
 
 		// Dashboard menu and settings pages
-
+		add_action( 'admin_init', array( &$this, 'admin_redirects') ); // 2.20 for welcome screen
+		add_action( 'admin_menu', array( &$this, 'admin_welcome'), 10 ); // 2.20
 		add_action( 'admin_menu', array( &$this, 'add_menu_settings_pages'), 10 );
 		add_action( 'admin_menu', array( &$this, 'admin_sub_menus_hide'), 12 ); //
 
@@ -385,6 +386,8 @@ class xili_language_admin extends xili_language {
 
 	// called by filter admin_head
 	function xd_flush_permalinks() {
+		remove_submenu_page( 'index.php', 'xl-about' ); // 2.20 - here to avoid remove page title
+
 		$screen = get_current_screen();
 		if ( $screen->base == 'settings_page_language_page' ) {
 			flush_rewrite_rules();
@@ -823,6 +826,121 @@ class xili_language_admin extends xili_language {
 	/********************************** SETTINGS ADMIN UI ***********************************/
 
 	/**
+	 * Handle redirects to setup/welcome page after install and updates. (like in WooCommerce)
+	 *
+	 * Transient must be present, the user must have access rights, and we must ignore the network/bulk plugin updaters.
+	 */
+	public function admin_redirects() {
+		wp_register_style( 'xl_welcome_stylesheet', $this->plugin_url.'/xili-css/xl-welcome-style.css' );
+		$transient = get_transient( '_xl_activation_redirect' );
+		if ( !$transient  || is_network_admin() || isset( $_GET['activate-multi'] ) ) {
+			return;
+		}
+
+		delete_transient( '_xl_activation_redirect' );
+
+		if ( ! empty( $_GET['page'] ) && in_array( $_GET['page'], array( 'xl-about' ) ) ) {
+			return;
+		}
+		$type = ( $transient == 2 ) ? '&xl-updated=1' : '';
+		// Here, the welcome page
+		wp_safe_redirect( admin_url( 'index.php?page=xl-about'.$type ) );
+		exit;
+	}
+
+	/**
+	 * Add admin menus/screens.
+	 * * @since 2.20
+	 */
+	function admin_welcome() {
+		$welcome_page_name  = __( 'About xili-language', 'xili-language' );
+		$welcome_page_title = __( 'Welcome to xili-language', 'xili-language' );
+
+		$page = add_dashboard_page( $welcome_page_title, $welcome_page_name, 'manage_options', 'xl-about', array( &$this, 'about_screen' ) );
+		add_action( 'admin_print_styles-' . $page, array( &$this, 'admin_welcome_css' ) );
+	}
+
+	/**
+	 * admin_css function.
+	 */
+	function admin_welcome_css() {
+		wp_enqueue_style( 'xl_welcome_stylesheet' );
+	}
+
+	/**
+	 * welcome about screen
+	 * * @since 2.20
+	 */
+	function about_screen() {
+		?>
+
+		<div class="wrap about-wrap">
+
+			<h1><?php printf( __( 'Welcome to xili-language %s', 'xili-language' ), XILILANGUAGE_VER ); ?></h1>
+
+			<div class="about-text">
+				<?php
+					if ( ! empty( $_GET['xl-installed'] ) ) {
+						$message = __( 'Thanks, all done!', 'xili-language' );
+						$type = 1;
+					} elseif ( ! empty( $_GET['xl-updated'] ) ) {
+						$message = __( 'Thank you for updating to the latest version!', 'xili-language' );
+						$type = 2;
+					} else {
+						$message = __( 'Thanks for installing!', 'xili-language' );
+						$type = 0;
+					}
+
+					printf( __( '%s xili-language %s is more powerful, stable and secure than ever before. We hope you enjoy using it.', 'xili-language' ), $message, XILILANGUAGE_VER );
+				?>
+			</div>
+
+			<?php // ?>
+
+			<div class="infolog">
+				<div class="changelog">
+					<div class="feature-section">
+						<?php if ( empty( $_GET['xl-updated'] ) ) { ?>
+
+						<div>
+						 	<h4><?php _e( 'What is a multilingual website with xili-language?', 'xili-language' ); ?></h4>
+							<p><?php _e( 'With this plugin, your localized website will become a (bi)multilingual website. xili-language trilogy also contains xili-dictionary and xili-tidy-tags plugins.', 'xili-language' ); ?></p>
+						</div>
+
+						<?php } ?>
+
+						<div>
+							<h4><?php _e( 'Improved Permalinks management', 'xili-language' ); ?></h4>
+							<p><?php echo __( 'Now xili-language includes special optional functions provided in example themes (201x-xili child series) to insert language at beginning for the permalink. ', 'xili-language' )
+							. '<br />' . __( 'Options are now in expert tab. (These functions were reserved formerly for donators and contributors).', 'xili-language' )
+							. '<br />' . __( 'If using or customizing 201x-xili child-theme series: it is fully recommanded to (re)visit and verify languages list and permalink settings page (flush fired).', 'xili-language' );
+							?>
+							</p>
+						</div>
+						<div>
+							<h4><?php _e( 'Fully customizable by webmasters', 'xili-language' ); ?></h4>
+							<p><?php _e( 'According your content “multilingual” strategy, xili-language offers six pages in settings to adapt lot of features. (with online help)', 'xili-language' ); ?></p>
+						</div>
+						<div class="last-feature">
+							<h4><?php _e( 'Entirely designed for developers', 'xili-language' ); ?></h4>
+							<p><?php _e( 'Following the WordPress Core rules, including specific elements (tags, shortcode, functions, filters,...) xili-language is a CMS plateform add-on able to work with custom post types without adding tables in db or cookies or redirecting.', 'xili-language' ); ?></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="return-to-setting">
+				<a href="<?php echo esc_url( admin_url( add_query_arg( array( 'page' => 'language_page' ), 'options-general.php' ) ) ); ?>"><?php _e( 'Go to xili-language Settings', 'xili-language' ); ?></a>
+			</div>
+			<div class="about-footer"><a href="https://wordpress.org/plugins/xili-language/" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
+				<img class="about-icon" src="<?php echo plugins_url( 'images/xililang-logo-32.png', $this->file_file ) ; ?>" alt="xili-language logo"/>
+				</a>&nbsp;&nbsp;&nbsp;©&nbsp;
+				<a href="http://dev.xiligroup.com" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2015
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * add admin menu and associated pages of admin UI
 	 *
 	 * @since 0.9.0
@@ -897,6 +1015,8 @@ class xili_language_admin extends xili_language {
 		remove_submenu_page( 'options-general.php', 'language_files' );
 		remove_submenu_page( 'options-general.php', 'author_rules' );
 		remove_submenu_page( 'options-general.php', 'language_support' );
+
+		//
 	}
 
 	// to recover title saved in $submenu and removed when hidding above ! 2.11.3
@@ -3309,7 +3429,7 @@ class xili_language_admin extends xili_language {
 						<?php do_meta_boxes($the_hook, 'normal', $data); ?>
 					</div>
 
-					<h4><a href="http://dev.xiligroup.com/xili-language" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
+					<h4><a href="https://wordpress.org/plugins/xili-language/" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
 							<img style="vertical-align:bottom; margin-right:10px" src="<?php echo plugins_url( 'images/xililang-logo-32.png', $this->file_file ) ; ?>" alt="xili-language logo"/>
 						</a>&nbsp;&nbsp;&nbsp;©&nbsp;
 						<a href="http://dev.xiligroup.com" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2015 - v. <?php echo XILILANGUAGE_VER; ?>
@@ -3926,9 +4046,9 @@ class xili_language_admin extends xili_language {
 		<?php } ?>
 		<br />
 		<?php $list = $this->check_other_xili_plugins();
-		if (''!= $list ) {?>
+		if ( ''!= $list ) {?>
 		<label for="xiliplugenable">
-			<input type="checkbox" id="xiliplugenable" name="xiliplugenable" value="enable" <?php checked ( $xiliplug, 'enable', true ); ?> />&nbsp;<?php echo "Other xili plugins = ".$list ; ?>
+			<input type="checkbox" id="xiliplugenable" name="xiliplugenable" value="enable" <?php checked ( $xiliplug, 'enable', true ); ?> />&nbsp;<?php printf(__( 'Other xili plugins = %s', 'xili-language' ), $list ) ; ?>
 		</label><br /><br />
 		<?php } ?>
 		</p><p class="textright">

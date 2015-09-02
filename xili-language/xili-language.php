@@ -289,35 +289,31 @@ class xili_language {
 		if( false === $this->xili_settings ) { //1.9.1
 			$this->xili_settings = $this->initial_settings ();
 			update_option('xili_language_settings', $this->xili_settings );
-
+			set_transient( '_xl_activation_redirect', 1, 30 ); // 2.20
 		} else {
-			if ($this->xili_settings['version'] == '1.9') { /* 2.4.0 */
+			$current_xl_version = $this->xili_settings['version'];
+			if ( $this->xili_settings['version'] === '1.9') { /* 2.4.0 */
 				$this->xili_settings['wp_locale'] = 'wp_locale'; //wp_locale new mode
 				$this->xili_settings['version'] = '2.0';
-				update_option('xili_language_settings', $this->xili_settings); //
 			}
-			if ($this->xili_settings['version'] == '2.0') { /* 2.4.0 */
+			if ( $this->xili_settings['version'] === '2.0') { /* 2.4.0 */
 				$this->xili_settings['available_langs'] = array(); // default array
 				$this->xili_settings['version'] = '2.1';
-				update_option('xili_language_settings', $this->xili_settings); //
 			}
-			if ($this->xili_settings['version'] == '2.1') { /* 2.6.0 */
+			if ( $this->xili_settings['version'] === '2.1') { /* 2.6.0 */
 				$this->xili_settings['external_xl_style'] = "on";
 				$this->xili_settings['creation_redirect'] = 'redirect'; // default - after initial creation
 				$this->xili_settings['version'] = '2.2';
-				update_option('xili_language_settings', $this->xili_settings); //
 			}
-			if ($this->xili_settings['version'] == '2.2') { /* 2.8.3 */
+			if ( $this->xili_settings['version'] === '2.2') { /* 2.8.3 */
 				$this->xili_settings['nav_menu_separator'] = "|";
 				$this->xili_settings['version'] = '2.3';
-				update_option('xili_language_settings', $this->xili_settings); //
 			}
-			if ($this->xili_settings['version'] == '2.3') { /* 2.8.4 */
+			if ( $this->xili_settings['version'] === '2.3') { /* 2.8.4 */
 				$this->xili_settings['pforp_select'] = "select"; // no_select,
 				$this->xili_settings['version'] = '2.4';
-				update_option('xili_language_settings', $this->xili_settings); //
 			}
-			if ($this->xili_settings['version'] == '2.4') { /* 2.8.4.3 */
+			if ( $this->xili_settings['version'] === '2.4') { /* 2.8.4.3 */
 				if ( isset($this->xili_settings['domains']['all'] ) ) unset ( $this->xili_settings['domains']['all'] ) ; // no_all for plugins
 				// move all value to new array
 				$this->xili_settings['page_in_nav_menu_array'] = '';
@@ -336,33 +332,28 @@ class xili_language {
 				}
 
 				$this->xili_settings['version'] = '2.5';
-				update_option('xili_language_settings', $this->xili_settings); //
 			}
-			if ($this->xili_settings['version'] == '2.5') { /* 2.8.4.4 */
+			if ( $this->xili_settings['version'] === '2.5') { /* 2.8.4.4 */
 				$this->xili_settings['list_pages_check_option'] = 'fixe';
 				$this->xili_settings['version'] = '2.6';
-				update_option('xili_language_settings', $this->xili_settings);
 			}
 			// 'Posts selected in %s' 2.8.7
-			if ($this->xili_settings['version'] == '2.6') {
+			if ( $this->xili_settings['version'] === '2.6') {
 				$this->xili_settings['list_link_title'] = array ( 'post_selected' => 'Posts selected in %s',
 										'current_post' => 'Current post in %s',
 										'latest_posts' => 'Latest posts in %s', // used in xili-language list,
 										'view_all_posts' => 'View all posts in %s'); //	the_category (and XD);
 				$this->xili_settings['version'] = '2.7';
-				update_option('xili_language_settings', $this->xili_settings);
 			}
-			if ($this->xili_settings['version'] == '2.7') {
+			if ( $this->xili_settings['version'] === '2.7') {
 				$this->xili_settings['mo_parent_child_merging'] = false;
 				$this->xili_settings['parent_langs_folder'] = '';
 				$this->xili_settings['version'] = '2.8';
-				update_option('xili_language_settings', $this->xili_settings);
 			}
-			if ($this->xili_settings['version'] == '2.8') {
+			if ( $this->xili_settings['version'] === '2.8') {
 				$this->xili_settings['version'] = '2.9';
-				update_option('xili_language_settings', $this->xili_settings);
 			}
-			if ($this->xili_settings['version'] == '2.9') {
+			if ( $this->xili_settings['version'] === '2.9') {
 				$this->xili_settings['version'] = '2.11';
 				$this->xili_settings['enable_fc_theme_class'] = 'enable'; //
 
@@ -373,36 +364,37 @@ class xili_language {
 						$this->xili_settings['theme_alias_cache'][$theme_name][$slug] = $this->xili_settings['lang_features'][$slug]['alias'];
 					}
 				}
-				update_option('xili_language_settings', $this->xili_settings);
 			}
 			// 2.12.1
-			if ($this->xili_settings['version'] == '2.11') {
+			if ( $this->xili_settings['version'] === '2.11') {
 				$this->xili_settings['version'] = '2.12';
 				if ( $this->xili_settings['mo_parent_child_merging'] === true ) $this->xili_settings['mo_parent_child_merging'] = "parent-priority";
-				update_option('xili_language_settings', $this->xili_settings);
+				//update_option('xili_language_settings', $this->xili_settings);
 			}
 			// 2.15.1
-			if ($this->xili_settings['version'] == '2.12') {
+			if ( $this->xili_settings['version'] === '2.12') {
 				$this->xili_settings['version'] = '2.15';
 				$this->xili_settings['langs_group_id'] = 0;
 				$this->xili_settings['langs_group_tt_id'] = 0;
-				update_option('xili_language_settings', $this->xili_settings);
 			}
 			// 2.15.1
-			if ($this->xili_settings['version'] == '2.15') {
+			if ( $this->xili_settings['version'] === '2.15') {
 				$this->xili_settings['version'] = '2.16';
 				$this->xili_settings['specific_widget'] = $this->xili_widgets; // 2.16.4
 			}
 			// 2.20
-			if ( version_compare( $this->xili_settings['version'], '2.17', '<') ) {
-				$this->xili_settings['version'] = '2.17';
+			if ( version_compare( $this->xili_settings['version'], '2.20', '<') ) {
+				$this->xili_settings['version'] = '2.20';
 				$lang_perma_state = 'updated';
 				$this->xili_settings['lang_permalink'] = $lang_perma_state; // 2.20
-				update_option('xili_language_settings', $this->xili_settings);
+				set_transient( '_xl_activation_redirect', 2, 30 ); // 2.20 - 2 = updated
 			}
-			if ( ! isset ( $this->xili_settings['version'] ) || $this->xili_settings['version'] != '2.17') { // repair or restart from new
+			if ( $this->xili_settings['version'] !== $current_xl_version ) update_option('xili_language_settings', $this->xili_settings);
+			// redundant !
+			if ( $this->xili_settings['version'] !== '2.20') { // repair or restart from new
 				$this->initial_settings ();
 				update_option('xili_language_settings', $this->xili_settings);
+				set_transient( '_xl_activation_redirect', 1, 30 ); // 2.20
 			}
 		}
 
@@ -577,7 +569,7 @@ class xili_language {
 	function initial_settings() { xili_xl_error_log ( '# ' . __LINE__ .' -------------------- init' );
 		return array(
 				'taxonomy'		=> 'language',
-				'version'		=> '2.15',
+				'version'		=> '2.20',
 				'reqtag'		=> 'lang', // query_var
 				'browseroption' => '',
 				'authorbrowseroption' => '',
