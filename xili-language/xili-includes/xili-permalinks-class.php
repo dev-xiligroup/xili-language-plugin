@@ -257,7 +257,7 @@ class XL_Permalinks_rules {
 	 * @updated 1.1.2 - short link of post
 	 * @updated 2.16.6 - add filter for json link
 	 */
-	function insert_lang_tag_root ( $url, $path, $orig_scheme, $blog_id ) { //error_log ( 'JSON_REQUEST' . $path ) ;
+	function insert_lang_tag_root ( $url, $path, $orig_scheme, $blog_id ) {
 		// isset( $wp_query->query_vars['json_route'])
 		if ( true === apply_filters('xili_json_dont_insert_lang_tag_root', false, $url, $path, $orig_scheme, $blog_id ) ) return $url; // for JSON REST API 2.16.5
 		if ( false !== strpos( $url, $this->rew_reqtag ) ) return $url; // to avoid twice insertion
