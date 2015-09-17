@@ -47,6 +47,7 @@
  * 2015-07-07 - 2.19.1 - fixes (3pepe3)
  * 2015-08-15 - 2.19.3 - fixes messages for mo file like arq.mo (3) or haw_US.mo (5) - PolyGlots teams
  * 2015-09-13 - 2.20.2 - sources (vars), doc optimized
+ * 2015-09-16 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
  *
  * @package xili-language
  */
@@ -260,7 +261,7 @@ class xili_language_admin extends xili_language {
 		add_action( 'admin_print_styles-edit.php', array(&$this, 'print_styles_posts_list'), 20 );
 		add_action( 'admin_print_styles-upload.php', array(&$this, 'print_styles_posts_list'), 20 );// 2.6.3
 
-		add_filter ( 'category_name', array(&$this, 'translated_category_name'), 10,3 ) ; // 2.13.3
+		add_filter ( 'category_name', array(&$this, 'translated_taxonomy_name'), 10, 3 ) ; // 2.13.3
 
 		// quick edit languages in list - 1.8.9
 		add_action( 'quick_edit_custom_box', array(&$this,'languages_custom_box'), 10, 2);
@@ -301,6 +302,13 @@ class xili_language_admin extends xili_language {
 		// default screen options - nav menus
 
 		add_action( 'added_user_meta' , array(&$this,'default_nav_menus_screen_options'), 10, 4 );
+
+		// new visibility for all widgets - 2.20.3
+		if ( !empty($this->xili_settings['widget_visibility']) ) {
+			add_filter( 'widget_update_callback', array( &$this, 'widget_update_callback' ), 10, 4 );
+			add_action( 'in_widget_form', array( &$this, 'widget_visibility_admin' ), 10, 3 );
+		}
+
 		// infos in xml export
 		add_action( 'export_filters', array(&$this,'message_export_limited' ) ); // 2.12.1
 		//display contextual help
@@ -522,8 +530,6 @@ class xili_language_admin extends xili_language {
 
 		if ( empty( $locale ) )
 			$locale = $this->get_default_locale();
-
-		$this->add_local_text_domain_file ( $locale ) ; // for taxonomy column translation
 
 		return $locale;
 	}
@@ -2924,6 +2930,22 @@ class xili_language_admin extends xili_language {
 		}
 
 		//
+		add_settings_section( 'option_section_settings_5', __('Option to define widget visibility', 'xili-language'), array( $this, 'display_one_section'), $this->settings_authoring_settings .'_group');
+		if ( current_theme_supports( 'widgets' ) ) {
+			$field_args = array(
+				'option_name'	=> $this->settings_authoring_settings,
+				'title'			=> __('Option Enabled', 'xili-language'),
+				'type'			=> 'checkbox',
+				'id'			=> 'widget_visibility',
+				'name'			=> 'widget_visibility',
+				'desc'			=> __('If checked, each widget settings form includes rules to define visibility in front-end.', 'xili-language') ,
+				'std'			=> '1',
+				'label_for'		=> 'widget_visibility',
+				'class'			=> 'css_class settings'
+			);
+			add_settings_field( $field_args['id'], $field_args['title'] , array( $this, 'display_one_setting'), $this->settings_authoring_settings .'_group', 'option_section_settings_5', $field_args );
+		}
+		//
 		add_settings_section( 'option_section_settings_4', __('Other settings (Widgets)', 'xili-language'), array( $this, 'display_one_section'), $this->settings_authoring_settings .'_group');
 		if ( current_theme_supports( 'widgets' ) ) {
 			$field_args = array(
@@ -3076,6 +3098,7 @@ class xili_language_admin extends xili_language {
 		$this->xili_settings['creation_redirect'] = ( isset( $input['creation_redirect'] ) ) ? $input['creation_redirect'] : "" ; // because checkbox
 		$this->xili_settings['external_xl_style'] = ( isset( $input['external_xl_style'] ) ) ? $input['external_xl_style'] : "off" ; // because checkbox
 		$this->xili_settings['widget'] = ( isset( $input['widget'] ) ) ? $input['widget'] : "" ; // because checkbox
+		$this->xili_settings['widget_visibility'] = ( isset( $input['widget_visibility'] ) ) ? $input['widget_visibility'] : "" ; // because checkbox
 		$specifics = array();
 		foreach ( $this->xili_settings['specific_widget'] as $key => $value ) {
 			$specifics[$key]['name'] = $value['name'];
@@ -3148,6 +3171,14 @@ class xili_language_admin extends xili_language {
 			case 'option_section_settings_4':
 				echo '<p class="section">'. __("Define here the widget(s) visible in Appearance. If visibility is set inside theme source code, a * is visible.", "xili-language") .'</p>';
 				break;
+			case 'option_section_settings_5': // 2.20.3
+				echo '<p class="section">'. __("Set here if an option to set <em>visibility rules according language</em> will be inserted in each widget form of Appearance/Widgets settings page (and Customize page).", "xili-language");
+				if ( class_exists ('jetpack') ) {
+					$modules_array = get_option ( 'jetpack_active_modules', true );
+					if ( $modules_array && in_array('widget-visibility', $modules_array ) ) echo '<br />' . __("The module - Widget visibility - of Jetpack is active. Language rules can overwrite Jetpack visibility rules!", "xili-language");
+				}
+				echo  '</p>';
+				break;
 
 			case 'option_front_section_1':
 				echo '<p class="section">' . __('Here select language of the home webpage', 'xili-language') .'</p>';
@@ -3193,6 +3224,7 @@ class xili_language_admin extends xili_language {
 				$options['creation_redirect'] = $this->xili_settings['creation_redirect'];
 				$options['external_xl_style'] = $this->xili_settings['external_xl_style'];
 				$options['widget'] = $this->xili_settings['widget'];
+				$options['widget_visibility'] = $this->xili_settings['widget_visibility'];
 				$options['functions_enable'] = $this->xili_settings['functions_enable'];
 				foreach ( $this->xili_settings['specific_widget'] as $key => $value ) { // 2.16.4
 					$options['specific_widget_'.$key] = $value['value'];
@@ -4395,39 +4427,49 @@ class xili_language_admin extends xili_language {
 		global $wpdb;
 		/*list of languages*/
 		$listlanguages = get_terms_of_groups_lite ( $this->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
-		if ( empty($listlanguages) ) { /*create two default lines with the default language (as in config)*/
-			/* language of WP */
-			$term = 'en_US';
-			$args = array( 'alias_of' => '', 'description' => 'english', 'parent' => 0, 'slug' =>'en_us');
-			$term_data = $this->safe_lang_term_creation ( $term, $args );
-			if ( ! is_wp_error($term_data) ) {
-				wp_set_object_terms($term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP);
-			} else {
-				$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
+		if ( empty($listlanguages) ) {
+			$cleaned = $this->clean_pll_languages_list(); // 2.20.3
+			if ( $cleaned ) {
+				$listlanguages = get_terms_of_groups_lite ( $this->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
 			}
-			$term = $this->default_lang;
-			$desc = ( isset($this->examples_list[$term]) ) ? $this->examples_list[$term] : $this->default_lang;
-			$desc_array = explode (' (', $desc );
-			$desc = $desc_array[0];
-			$slug = strtolower( $this->default_lang ) ; // 2.3.1
-			$wplang = $this->get_WPLANG();
-			if ( '' == $wplang || $this->default_lang == 'en_US' || $this->default_lang == '' ) {
-				$term = 'fr_FR'; $desc = 'French'; $slug = 'fr_fr' ;
-			}
-			$args = array( 'alias_of' => '', 'description' => $desc, 'parent' => 0, 'slug' => $slug);
+		}
+		if ( empty($listlanguages) ) {
+			$listlanguages = $this->create_default_languages_list ( '_add' ); // 2.20.3
+			$default = 1;
+		}
 
-			$term_data = $this->safe_lang_term_creation ( $term, $args );
-			if ( ! is_wp_error($term_data) ) {
-				wp_set_object_terms($term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP);
-			} else {
-				$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
-			}
-			$listlanguages = get_terms_of_groups_lite ($this->langs_group_id,TAXOLANGSGROUP,TAXONAME,'ASC');
+		if ( !empty($default) || !empty($cleaned) ) {
+
+			if ( $cleaned ) $message = sprintf(__('A list of %s languages from a previous Polylang install has just been updated !', 'xili-language'), count ( $listlanguages ) );
+			if ( $default ) $message = sprintf(__('A new list of %s languages by default has just been created !', 'xili-language'), count ( $listlanguages ) );
+
+			$line = '<tr>'
+			.'<th scope="row" class="lang-id" >'. '<img src="'. includes_url( 'images/smilies/icon_exclaim.gif') . '" alt="Caution" />' . '&nbsp;&nbsp;' . __('CAUTION', 'xili-language') .  '</th>'
+			.'<td class="col-center" colspan="5" ><strong class="red-alert">'. $message . '</strong></td>'
+			.'<td class="col-center" colspan="5" >'. __('Complete and modify the list according your multilingual need...', 'xili-language') . '</td>'
+			. '</tr>';
+			echo $line;
+			$line = '<tr>'
+			.'<th scope="row" class="lang-id" ></th>'
+			.'<td class="col-center" colspan="10" ><hr/></td>'
+			. '</tr>';
+			echo $line;
+		}
+		if ( count ( $listlanguages ) == 1 ) {
+
+			$line = '<tr>'
+			.'<th scope="row" class="lang-id" >'. '<img src="'. includes_url( 'images/smilies/icon_exclaim.gif') . '" alt="Caution" />' . '&nbsp;&nbsp;' . __('CAUTION', 'xili-language') .  '</th>'
+			.'<td class="col-center" colspan="5" ><strong class="red-alert">'. __('Only one language remains in the list !', 'xili-language') . '</strong></td>'
+			.'<td class="col-center" colspan="5" >'. __('If you don’t need it, add another language required before deletion !', 'xili-language') . '</td>'
+			. '</tr>';
+			echo $line;
+			$line = '<tr>'
+			.'<th scope="row" class="lang-id" ></th>'
+			.'<td class="col-center" colspan="10" ><hr/></td>'
+			. '</tr>';
+			echo $line;
 		}
 		$trclass = '';
-
-
-
 		foreach ($listlanguages as $language) {
 
 			$trclass = ((defined('DOING_AJAX') && DOING_AJAX) || ' alternate' == $trclass ) ? '' : ' alternate';
@@ -6129,18 +6171,23 @@ class xili_language_admin extends xili_language {
 	}
 
 	/**
-	 * Insert translation for categories columns in edit.php - only dashboard yet
+	 * Insert translation for taxonomies columns in edit.php - only dashboard yet
 	 *
 	 * filter from sanitize_term_field  at end {$taxonomy}_{$field} name here
 	 *
 	 * @since 2.13.3
 	 *
 	 */
-	function translated_category_name ( $value, $term_id, $context ) {
+	function translated_taxonomy_name ( $value, $term_id, $context ) {
 		if ( $context == 'display') {
-			$theme_domain = the_theme_domain();
+
 			$locale = $this->admin_side_locale();
-			$tvalue = ( $locale != 'en_US' ) ? $value . ' (' . translate( $value, $theme_domain) . ')' : $value;
+			$this->add_local_text_domain_file ( $locale ) ; // called here - 2.20.3
+
+			$theme_domain = the_theme_domain();
+			$translated = translate( $value, $theme_domain );
+
+			$tvalue = ( $locale != 'en_US' &&  $translated != $value ) ? $value . ' (' . $translated . ')' : $value;
 		} else {
 			$tvalue = $value;
 		}
@@ -6948,6 +6995,72 @@ class xili_language_admin extends xili_language {
 			}
 		}
 	}
+
+
+	/*
+	 * insert in the widgets forms two dropdowns to define visibility rules according current language
+	 *
+	 * @since 2.20.3
+	 *
+	 * @param object $widget
+	 */
+	public function widget_visibility_admin ( $widget, $return, $instance ) {
+
+		$dropdown = '<select name="' . $widget->id.'_lang_show">';
+		$selected = ( isset ( $instance['xl_show'] )) ? selected( $instance['xl_show'], 'show', false ) : '';
+		$dropdown .= '<option value="show" ' . $selected . '>' . __('Show', 'xili-language') . '</option>';
+		$selected = ( isset ( $instance['xl_show'] )) ? selected( $instance['xl_show'], 'hidden', false ) : '';
+		$dropdown .= '<option value="hidden" ' . $selected . '>' . __('Hidden', 'xili-language') . '</option>';
+		$dropdown .= '</select>';
+
+		printf('<hr /><label for="%1$s">%2$s %3$s</label><br />',
+			esc_attr( $widget->id.'_lang_rule'),
+			__('Visibility of this widget:', 'xili-language'),
+			$dropdown
+		);
+
+		$dropdown = '<select name="' . $widget->id.'_lang_rule">';
+		$dropdown .= '<option value="0">' . __('All languages', 'xili-language') . '</option>';
+		foreach ( $this->langs_slug_fullname_array as $slug => $name ) {
+			$selected = ( isset ( $instance['xl_lang'] )) ? selected( $instance['xl_lang'], $slug, false ) : '';
+			$dropdown .= '<option value="' . $slug . '" ' . $selected . '>' . $name . '</option>';
+		}
+		$dropdown .= '</select>';
+
+		printf('<label for="%1$s">%2$s %3$s</label><br /><small>%4$s</small><hr />',
+			esc_attr( $widget->id.'_lang_rule'),
+			__('when:', 'xili-language'),
+			$dropdown,
+			'© xili-language'
+		);
+	}
+
+	/*
+	 * called when widget options are saved (filter: widget_update_callback)
+	 * add rules (language visibility) associated to the widget
+	 *
+	 * @since 2.20.3
+	 *
+	 * @param array $instance widget options
+	 * @param array $new_instance not used
+	 * @param array $old_instance not used
+	 * @param object $widget WP_Widget object
+	 * @return array widget options
+	 */
+	public function widget_update_callback( $instance, $new_instance, $old_instance, $widget ) {
+		if ( !empty( $_POST[$key = $widget->id.'_lang_show'] ) && in_array( $_POST[$key], array('show', 'hidden') ) )
+			$instance['xl_show'] = $_POST[$key];
+		else
+			unset($instance['xl_show']);
+
+		if ( !empty( $_POST[$key = $widget->id.'_lang_rule'] ) && in_array( $_POST[$key], array_keys($this->langs_slug_fullname_array) ) )
+			$instance['xl_lang'] = $_POST[$key];
+		else
+			unset($instance['xl_lang']);
+
+		return $instance;
+	}
+
 
 	// with xili-language, it is now possible to export/import xml with language for all authorized cpts
 	function message_export_limited() {

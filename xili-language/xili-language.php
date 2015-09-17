@@ -5,12 +5,12 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.20.2
+Version: 2.20.3
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
-
+# updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
 # updated 150914 - 2.20.2 - updated language list (Jetpack 3.7) - updated commun messages (pointer)
 # updated 150903 - 2.20.1 - fixes error "/theme-multilingual-classes.php on line 1014"
 # updated 150820 - 2.20.0 - WP 4.3 is finally shipped - add "alternate x-default" - includes now files and functions from 201x-xili themes examples - pre-tests with twentysixteen
@@ -112,7 +112,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.20.2'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.20.3'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -440,7 +440,7 @@ class xili_language {
 		/* to be compatible with l10n cache from Johan since 1.1.9 */
 
 		add_filter( 'widget_title', array(&$this,'one_text'), 9 ); /* added 0.9.8.1 - 9 to avoid quotation filter 2.8.8 */
-		add_filter( 'widget_text', array(&$this,'one_text'));
+		add_filter( 'widget_text', array(&$this,'one_text') );
 
 		add_filter( 'list_cats', array(&$this,'xiliml_cat_language'), 10, 2 ); /* mode 2 : content = name */
 		add_filter( 'link_category', array(&$this,'one_text')); // 1.6.0 for wp_list_bookmarks (forgotten)
@@ -529,6 +529,8 @@ class xili_language {
 		if ( $this->xili_settings['widget'] == 'enable' )
 			add_action( 'widgets_init', array(&$this,'add_new_widgets') );
 
+		add_filter( 'widget_display_callback', array(&$this, 'widget_display_callback' ), 10, 2); // 2.20.3
+
 		/* new actions for xili-language theme's templates tags */
 
 		add_action( 'xili_language_list', array(&$this, 'xili_language_list' ), 10, 5); /* add third param 0.9.7.4 - 4th 1.6.0*/
@@ -615,7 +617,8 @@ class xili_language {
 				'langs_group_tt_id'=> 0, // 2.15.1
 				'languages_list' => array(), // 2.15.2
 				'specific_widget' => $this->xili_widgets, // 2.16.4
-				'lang_permalink' => '' // 2.20
+				'lang_permalink' => '', // 2.20
+				'widget_visibility' => '',
 		);
 	}
 
@@ -810,83 +813,41 @@ class xili_language {
 
 		/* default values */
 		$wplang = $this->get_WPLANG();
-		if ( ''!= $wplang && ( strlen( $wplang )==5 || strlen( $wplang ) == 2 ) ) : // for japanese
+		if ( ''!= $wplang && ( in_array ( strlen( $wplang ), array ( 2, 3, 5, 6 ) ) ) ) {
 			$this->default_lang = $wplang;
-		else:
+		} else {
 			$this->default_lang = 'en_US';
-		endif;
+		}
 		// cache_domain added to avoid annoying caches 2.8.4
 		$cache_suffix = ( $this->class_admin ) ? "_ad" : "";
 		$thegroup = get_terms(TAXOLANGSGROUP, array('hide_empty' => false,'slug' => 'the-langs-group', 'cache_domain' => 'core1' . $cache_suffix));
 
-		if ( array() == $thegroup ) { /* update langs group 0.9.8 and if from start 2.3.1 */
+		if ( empty( $thegroup ) || empty( $thegroup[0]->count ) ) { /* update langs group 0.9.8 and if from start 2.3.1 */
 			$args = array( 'alias_of' => '', 'description' => 'the group of languages', 'parent' => 0, 'slug' =>'the-langs-group');
 			wp_insert_term( 'the-langs-group', TAXOLANGSGROUP, $args); /* create and link to existing langs */
-			$list_languages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core1' . $cache_suffix));
+			$listlanguages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core1' . $cache_suffix));
 
-
-
-			if ( array() == $list_languages ) { /*create two default lines with the default language (as in config)*/
-				/* language of WP */
-				if (!class_exists('GP_Locales')) {
-					require_once ( $this->plugin_path .'xili-includes/locales.php' ); // thanks hnygard 20141212
-				}
-
-
-				$term = 'en_US';
-				$args = array( 'alias_of' => '', 'description' => 'english', 'parent' => 0, 'slug' =>'en_us');
-
-				$term_data = $this->safe_lang_term_creation ( $term, $args );
-				if ( ! is_wp_error( $term_data ) ) {
-					wp_set_object_terms( $term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP );
-					$this->xili_settings['lang_features']['en_us'] = array('charset'=>"",'hidden'=>"");
-				} else {
-					$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
-				}
-
-				$term = $this->default_lang;
-
-				$locale_2 = GP_Locales::by_field( 'wp_locale', $term );
-
-				$desc = ( $locale_2 ) ? $locale_2->english_name : $this->default_lang;
-				$desc_array = explode (' (', $desc );
-				$desc = $desc_array[0];
-
-				$slug = strtolower( $this->default_lang ) ; // 2.3.1
-				$wp_lang = $this->get_WPLANG();
-				if ( $wp_lang == '' || $this->default_lang == 'en_US' || $this->default_lang == '' ) {
-					$term = 'fr_FR'; $desc = 'french'; $slug = 'fr_fr' ;
-				}
-				$args = array( 'alias_of' => '', 'description' => $desc, 'parent' => 0, 'slug' => $slug);
-
-				$term_data = $this->safe_lang_term_creation ( $term, $args ) ;
-				if ( ! is_wp_error( $term_data ) ) {
-					wp_set_object_terms( $term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP);
-					$this->xili_settings['lang_features'][$slug] = array('charset'=>"",'hidden'=>"");
-				} else {
-					$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
-				}
-
-				update_option( 'xili_language_settings', $this->xili_settings );
-
-				$list_languages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
-
+			if ( array() == $listlanguages ) { /*create two default lines with the default language (as in config)*/
+				$listlanguages = $this->create_default_languages_list ( $cache_suffix );
 			}
-			foreach( $list_languages as $language ) {
+			foreach( $listlanguages as $language ) {
 				wp_set_object_terms( $language->term_id, 'the-langs-group', TAXOLANGSGROUP );
 			}
 			$thegroup = get_terms( TAXOLANGSGROUP, array('hide_empty' => false,'slug' => 'the-langs-group', 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix) );
 		} else {
-			// if created by XD - update
-			$list_languages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
-			$i = 0;
-			foreach( $list_languages as $language ) {
-				if ( ! isset ( $this->xili_settings['lang_features'][$language->slug] ) ) {
-					$this->xili_settings['lang_features'][$language->slug] = array('charset'=>"",'hidden'=>"");
-					$i++;
+			$cleaned = $this->clean_pll_languages_list(); // 2.20.3
+			if ( !$cleaned ) {
+				// if created by XD - update
+				$listlanguages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
+				$i = 0;
+				foreach( $listlanguages as $language ) {
+					if ( ! isset ( $this->xili_settings['lang_features'][$language->slug] ) ) {
+						$this->xili_settings['lang_features'][$language->slug] = array('charset'=>"",'hidden'=>"");
+						$i++;
+					}
 				}
+				if ( $i > 0) update_option( 'xili_language_settings', $this->xili_settings );
 			}
-			if ( $i > 0) update_option( 'xili_language_settings', $this->xili_settings );
 		}
 
 		$this->langs_group_id = $thegroup[0]->term_id;
@@ -928,6 +889,101 @@ class xili_language {
 			$this->xili_settings['available_langs'] = $this->get_lang_ids() ;
 			update_option('xili_language_settings', $this->xili_settings);
 		}
+	}
+
+	function create_default_languages_list ( $cache_suffix ) {
+		/* language of WP */
+		if (!class_exists('GP_Locales')) {
+			require_once ( $this->plugin_path .'xili-includes/locales.php' ); // thanks hnygard 20141212
+		}
+error_log('main front empty');
+
+		$term = 'en_US';
+		$locale_1 = GP_Locales::by_field( 'wp_locale', $term );
+		$desc = ( $locale_1 ) ? $locale_1->english_name : 'english';
+		$args = array( 'alias_of' => '', 'description' => $desc , 'parent' => 0, 'slug' =>'en_us');
+
+		$term_data = $this->safe_lang_term_creation ( $term, $args );
+		if ( ! is_wp_error( $term_data ) ) {
+			wp_set_object_terms( $term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP );
+			$this->xili_settings['lang_features']['en_us'] = array('charset'=>"",'hidden'=>"");
+		} else {
+			$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
+		}
+
+		$term = $this->default_lang;
+
+		$locale_2 = GP_Locales::by_field( 'wp_locale', $term );
+
+		$desc = ( $locale_2 ) ? $locale_2->english_name : $this->default_lang;
+		$desc_array = explode (' (', $desc );
+		$desc = $desc_array[0];
+		$slug = strtolower( $this->default_lang ) ; // 2.3.1
+
+		$wp_lang = $this->get_WPLANG();
+		if ( $wp_lang == '' || $this->default_lang == 'en_US' || $this->default_lang == '' ) {
+			$term = 'fr_FR';
+			$locale_f = GP_Locales::by_field( 'wp_locale', $term );
+			$desc = ( $locale_f ) ? $locale_f->english_name : 'french';
+			$desc_array = explode (' (', $desc );
+			$desc = $desc_array[0];
+			$slug = 'fr_fr' ;
+		}
+		$args = array( 'alias_of' => '', 'description' => $desc, 'parent' => 0, 'slug' => $slug);
+
+		$term_data = $this->safe_lang_term_creation ( $term, $args ) ;
+		if ( ! is_wp_error( $term_data ) ) {
+			wp_set_object_terms( $term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP);
+			$this->xili_settings['lang_features'][$slug] = array('charset'=>"",'hidden'=>"");
+		} else {
+			$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
+		}
+
+		update_option( 'xili_language_settings', $this->xili_settings );
+
+		return get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
+	}
+
+	/**
+	 * Clean terms from Polylang if previous install.
+	 *
+	 * @since 2.4.1
+	 */
+	function clean_pll_languages_list() {
+		$listlanguages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2_ppl' ));
+		// test pll was previously installed but not deleted
+		if ( get_option('polylang') ) {
+		// test pll was not previously imported
+			if ( empty($this->xili_settings['pll_cleaned']) ) {
+
+				foreach( $listlanguages as $language ) {
+					// search iso in desc.
+					$pll_description = unserialize( $language->description );
+					if (!empty( $pll_description['locale'] )) {
+						$xl_name = $pll_description['locale'];
+						$xl_description = $language->name;
+						$xl_alias = $language->slug;
+						// update with xl value
+						$term_data = wp_update_term( (int)$language->term_id,
+							TAXONAME,
+							array( 'name' => $xl_name,
+								'slug' => strtolower($xl_name),
+								'description' => $xl_description,
+								) );
+						if ( ! is_wp_error( $term_data ) ) {
+							wp_set_object_terms( $term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP);
+							$this->xili_settings['lang_features'][$slug] = array('charset'=>"",'hidden'=>"", 'alias'=>$xl_alias);
+						} else {
+							$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
+						}
+					}
+				}
+				$this->xili_settings['pll_cleaned'] = 1;
+				update_option('xili_language_settings', $this->xili_settings);
+				return true ;
+			}
+		}
+		return false ;
 	}
 
 	/**
@@ -3563,12 +3619,38 @@ class xili_language {
  	*/
 	function add_new_widgets() {
 		foreach ( $this->xili_settings['specific_widget'] as $key => $value ) {
-		//register_widget('xili_Widget_Recent_Posts'); // since 1.3.2
-		//register_widget('xili_WP_Widget_Recent_Comments'); // since 1.8.3
-		//register_widget('xili_language_Widgets'); // since 1.8.3
 			if ( $value['value'] == 'enabled' ) register_widget($key);
 		}
 	}
+
+	/*
+	 * visibility of the widget according to the rule and the current language
+	 * don't display according rules (show, hidden and current language)
+	 *
+	 * @since 2.20.3
+	 *
+	 * @param array $instance widget settings
+	 * @param object $widget WP_Widget object
+	 * @return bool|array false if we hide the widget, unmodified $instance otherwise
+	 */
+	public function widget_display_callback($instance, $widget) {
+		if ( empty($this->xili_settings['widget_visibility']))  return $instance;
+
+		if ( !empty( $instance['xl_show'] ) ) {
+			if ( $instance['xl_show'] == 'show' ) {
+				$false_rule = false ;
+				$instance_rule = $instance ;
+			} else {
+				$false_rule = $instance ;
+				$instance_rule = false ;
+			}
+		} else {
+			$false_rule = false ;
+			$instance_rule = $instance ;
+		}
+		return !empty($instance['xl_lang']) && $instance['xl_lang'] != $this->curlang ? $false_rule : $instance_rule ;
+	}
+
 
 	//********************************************//
 	// Functions for themes (hookable by add_action() in functions.php - 0.9.7
