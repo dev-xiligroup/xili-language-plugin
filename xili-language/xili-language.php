@@ -896,7 +896,6 @@ class xili_language {
 		if (!class_exists('GP_Locales')) {
 			require_once ( $this->plugin_path .'xili-includes/locales.php' ); // thanks hnygard 20141212
 		}
-error_log('main front empty');
 
 		$term = 'en_US';
 		$locale_1 = GP_Locales::by_field( 'wp_locale', $term );
