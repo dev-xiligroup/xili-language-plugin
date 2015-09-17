@@ -1,12 +1,12 @@
-// part of package xl 2.14.2
+// part of package xl 2.20.2 - WP 4.3.1 - wide
 jQuery(document).ready(function($) { 
 	$('#update-nav-menu').bind('click', function(e) {
 		if ( e.target && e.target.className && -1 != e.target.className.indexOf('item-edit')) {
 			var inputclass = '';
 			var inputvalue = '';
-			//var inputvalue2 = ''; 
+			//var inputvalue2 = '';
 			$("input[value='"+xili_data.strings[0]+"'][type=text]").parent().parent().parent().each( function(){
-				$(this).children('.description-thin,.field-url,.field-link-target,.field-description').each( function(){
+				$(this).children('.description-wide,.description-thin,.field-url,.field-link-target,.field-description').each( function(){
 					
 					$(this).children('label').each( function(){
 						//$(this).attr("style", "border:yellow solid 1px") ;
@@ -29,7 +29,7 @@ jQuery(document).ready(function($) {
 			});
 			// pages
 			$("input[value='"+xili_data.strings[3]+"'][type=text]").parent().parent().parent().each( function(){
-				$(this).children('.description-thin,.field-url,.field-link-target,.field-description').each( function(){
+				$(this).children('.description-wide,.description-thin,.field-url,.field-link-target,.field-description').each( function(){
 					
 					$(this).children('label').each( function(){
 						//$(this).attr("style", "border:yellow solid 1px") ;
@@ -53,8 +53,8 @@ jQuery(document).ready(function($) {
 			});
 			// menus
 			$("input[value='"+xili_data.strings[6]+"'][type=text]").parent().parent().parent().each( function(){
-				$(this).children('.description-thin,.field-url,.field-link-target,.field-description').each( function(){
-					
+				$(this).children('.description-wide,.description-thin,.field-url,.field-link-target,.field-description').each( function(){
+
 					$(this).children('label').each( function(){
 						//$(this).attr("style", "border:yellow solid 1px") ;
 						if ( !$(this).parent().hasClass("field-link-target") ) { $(this).css("visibility", "hidden") } ;  // attr disabled pb avec remove...
