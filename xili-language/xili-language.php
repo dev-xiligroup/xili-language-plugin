@@ -117,6 +117,7 @@ define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see a
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
 define('XILILANGUAGE_WP_TESTED', '4.3 Billie'); /* 2.17.1 - used in version pointer infos */
+define('XILILANGUAGE_PLL_TESTED', '1.7.9'); /* 2.20.3 - newest PLL tested */
 define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 
 
@@ -401,8 +402,10 @@ class xili_language {
 		}
 		// 2.20.3
 		// test pll was previously installed but not deleted
-		if ( get_option('polylang', false ) && ( empty( $this->xili_settings['pll_cleaned'] )  || $this->xili_settings['pll_cleaned'] < 2 ) ) {
-			include_once ( $this->plugin_path . 'xili-includes/pll_functions.php' );
+		if ( ( $settings = get_option('polylang', false ) ) && ( empty( $this->xili_settings['pll_cleaned'] )  || $this->xili_settings['pll_cleaned'] < 2 ) ) {
+			if ( version_compare( $settings['version'] , XILILANGUAGE_PLL_TESTED, '>=') ) {
+				include_once ( $this->plugin_path . 'xili-includes/pll_functions.php' );
+			}
 		}
 
 		if ( ! defined( 'TAXONAME' ) ) define('TAXONAME', $this->xili_settings['taxonomy']);

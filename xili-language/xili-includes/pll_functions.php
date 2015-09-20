@@ -40,6 +40,8 @@ function clean_pll_languages_list( $result = false ) {
 				}
 			}
 		}
+
+
 		update_option( 'xili_language_pll_languages', $pll_languages );
 		$xili_language->xili_settings['pll_cleaned'] = 1;
 		update_option( 'xili_language_settings', $xili_language->xili_settings );
@@ -134,6 +136,27 @@ function recreate_links_from_pll( $messages = array() ) {
 		$xili_language->xili_settings['pll_cleaned'] = 99;
 		$message = __( 'Errors when importing Polylang!', 'xili-language');
 	}
+	// get_pll_CPTs
+	// here because CPTs are registered
+	$pll_settings = get_option( 'polylang');
+	$pll_post_types = $pll_settings['post_types'];
+	$customposttypes = $xili_language->xili_settings['multilingual_custom_post'] ;
+	if ( $pll_post_types ) {
+		foreach ( $pll_post_types as $one_type ) {
+			$custom = get_post_type_object ($one_type);
+			if ( $custom ) { // is registered
+				$clabels = $custom->labels;
+				$customposttypes[$one_type] = array( 'name' => $custom->label , 'singular_name' => $clabels->singular_name , 'multilingual' => 'enable');
+			}
+		}
+		$xili_language->xili_settings['multilingual_custom_post'] = $customposttypes ;
+	}
+	// Frontend settings
+	if ( $pll_settings['browser'] ) {
+		$xili_language->xili_settings['browseroption'] = 'browser';
+		$xili_language->xili_settings['homelang'] = 'modify';
+	}
+
 	update_option( 'xili_language_settings', $xili_language->xili_settings );
 	return $message;
 }
