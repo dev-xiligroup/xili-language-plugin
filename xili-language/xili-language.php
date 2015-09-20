@@ -391,13 +391,18 @@ class xili_language {
 				$this->xili_settings['lang_permalink'] = $lang_perma_state; // 2.20
 				set_transient( '_xl_activation_redirect', 2, 30 ); // 2.20 - 2 = updated
 			}
-			if ( $this->xili_settings['version'] !== $current_xl_version ) update_option('xili_language_settings', $this->xili_settings);
+			if ( $this->xili_settings['version'] !== $current_xl_version ) update_option( 'xili_language_settings', $this->xili_settings );
 			// redundant !
 			if ( $this->xili_settings['version'] !== '2.20') { // repair or restart from new
 				$this->initial_settings ();
-				update_option('xili_language_settings', $this->xili_settings);
+				update_option( 'xili_language_settings', $this->xili_settings );
 				set_transient( '_xl_activation_redirect', 1, 30 ); // 2.20
 			}
+		}
+		// 2.20.3
+		// test pll was previously installed but not deleted
+		if ( get_option('polylang', false ) && ( empty( $this->xili_settings['pll_cleaned'] )  || $this->xili_settings['pll_cleaned'] < 2 ) ) {
+			include_once ( $this->plugin_path . 'xili-includes/pll_functions.php' );
 		}
 
 		if ( ! defined( 'TAXONAME' ) ) define('TAXONAME', $this->xili_settings['taxonomy']);
@@ -835,7 +840,8 @@ class xili_language {
 			}
 			$thegroup = get_terms( TAXOLANGSGROUP, array('hide_empty' => false,'slug' => 'the-langs-group', 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix) );
 		} else {
-			$cleaned = $this->clean_pll_languages_list(); // 2.20.3
+
+			$cleaned = apply_filters( 'clean_previous_languages_list', false ); // 2.20.3
 			if ( !$cleaned ) {
 				// if created by XD - update
 				$listlanguages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
@@ -941,48 +947,6 @@ class xili_language {
 		update_option( 'xili_language_settings', $this->xili_settings );
 
 		return get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
-	}
-
-	/**
-	 * Clean terms from Polylang if previous install.
-	 *
-	 * @since 2.4.1
-	 */
-	function clean_pll_languages_list() {
-		$listlanguages = get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2_ppl' ));
-		// test pll was previously installed but not deleted
-		if ( get_option('polylang') ) {
-		// test pll was not previously imported
-			if ( empty($this->xili_settings['pll_cleaned']) ) {
-
-				foreach( $listlanguages as $language ) {
-					// search iso in desc.
-					$pll_description = unserialize( $language->description );
-					if (!empty( $pll_description['locale'] )) {
-						$xl_name = $pll_description['locale'];
-						$xl_description = $language->name;
-						$xl_alias = $language->slug;
-						// update with xl value
-						$term_data = wp_update_term( (int)$language->term_id,
-							TAXONAME,
-							array( 'name' => $xl_name,
-								'slug' => strtolower($xl_name),
-								'description' => $xl_description,
-								) );
-						if ( ! is_wp_error( $term_data ) ) {
-							wp_set_object_terms( $term_data['term_id'], 'the-langs-group', TAXOLANGSGROUP);
-							$this->xili_settings['lang_features'][$slug] = array('charset'=>"",'hidden'=>"", 'alias'=>$xl_alias);
-						} else {
-							$inserted = $this->safe_insert_in_language_group ( $term_data, 0 );
-						}
-					}
-				}
-				$this->xili_settings['pll_cleaned'] = 1;
-				update_option('xili_language_settings', $this->xili_settings);
-				return true ;
-			}
-		}
-		return false ;
 	}
 
 	/**
@@ -5684,7 +5648,7 @@ function xl_get_linked_post_in ( $fromID, $lang, $info = 'id' ) {
 					$output = get_permalink( $otherpost );
 					break;
 				case 'postname'; // 2.19.3
-					$post = get_post($otherpost);
+					$post = get_post( $otherpost );
 					$output = $post->post_name ;
 					break;
 			}

@@ -76,17 +76,20 @@ class xili_language_uninstall {
 			delete_option('xiliml_authoring_settings'); // future uses
 			delete_option('xiliml_frontend_settings');
 
-			// transient 2.16.4
+			// transient
 			delete_transient( 'get_flag_series' );
-			delete_transient( 'admin_get_flag_series' );
+			delete_transient( 'admin_get_flag_series' ); // 2.16.4
+			delete_transient( '_xl_activation_redirect' ); // 2.20
 
 			// Options
-			delete_option('xili_language_widgets_options');
-			delete_option('xili_widget_recent_comments');
-			delete_option('xili_widget_recent_entries');
-			delete_option('xl-bbp-addon-activated'); // since 2.18
+			delete_option( 'xili_language_widgets_options' );
+			delete_option( 'xili_widget_recent_comments' );
+			delete_option( 'xili_widget_recent_entries' );
+			delete_option( 'xl-bbp-addon-activated' ); // since 2.18
+			delete_option( 'xili_language_pll_languages' ); // since 2.20.3
+
 			// main settings now !
-			delete_option('xili_language_settings');
+			delete_option( 'xili_language_settings' );
 
 			if ( defined ('WP_DEBUG') && WP_DEBUG == true )
 				error_log( sprintf('xili-language datas of db %s deleted' , $blog_id ) );

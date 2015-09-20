@@ -1571,6 +1571,13 @@ class xili_language_admin extends xili_language {
 				$msg = 2;
 				break;
 
+			case 'refreshlinks'	; // refresh from PLL
+				check_admin_referer( 'refresh_pll_links' );
+				$themessages[11] = apply_filters ( 'recreate_links_from_previous', array() ); // in pll_functions.php file
+				$msg = 11;
+				$actiontype = "add";
+				break;
+
 			case 'reset';
 				$actiontype = "add";
 				break;
@@ -1948,10 +1955,19 @@ class xili_language_admin extends xili_language {
 				check_admin_referer( 'xili-language-expert' );
 				$special_msg = array();
 				// here (and not theme options) 2.20
-				$lang_permalink = ( isset($_POST['lang_permalink'] ) ) ? $_POST['lang_permalink'] : "perma_not";
+				$lang_permalink = ( isset($_POST['lang_permalink'] ) ) ? $_POST['lang_permalink'] : 'perma_not';
 				if ( $lang_permalink != $this->xili_settings['lang_permalink']) {
 					$this->xili_settings['lang_permalink'] = $lang_permalink;
-					$special_msg[] = sprintf(__('Language beginning permalink: %s ', 'xili-language'), $this->xili_settings['lang_permalink']);
+					$special_msg[] = sprintf(__('Language begins permalink: %s ', 'xili-language'), $this->xili_settings['lang_permalink']);
+					// 2.20.3
+					if ( $this->xili_settings['lang_permalink'] != 'perma_not' ) {
+						/*
+						$result = apply_filters ('xl_import_previous_aliases', false );
+						if ( $result ) {
+							$special_msg[] = ' ' . __('Alias imported from Polylang.', 'xili-language');
+						}
+						*/
+					}
 				}
 
 				/* force rules flush - 2.1.1 */
@@ -4428,7 +4444,7 @@ class xili_language_admin extends xili_language {
 		/*list of languages*/
 		$listlanguages = get_terms_of_groups_lite ( $this->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
 		if ( empty($listlanguages) ) {
-			$cleaned = $this->clean_pll_languages_list(); // 2.20.3
+			$cleaned = apply_filters( 'clean_previous_languages_list', false ); // 2.20.3
 			if ( $cleaned ) {
 				$listlanguages = get_terms_of_groups_lite ( $this->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
 			}
@@ -4438,22 +4454,31 @@ class xili_language_admin extends xili_language {
 			$default = 1;
 		}
 
-		if ( !empty($default) || !empty($cleaned) ) {
+		if ( !empty($default) || !empty($cleaned) || !empty($this->xili_settings['pll_cleaned']) ) {
+			$click = '';
+			$message = '';
 
-			if ( $cleaned ) $message = sprintf(__('A list of %s languages from a previous Polylang install has just been updated !', 'xili-language'), count ( $listlanguages ) );
+
+				$messages = apply_filters ( 'previous_install_list_messages', array(), count( $listlanguages ) );
+				$message = $messages['message'];
+				$click = $messages['click'];
+
+
 			if ( $default ) $message = sprintf(__('A new list of %s languages by default has just been created !', 'xili-language'), count ( $listlanguages ) );
 
-			$line = '<tr>'
-			.'<th scope="row" class="lang-id" >'. '<img src="'. includes_url( 'images/smilies/icon_exclaim.gif') . '" alt="Caution" />' . '&nbsp;&nbsp;' . __('CAUTION', 'xili-language') .  '</th>'
-			.'<td class="col-center" colspan="5" ><strong class="red-alert">'. $message . '</strong></td>'
-			.'<td class="col-center" colspan="5" >'. __('Complete and modify the list according your multilingual need...', 'xili-language') . '</td>'
-			. '</tr>';
-			echo $line;
-			$line = '<tr>'
-			.'<th scope="row" class="lang-id" ></th>'
-			.'<td class="col-center" colspan="10" ><hr/></td>'
-			. '</tr>';
-			echo $line;
+			if ( $message ) {
+				$line = '<tr>'
+				.'<th scope="row" class="lang-id" >'. '<img src="'. includes_url( 'images/smilies/icon_exclaim.gif') . '" alt="Caution" />' . '&nbsp;&nbsp;' . __('CAUTION', 'xili-language') .  '</th>'
+				.'<td class="col-center" colspan="5" ><strong class="red-alert">'. $message . $click . '</strong></td>'
+				.'<td class="col-center" colspan="5" >'. __('Complete and modify the list according your multilingual need...', 'xili-language') . '</td>'
+				. '</tr>';
+				echo $line;
+				$line = '<tr>'
+				.'<th scope="row" class="lang-id" ></th>'
+				.'<td class="col-center" colspan="10" ><hr/></td>'
+				. '</tr>';
+				echo $line;
+			}
 		}
 		if ( count ( $listlanguages ) == 1 ) {
 
@@ -4524,7 +4549,7 @@ class xili_language_admin extends xili_language {
 				if ( count ( $key_slug ) == 1 ) {
 					$line .= '<td>' . $alias_val . '</td>';
 				} else {
-					$line .= '<td><span class="red-alert">' . $alias_val . '</span></td>';
+					$line .= sprintf( '<td><span class="red-alert" title="%s">', esc_html('the default alias needs to be defined', 'xili-language' ) ) . $alias_val . '</span></td>';
 				}
 			}
 
