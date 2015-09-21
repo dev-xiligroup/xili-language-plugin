@@ -183,4 +183,192 @@ function pll_list_messages( $messages, $count = 0 ) {
 	return array ('message' => $message, 'click' => $click );
 }
 add_filter ( 'previous_install_list_messages', 'pll_list_messages', 10, 2 ); // messages in xl-class-admin
+
+/**
+ * Clean polylang db records - customized functions from original uninstall file
+ * Do not delete 'language' taxonomy !
+ *
+ * @since 2.20.3
+ */
+function pll_clean_db_records() {
+	global $wpdb;
+
+	// to secure direct call
+	if ( ! current_user_can('activate_plugins') )
+	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.' ) );
+
+	//nounce
+
+	// need to register the taxonomies
+	$pll_taxonomies = array( 'term_language', 'post_translations', 'term_translations' ); // w/o language used by XL
+	foreach ($pll_taxonomies as $taxonomy)
+		register_taxonomy($taxonomy, null , array('label' => false, 'public' => false, 'query_var' => false, 'rewrite' => false));
+
+	$languages = get_terms('language', array('hide_empty'=>false)); //registered by XL
+
+	$pll_xl_aliases = get_option( 'xili_language_pll_languages', false ); // to be used in future to recover taxonomies
+	$xl_slug_pll_slug = array_flip ( $pll_xl_aliases ) ;
+
+	// delete users options
+	foreach (get_users(array('fields' => 'ID')) as $user_id) {
+		delete_user_meta($user_id, 'user_lang');
+		delete_user_meta($user_id, 'pll_filter_content');
+		foreach ($languages as $lang) {
+			$xl_slug = $lang->slug;
+			delete_user_meta($user_id, 'description_'. $xl_slug_pll_slug[$xl_slug]);
+		}
+	}
+
+	// delete menu language switchers
+	$ids = get_posts(array(
+		'post_type'   => 'nav_menu_item',
+		'numberposts' => -1,
+		'nopaging'    => true,
+		'fields'      => 'ids',
+		'meta_key'    => '_pll_menu_item'
+	));
+
+	foreach ($ids as $id)
+		wp_delete_post($id, true);
+
+	// delete the strings translations (<1.2)
+	// FIXME: to remove when support for v1.1.6 will be dropped
+	foreach ($languages as $lang)
+		delete_option('polylang_mo'.$lang->term_id);
+
+	// delete the strings translations 1.2+
+	register_post_type('polylang_mo', array('rewrite' => false, 'query_var' => false));
+	$ids = get_posts(array(
+		'post_type'   => 'polylang_mo',
+		'numberposts' => -1,
+		'nopaging'    => true,
+		'fields'      => 'ids',
+	));
+	foreach ($ids as $id)
+		wp_delete_post($id, true);
+
+	// delete all what is related to languages and translations
+	foreach (get_terms($pll_taxonomies, array('hide_empty'=>false)) as $term) {
+		$term_ids[] = (int) $term->term_id;
+		$tt_ids[] = (int) $term->term_taxonomy_id;
+	}
+
+	if (!empty($term_ids)) {
+		$term_ids = array_unique($term_ids);
+		$wpdb->query("DELETE FROM $wpdb->terms WHERE term_id IN (" . implode(',', $term_ids) . ")");
+		$wpdb->query("DELETE FROM $wpdb->term_taxonomy WHERE term_id IN (" . implode(',', $term_ids) . ")");
+	}
+
+	if (!empty($tt_ids)) {
+		$tt_ids = array_unique($tt_ids);
+		$wpdb->query("DELETE FROM $wpdb->term_relationships WHERE term_taxonomy_id IN (" . implode(',', $tt_ids) . ")");
+	}
+
+	// delete options
+	delete_option('polylang');
+	delete_option('widget_polylang'); // automatically created by WP
+	delete_option('polylang_wpml_strings'); // strings registered with icl_register_string
+
+	//delete transients
+	delete_transient('pll_languages_list');
+	delete_transient('pll_upgrade_1_4');
+
+}
+
+/**
+ * Display form in expert tab
+ *
+ *
+ * @since 2.20.3
+ */
+function pll_list_forms_action() {
+	global $xili_language;
+	if ( !empty($xili_language->xili_settings['pll_cleaned']) && $xili_language->xili_settings['pll_cleaned'] >= 2 ) {
+		?>
+		<p><?php _e('This multilingual website was formerly driven by Polylang.','xili-language'); ?></p>
+		<?php
+		$step = $xili_language->xili_settings['pll_cleaned'];
+		switch ( $step ) {
+			case 2: // 2 = achieved
+
+				$label = __('Launch taxonomy importation.','xili-language');
+				$submit_id = 'fire_taxo_step';
+				break;
+
+			case 3:
+				$label = __('Launch db cleaning.','xili-language');
+				$submit_id = 'fire_clean_db_step';
+				break;
+
+			default:
+				# code...
+				break;
+		}
+		if ( $step < 4) {
+			echo sprintf( '<fieldset id="pll-box" class="box"><legend>%s</legend>', __("Polylang importation last actions",'xili-language') ) ;
+			wp_nonce_field( $submit_id );
+			echo sprintf( '<label for="%s" class="selectit">&nbsp;', 'pll_action' );
+			echo sprintf( '<input name="%1$s" id="%1$s" type="checkbox" value="enable">', 'pll_action' );
+			echo sprintf( '&nbsp;%s</label>',$label);
+			echo sprintf( '<div class="submit"><input id="%1$s" name="%1$s" type="submit" value="%2$s" /></div>', $submit_id, __('Start','xili-language'));
+			echo '</fieldset>';
+		} else {
+			$plugin_dir = str_replace ( 'xili-language/xili-includes', 'polylang', plugin_dir_path( __FILE__ ) );
+			$plugin_dir = trailingslashit( $plugin_dir );
+
+			if ( file_exists ( $plugin_dir . "polylang.php" ) ) {
+				echo '<em>' . __('Now the imporation process is achieved, you can delete the Polylang plugin files.','xili-language') . '</em>';
+			} else {
+				echo '<em>' . __('Now the imporation process is achieved, Polylang plugin is deleted.','xili-language') . '</em>';
+				$xili_language->xili_settings['pll_cleaned'] = 5 ;
+				update_option( 'xili_language_settings', $xili_language->xili_settings );
+			}
+
+
+		}
+	}
+}
+add_action ('import_list_forms_action', 'pll_list_forms_action');
+
+/**
+ * fire actions from expert tab
+ *
+ *
+ * @since 2.20.3
+ */
+function pll_list_of_actions( $post_array ) {
+	if ( ! current_user_can('activate_plugins') )
+	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.' ) );
+
+	global $xili_language;
+	$actions = array ( 'fire_taxo_step', 'fire_clean_db_step' );
+	$action = '';
+	foreach ( $actions as $one ) {
+		if ( isset ( $post_array[$one])) {
+			$action = $one;
+			continue ;
+		}
+	}
+	if ( !$action ) return;
+	check_admin_referer( $action );
+	if ( isset($post_array['pll_action']) ) {
+		switch ( $action ) {
+			case 'fire_taxo_step': // 2 = achieved
+				$step = 3;
+				break;
+
+			case 'fire_clean_db_step':
+				$step = 4;
+				pll_clean_db_records();
+				break;
+
+			default:
+				$step = 2;
+			break;
+		}
+		$xili_language->xili_settings['pll_cleaned'] = $step;
+		update_option( 'xili_language_settings', $xili_language->xili_settings );
+	}
+}
+add_action ('import_list_of_actions', 'pll_list_of_actions');
 ?>

@@ -1810,7 +1810,7 @@ class xili_language_admin extends xili_language {
 		<form name="frontend_settings" id="frontend_settings" method="post" enctype="multipart/form-data" action="options.php">
 			<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
-			settings_fields( $this->settings_frontend . '_group' ); // nounce, action (plugin.php)
+			settings_fields( $this->settings_frontend . '_group' ); // nonce, action (plugin.php)
 			do_settings_sections( $this->settings_frontend . '_group' );
 			?>
 			<p class="submit">
@@ -1876,17 +1876,17 @@ class xili_language_admin extends xili_language {
 		$optionmessage = '';
 
 		if (isset($_POST['reset'])) {
-			$action =$_POST['reset'];
+			$action = $_POST['reset'];
 		} elseif ( isset($_POST['menuadditems'])) {
-			$action ='menuadditems';
+			$action = 'menuadditems';
 		} elseif ( isset($_POST['updatespecials'])) {
-			$action ='updatespecials';
+			$action = 'updatespecials';
 		} elseif ( isset($_POST['innavenable']) || isset($_POST['pagnavenable']) ) {
-			$action ='menunavoptions';
+			$action = 'menunavoptions';
 		} elseif ( isset($_POST['jetpack_fc_enable'])) {
-			$action ='jetpack_fc_enable';
+			$action = 'jetpack_fc_enable';
 		} elseif ( isset($_POST['xl-bbp-addon-integrate'])) { // 2.18
-			$action ='xl-bbp-addon-integrate';
+			$action = 'xl-bbp-addon-integrate';
 		}
 
 		switch( $action ) {
@@ -2026,6 +2026,12 @@ class xili_language_admin extends xili_language {
 				update_option ('xl-bbp-addon-activated-folder', $_POST['xl-bbp-addon'] );
 				$optionmessage = sprintf(__('Settings for bbPress are updated to %1$s. Now %2$s','xili-language'), ($_POST['xl-bbp-addon'] != '') ? $_POST['xl-bbp-addon'] : __('no integration', 'xili-language'), '<a href="" >'. __('click to refresh dashboard...','xili-language').'</a>');
 				$msg = 1; // green
+			break;
+
+			default:
+				# do action set in importer functions - 2.20.3
+				if ( isset( $_POST ) )
+					do_action ( 'import_list_of_actions', $_POST );
 			break;
 		}
 
@@ -3038,7 +3044,7 @@ class xili_language_admin extends xili_language {
 		<form name="authoring_settings" id="authoring_settings" method="post" enctype="multipart/form-data" action="options.php">
 			<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
-			settings_fields( $this->settings_authoring_settings . '_group' ); // nounce, action (plugin.php)
+			settings_fields( $this->settings_authoring_settings . '_group' ); // nonce, action (plugin.php)
 			do_settings_sections( $this->settings_authoring_settings . '_group' );
 			?>
 			<p class="submit">
@@ -3056,7 +3062,7 @@ class xili_language_admin extends xili_language {
 		<form name="author_rules" id="author_rules" method="post" enctype="multipart/form-data" action="options.php">
 			<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
-			settings_fields( $this->settings_author_rules . '_group' ); // nounce, action (plugin.php)
+			settings_fields( $this->settings_author_rules . '_group' ); // nonce, action (plugin.php)
 			do_settings_sections( $this->settings_author_rules . '_group' );
 			?>
 			<p class="submit">
@@ -4027,7 +4033,8 @@ class xili_language_admin extends xili_language {
 	 *
 	 */
 	function on_box_plugins_expert( $data ) {
-		//extract( $data );
+		do_action ('import_list_forms_action'); // 2.20.3
+
 		$checked = checked ($this->xili_settings['enable_fc_theme_class'], 'enable', false ) ;
 		?>
 		<p><?php _e('Define some behaviours with plugins like JetPack.','xili-language'); ?></p>
@@ -4512,12 +4519,12 @@ class xili_language_admin extends xili_language {
 			$posts_count = ( $language->count > 0 ) ? '<a title= "'.$title.'" href="edit.php?lang='.$language->slug.'">'.$language->count . '</a>' : $language->count;
 
 			/* edit link*/
-			// nounce added
+			// nonce added
 			$link = wp_nonce_url( "?action=edit&amp;page=language_page&amp;term_id=".$language->term_id, "edit-".$language->term_id );
 
 			$edit = "<a href='".$link."' >".__( 'Edit' )."</a>&nbsp;|";
 			/* delete link*/
-			// nounce added
+			// nonce added
 			$link = wp_nonce_url( "?action=delete&amp;page=language_page&amp;term_id=".$language->term_id, "delete-".$language->term_id );
 
 			$edit .= "&nbsp;<a href='".$link."' class='delete'>".__( 'Delete' )."</a>";
@@ -5798,7 +5805,7 @@ class xili_language_admin extends xili_language {
 				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
 			</p>
 			<?php
-				settings_fields( $this->flag_settings_name . '_group' );	// nounce, action (plugin.php)
+				settings_fields( $this->flag_settings_name . '_group' );	// nonce, action (plugin.php)
 				do_settings_sections( $this->flag_settings_name . '_group' );
 			?>
 			<p class="submit">

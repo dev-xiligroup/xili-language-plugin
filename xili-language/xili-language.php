@@ -10,6 +10,7 @@ License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
+# updated 150927 - 2.21.0 - includes detection of previous PLL install
 # updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
 # updated 150914 - 2.20.2 - updated language list (Jetpack 3.7) - updated commun messages (pointer)
 # updated 150903 - 2.20.1 - fixes error "/theme-multilingual-classes.php on line 1014"
@@ -390,11 +391,17 @@ class xili_language {
 				$this->xili_settings['version'] = '2.20';
 				$lang_perma_state = 'updated';
 				$this->xili_settings['lang_permalink'] = $lang_perma_state; // 2.20
-				set_transient( '_xl_activation_redirect', 2, 30 ); // 2.20 - 2 = updated
+			}
+			// 2.21
+			if ( version_compare( $this->xili_settings['version'], '2.21', '<') ) {
+				$this->xili_settings['version'] = '2.21';
+				if ( empty ( $this->xili_settings['show_page_on_front_array'] ) ) // fixed enfold theme - thanks to Stephanie DE
+					$this->xili_settings['show_page_on_front_array'] = array(); // 2.21
+				set_transient( '_xl_activation_redirect', 2, 30 ); // 2.21 - 2 = updated
 			}
 			if ( $this->xili_settings['version'] !== $current_xl_version ) update_option( 'xili_language_settings', $this->xili_settings );
 			// redundant !
-			if ( $this->xili_settings['version'] !== '2.20') { // repair or restart from new
+			if ( $this->xili_settings['version'] !== '2.21') { // repair or restart from new
 				$this->initial_settings ();
 				update_option( 'xili_language_settings', $this->xili_settings );
 				set_transient( '_xl_activation_redirect', 1, 30 ); // 2.20
@@ -402,7 +409,7 @@ class xili_language {
 		}
 		// 2.20.3
 		// test pll was previously installed but not deleted
-		if ( ( $settings = get_option('polylang', false ) ) && ( empty( $this->xili_settings['pll_cleaned'] )  || $this->xili_settings['pll_cleaned'] < 2 ) ) {
+		if ( ( $settings = get_option('polylang', false ) ) && ( empty( $this->xili_settings['pll_cleaned'] )  || $this->xili_settings['pll_cleaned'] <= 4 ) ) {
 			if ( version_compare( $settings['version'] , XILILANGUAGE_PLL_TESTED, '>=') ) {
 				include_once ( $this->plugin_path . 'xili-includes/pll_functions.php' );
 			}
@@ -581,7 +588,7 @@ class xili_language {
 	function initial_settings() { xili_xl_error_log ( '# ' . __LINE__ .' -------------------- init' );
 		return array(
 				'taxonomy'		=> 'language',
-				'version'		=> '2.20',
+				'version'		=> '2.21',
 				'reqtag'		=> 'lang', // query_var
 				'browseroption' => '',
 				'authorbrowseroption' => '',
@@ -627,6 +634,7 @@ class xili_language {
 				'specific_widget' => $this->xili_widgets, // 2.16.4
 				'lang_permalink' => '', // 2.20
 				'widget_visibility' => '',
+				'show_page_on_front_array' => array(), // 2.20.3 - thanks to Stephanie DE
 		);
 	}
 
