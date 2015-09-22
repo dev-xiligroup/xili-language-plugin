@@ -10,7 +10,7 @@ License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
-# updated 150927 - 2.21.0 - includes detection of previous PLL install
+# updated 150927 - 2.21.0 - includes detection of previous PLL install - source cleaned and improved
 # updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
 # updated 150914 - 2.20.2 - updated language list (Jetpack 3.7) - updated commun messages (pointer)
 # updated 150903 - 2.20.1 - fixes error "/theme-multilingual-classes.php on line 1014"
@@ -406,6 +406,7 @@ class xili_language {
 				update_option( 'xili_language_settings', $this->xili_settings );
 				set_transient( '_xl_activation_redirect', 1, 30 ); // 2.20
 			}
+			xili_xl_error_log ('# '. __LINE__ .' ************* only_parent_construct = ' . $this->xili_settings['version'] );
 		}
 		// 2.20.3
 		// test pll was previously installed but not deleted
@@ -437,7 +438,7 @@ class xili_language {
 		add_action( 'switch_theme', array(&$this,'theme_switched') );
 
 		/* query filters */
-		//add_filter( 'posts_join', array(&$this,'posts_join_with_lang'), 10, 2 );
+
 		add_filter( 'posts_join', array(&$this,'posts_join_tax_lang'), 10, 2 ); // 2.16.4
 		add_filter( 'posts_where', array(&$this,'posts_where_lang'), 10, 2 );
 
@@ -585,7 +586,7 @@ class xili_language {
 	/**
 	 * first activation or empty settings
 	 */
-	function initial_settings() { xili_xl_error_log ( '# ' . __LINE__ .' -------------------- init' );
+	function initial_settings() {
 		return array(
 				'taxonomy'		=> 'language',
 				'version'		=> '2.21',
@@ -655,7 +656,7 @@ class xili_language {
 
 	/* first activation of plugin */
 	function xili_language_activate() {
-		$this->xili_settings = get_option('xili_language_settings', false ); xili_xl_error_log( '# ' . __LINE__ .' -- xl first activate');
+		$this->xili_settings = get_option('xili_language_settings', false );
 		if ( $this->xili_settings === false ) {
 			$this->xili_settings = $this->initial_settings();
 			update_option('xili_language_settings', $this->xili_settings );
@@ -1561,66 +1562,10 @@ class xili_language {
 	function posts_join_tax_lang( $join, $query_object = null ) { // new version 2.16.4
 		global $wpdb;
 		$insert_join = $this->ready_to_join_filter; // value from where filter fired before
-		xili_xl_error_log ( '# '. __LINE__ .' ===== ready_to_join_filter =========' . serialize($this->ready_to_join_filter));
-		xili_xl_error_log ( '# '. __LINE__ .' ===== ready_to_join_filter =========' . $join );
 		if ( $insert_join )  { // ready_to_join_filter set in where filter 2.12 (before optimization - avoid sql error)
 			$join .= " LEFT JOIN $wpdb->term_relationships as xtr ON ($wpdb->posts.ID = xtr.object_id) LEFT JOIN $wpdb->term_taxonomy as xtt ON (xtr.term_taxonomy_id = xtt.term_taxonomy_id) ";
 		}
-		return $join;
-	}
-	// obsolete
-	function posts_join_with_lang( $join, $query_object = null ) {
-		global $wpdb, $wp_query;
-
-		xili_xl_error_log ( '# '. __LINE__ .' ===== ready_to_join_filter =========' . serialize($this->ready_to_join_filter));
-		xili_xl_error_log ( '# '. __LINE__ .' ===== posts_join_with_lang =========' . serialize($query_object->query_vars));
-
-		$insert_join = false ;
-		if ( isset ( $query_object->query_vars[QUETAG] ) && '' != $query_object->query_vars[QUETAG] ) {
-
-				$insert_join = $this->ready_to_join_filter;
-				$leave_like = false;
-			xili_xl_error_log ('# '. __LINE__ .' before post_format (insert_join) ****** ' .  $join );
-				if ( isset( $query_object->query_vars['post_format'] ) && ! empty($query_object->query_vars['post_format'])  ) {
-					$leave_like = true;
-					if ( false === strpos( $join, "$wpdb->term_relationships ON" )) {
-						$join .= " INNER JOIN $wpdb->term_relationships ON ( wp_posts.ID = $wpdb->term_relationships.object_id ) ";
-					}
-				}
-
-				if ( isset( $query_object->query_vars['taxonomy'] ) ) {
-					$leave_like = true;
-					if ( false === strpos( $join, "INNER JOIN $wpdb->term_relationships ON" )) {
-						$join .= " LEFT JOIN $wpdb->term_relationships ON ( $wpdb->posts.ID = $wpdb->term_relationships.object_id ) ";
-					}
-				}
-
-			xili_xl_error_log ('# '. __LINE__ .' before lang_perma (insert_join) ****** ' . serialize($join));
-
-				$this->xili_test_lang_perma ();
-				if ( $this->lang_perma ){ // basic post
-					if ( empty($query_object->query_vars['post_type']) && empty($query_object->query_vars['category_name']) && isset( $query_object->query_vars[QUETAG]) && $this->show_page_on_front && !is_admin()) {
-						if (!$leave_like ) $join = ''; // page linked on front page
-			xili_xl_error_log ('# '. __LINE__ .' front-page ****** ');
-						unset($wp_query->queried_object); // to avoid notice in get_page_template and force get_queried_object -2.3.2
-					}
-				}
-			xili_xl_error_log ('# '. __LINE__ .' lang_perma (insert_join) ****** ' . serialize($insert_join));
-
-
-		} else { // join if home and modify home according rule ignore_sticky_posts
-
-			if ( ''== $this->sublang ) {
-				$insert_join = $this->ready_to_join_filter;
-			}
-		}
-
-		xili_xl_error_log ('# '. __LINE__ .' ici - join = ' . serialize($insert_join) );
-		xili_xl_error_log ('# '. __LINE__ .' ici - join ( post_type) = ' . serialize($query_object->query_vars['post_type']) );
-
-		if ( $insert_join || ( !$insert_join && $this->ready_to_join_filter ) ) { // ready_to_join_filter set in where filter 2.12 (before optimization - avoid sql error)
-			$join .= " LEFT JOIN $wpdb->term_relationships as xtr ON ($wpdb->posts.ID = xtr.object_id) LEFT JOIN $wpdb->term_taxonomy as xtt ON (xtr.term_taxonomy_id = xtt.term_taxonomy_id) ";
-		}
+		xili_xl_error_log ( '# ' . __LINE__ . ' ****** END JOIN *** *** '. $join );
 		return $join;
 	}
 
@@ -1633,7 +1578,6 @@ class xili_language {
 		$this->sublang = "";
 
 		if ( isset( $the_query->query_vars[QUETAG] ) && false !== strpos( $the_query->query_vars[QUETAG] , LANG_UNDEF ) ) {
-
 
 			if ( isset ( $the_query->tax_query->queries ) && array() != $the_query->tax_query->queries ) {
 				$new_queries = array();
@@ -1671,10 +1615,6 @@ class xili_language {
 		$reqtags = array();
 		$thereqtags = array();
 		$need_join = false; // 2.12
- 		xili_xl_error_log ('# '. __LINE__ .' START where  = ' . $where . ' + main_query = ' . (( $query_object->is_main_query() ) ? 'true' : 'false') );
-		if ( isset ( $query_object->query_vars[QUETAG] )) {
-			xili_xl_error_log( '# '. __LINE__ .' where  = ' . $query_object->query_vars[QUETAG] );
-		}
 
 		if ( "" != $this->sublang ) { // see above - add undefined post
 
@@ -1722,7 +1662,6 @@ class xili_language {
 					}
 				}
 			}
-			xili_xl_error_log ('# '. __LINE__ .' ICI** - doit where  = ' . serialize($do_it) . ' + main_query = ' . (( $query_object->is_main_query() ) ? 'true' : 'false') );
 
 			if ( $do_it ) { // insertion of selection
 
@@ -1764,7 +1703,6 @@ class xili_language {
 
 					$where = str_replace ("'post'","'page'",$where); // post_type =
 					$where .= " AND 3=3 AND {$wpdb->posts}.ID = " . $query_object->query_vars['page_id'];
-					xili_xl_error_log ( '# '. __LINE__ .' '.$query_object->query_vars['page_id'] . ' <-----+++**** where home ' . $query_object->query_vars[QUETAG] . ' - page_on_front = ' . get_option('page_on_front'));
 				}
 
 				if ( $this->lang_perma && $this->show_page_on_front ) { // 2.1.1
@@ -1797,24 +1735,22 @@ class xili_language {
 						$wp_query->queried_object_id = $query_object->query_vars['page_id'];
 						$wp_query->queried_object->ID = $query_object->query_vars['page_id'];
 
-						xili_xl_error_log ( '# '. __LINE__ .' '.$query_object->query_vars['page_id'] . ' <-----+++**** where perma home ' . $query_object->query_vars[QUETAG] . ' - page_on_front = ' . get_option('page_on_front'));
-
 					}
 				}
 			}
-			xili_xl_error_log ( '# '. __LINE__ .' ****** ici fin + query tag ******' . serialize ( $query_object->query_vars ) );
+
 		} else { // no query tag
 
 			if ( ( isset ( $query_object->query_vars['caller_get_posts'] ) && $query_object->query_vars['caller_get_posts']) || ( isset ( $query_object->query_vars['ignore_sticky_posts'] ) && $query_object->query_vars['ignore_sticky_posts']) ) {
 				// nothing - caller_get_posts deprecated => ignore_sticky_posts
 			} else {
 				if ( ( $query_object->is_main_query() && $query_object->is_home && !$this->show_page_on_front && $this->xili_settings['homelang'] == 'modify') || ($query_object->is_home && $query_object->is_posts_page && $this->xili_settings['pforp_select'] != 'no_select' ) ) {
-// 2.16.5 - WP REST API - JSON is_home not like feed...
+					// 2.16.5 - WP REST API - JSON is_home not like feed...
 					// force change if loop - home or page_for_posts
 					if ( $query_object->is_posts_page ) { // 2.8.4
 
 						if ( $this->is_permalink ) { // 2.8.4.1
-							xili_xl_error_log ( '# '. __LINE__ .' ****** ici force change ******' . serialize ( $query_object->query_vars['pagename']) );
+
 							// $pagenametolang = array_flip ( $this->page_for_posts_name_array ) ;
 							// now test values before becoming index - 2.15.4
 							$pagenametolang = array();
@@ -1825,21 +1761,17 @@ class xili_language {
 							}
 							if ( isset ( $query_object->query_vars['pagename'] ) && isset ( $pagenametolang[$query_object->query_vars['pagename']] ) ) {
 								$curlang = $pagenametolang[$query_object->query_vars['pagename']];
-								xili_xl_error_log ( '# '. __LINE__ .' ****** ici pageName + ' . $curlang );
 							} else {
-
 								$curlang = $this->choice_of_browsing_language();
-
 							}
 
 						} else {
-							xili_xl_error_log ( '# '. __LINE__ .' ****** ici force change ****** ' . serialize ( $query_object->query_vars['page_id']) );
 
 							$pageidtolang = array_flip ( $this->page_for_posts_array ) ;
 
 							if ( isset ( $query_object->query_vars['page_id'] ) && isset ( $pageidtolang[$query_object->query_vars['page_id']] ) ) {
 								$curlang = $pageidtolang[$query_object->query_vars['page_id']];
-								xili_xl_error_log ( '# '. __LINE__ .' ID + ' . $curlang );
+
 							} else {
 
 								$curlang = $this->choice_of_browsing_language();
@@ -1851,9 +1783,8 @@ class xili_language {
 						// 2.16.5
 						//$curlang = ( isset ( $query_object->query_vars['json_route'] ) ) ? '' : ( $query_object->is_main_query() ) ? $this->choice_of_browsing_language() : '' ;
 					}
-					xili_xl_error_log ( '# '. __LINE__ .' ****** query_vars post_type ***'. serialize( $query_object->query_vars['post_type'] ));
+
 					// 2.12 - // thanks to muh if multiple post_types
-					xili_xl_error_log ( '# '. __LINE__ .' ****** Query VAR *** ***'.serialize($query_object->query_vars) );
 					if ( empty( $query_object->query_vars['post_type'] ) ) { // string or array
 
 						$insertWhere = true;
@@ -1879,7 +1810,7 @@ class xili_language {
 				}
 			}
 		}
-		xili_xl_error_log ( '# '. __LINE__ .' ****** END WHERE *** ***'.$where );
+		xili_xl_error_log ( '# '. __LINE__ .' ****** END WHERE *** *** '.$where );
 		$this->ready_to_join_filter = $need_join; // 2.12 - join filter after where filter
 		return $where;
 	}
@@ -1905,6 +1836,7 @@ class xili_language {
 				$this->set_mofile( $this->curlang );
 			}
 		}
+		xili_xl_error_log ( '# '. __LINE__ .' ****** END WP *** *** ' . $this->curlang );
 	}
 
 	// to fixe event in WP 3.4 - 2.7.1
@@ -2379,7 +2311,7 @@ class xili_language {
 			}
 		}
 
-		xili_xl_error_log ('# '. __LINE__ .'  - fin get_curlang_action_wp =' . $curlang );
+		xili_xl_error_log ('# '. __LINE__ .' - end get_curlang_action_wp = ' . $curlang );
 
 		return str_replace ( LANG_UNDEF , '' , $curlang ) ; // 2.3 to return main part
 	}
@@ -2437,7 +2369,6 @@ class xili_language {
 	 * @updated 1.1.8
 	 * @must be defined in functions.php according general theme design (wp_head)
 	 *
-	 * @param $curlang
 	 */
 	function head_insert_language_metas( ) {
 		$curlang = $this->curlang;
@@ -2454,7 +2385,6 @@ class xili_language {
 	 *
 	 * to change rules or be compatible with cpt and taxonomy use head_insert_hreflang_link filter
 	 *
-	 * @param $curlang
 	 */
 	function head_insert_hreflang_link ( ) {
 		if ( has_filter('head_insert_hreflang_link') ) return apply_filters( 'head_insert_hreflang_link', $this->curlang );
@@ -2942,6 +2872,7 @@ class xili_language {
 
 	/**
 	 * here basic translation - to improve depending theme features : use hook 'xiliml_get_archives_link'
+	 *
 	 */
 	function xiliml_get_archives_link( $link_html ) {
 		if ( has_filter('xiliml_get_archives_link')) return apply_filters('xiliml_get_archives_link', $link_html,$this->get_archives_called, $this->curlang );
@@ -3149,7 +3080,8 @@ class xili_language {
 	 * to encapsulate future method
 	 *
 	 * @since 1.8.9.1
-	 * @param post_ID and lang slug
+	 * @param post_ID
+	 * @param lang slug
 	 */
 	function linked_post_in ( $fromID, $lang_slug ) {
 		return get_post_meta( $fromID, QUETAG.'-'.$lang_slug, true ); // will be soon changed
@@ -3160,6 +3092,8 @@ class xili_language {
 	 *
 	 * @since 1.6.1
 	 * called by hook option_sticky_posts
+	 * @param array of sticky post ID
+	 *
 	 * @updated 2.8.1
 	 * @updated 2.16.4
 	 */
@@ -3207,6 +3141,7 @@ class xili_language {
 	 *
 	 *
 	 * @updated 2.6.3
+	 * @param string option
 	 */
 	function get_option_wo_xili ( $option ) {
 		if ( $option == 'page_on_front' && has_filter ( 'option_'.$option, array(&$this, 'translate_page_on_front_ID' ) ) ) { // 2.6.3
@@ -3281,19 +3216,17 @@ class xili_language {
 	}
 
 	/**
-	 *
+	 * blog page id (page for posts container)
 	 * @since 2.8.4
 	 *
 	 */
 	function translate_page_for_posts_ID ( $original_id ) {
 		if ( empty ( $original_id ) ) return $original_id; // 2.8.4.1
 		global $wp_query ;
-		xili_xl_error_log ( '# ' . __LINE__ .'------->>>' . $original_id . serialize ( $this->page_for_posts_name_array ) );
 
 		if ( $this->is_permalink ) {
 			if ( isset($wp_query->query_vars['pagename']) && in_array ( $wp_query->query_vars['pagename'] , $this->page_for_posts_name_array ) ) {
 
-				xili_xl_error_log ( '# ' . __LINE__ .' '.serialize ($this->page_for_posts_name_array) . ' ----perma--p-name--->>>' . $wp_query->query_vars['pagename'] );
 				$wp_query->is_page = false;
 				$wp_query->is_home = true;
 				$wp_query->is_posts_page = true;
@@ -3309,7 +3242,6 @@ class xili_language {
 		} else { // no permalinks
 			if ( isset($wp_query->query_vars['page_id']) && in_array ( $wp_query->query_vars['page_id'] , $this->page_for_posts_array ) ) {
 
-				xili_xl_error_log ( '# ' . __LINE__ .' ' .serialize ($this->page_for_posts_array) . ' ------->>>' . $wp_query->query_vars['page_id'] );
 				$wp_query->is_page = false;
 				$wp_query->is_home = true;
 				$wp_query->is_posts_page = true;
@@ -4887,7 +4819,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 		}
 
 		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili' ) ) ) {
-			xili_xl_error_log ('*********** bundled_themes_support_flag for '. $current_theme );
+
 			remove_theme_support ( 'custom_xili_flag' ) ;
 			$args = array();
 			$listlanguages = $this->get_listlanguages();
@@ -6217,7 +6149,6 @@ function xili_xl_old_bbp_addon_remove () {
 	}
 }
 add_action( 'admin_init', 'xili_xl_old_bbp_addon_remove' );
-
 
 // new bbPress api since 2.18
 // replace test plugin xili-xl-bbp-addon

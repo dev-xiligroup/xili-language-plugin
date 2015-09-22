@@ -311,15 +311,15 @@ class XL_Permalinks_rules {
 		}
 
 		if ( $pattern && preg_match ( $pattern, $path ) ) {
-			xili_xl_error_log ( __CLASS__ . ' # ' . __LINE__ .' ' . $path.' ici 1 ' . $url ); // CPT
-			$path = ( substr ($path,0,1) == '/' ) ? $path : '/' . $path ;
+
+			$path = ( substr ( $path, 0, 1) == '/' ) ? $path : '/' . $path ;
 			$url = str_replace( $path, '/' . $this->rew_reqtag . $path, $url ) ;
 
 		} else if ( preg_match ( $pattern_tax, $path ) ) {
-			$url = str_replace( $path, '/' . $this->rew_reqtag . $path, $url ) ;  xili_xl_error_log ( __CLASS__ . ' # ' . __LINE__ .' ici 2 tax ' . $url );
+			$url = str_replace( $path, '/' . $this->rew_reqtag . $path, $url ) ;
 
 		} else if ( '' != $path && '/' != substr( $path, 0, 1 ) && false === strpos( $path, $this->rew_reqtag ) ) {
-			$url = str_replace( $path, $this->rew_reqtag . '/' . $path, $url ) ; xili_xl_error_log ( __CLASS__ . ' # ' . __LINE__ .' ici 3 ' . $url ); // page
+			$url = str_replace( $path, $this->rew_reqtag . '/' . $path, $url ) ;
 
 		}
 

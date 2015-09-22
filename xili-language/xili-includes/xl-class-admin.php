@@ -314,6 +314,7 @@ class xili_language_admin extends xili_language {
 		//display contextual help
 		add_action( 'contextual_help', array( &$this,'add_help_text' ), 10, 3 ); /* 1.7.0 */
 
+		xili_xl_error_log ('# ADMIN '. __LINE__ .' ************* only_construct = ' . __CLASS__ );
 	}
 
 	/**
@@ -4448,6 +4449,7 @@ class xili_language_admin extends xili_language {
 	 */
 	function available_languages_row() {
 		global $wpdb;
+		$default = 0;
 		/*list of languages*/
 		$listlanguages = get_terms_of_groups_lite ( $this->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
 		if ( empty($listlanguages) ) {
@@ -5273,7 +5275,6 @@ class xili_language_admin extends xili_language {
 					}
 
 					$return = wp_set_object_terms( $post_ID, $sellang, TAXONAME );
-					xili_xl_error_log ( '# ' . __LINE__ .' ---- wp_set_object_terms --- ' . serialize ( $return ) );
 
 				} else { // undefined
 					if ( !isset ( $_GET['action'] ) ) { // trash - edit
@@ -5314,7 +5315,6 @@ class xili_language_admin extends xili_language {
 						wp_delete_object_term_relationships( $post_ID, TAXONAME );
 					}
 					$return = wp_set_object_terms($post_ID, $sellang, TAXONAME);
-					xili_xl_error_log ( '# ' . __LINE__ .' ---- wp_set_object_terms --- ' . serialize ( $return ) );
 
 				} elseif ( "undefined" == $sellang ) {
 
@@ -5363,7 +5363,7 @@ class xili_language_admin extends xili_language {
 								}
 								update_post_meta( $linkid, QUETAG.'-'.$curlang[QUETAG], $post_ID ); // cur post
 								$return = wp_set_object_terms( $linkid, $language->slug, TAXONAME );
-								xili_xl_error_log ( '# ' . __LINE__ .' ---- wp_set_object_terms --- ' . serialize ( $return ) );
+
 							}
 						}
 					}

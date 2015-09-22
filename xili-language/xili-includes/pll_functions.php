@@ -195,7 +195,7 @@ function pll_clean_db_records() {
 
 	// to secure direct call
 	if ( ! current_user_can('activate_plugins') )
-	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.' ) );
+	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.', 'xili-language' ) );
 
 	//nounce
 
@@ -338,7 +338,7 @@ add_action ('import_list_forms_action', 'pll_list_forms_action');
  */
 function pll_list_of_actions( $post_array ) {
 	if ( ! current_user_can('activate_plugins') )
-	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.' ) );
+	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.','xili-language') );
 
 	global $xili_language;
 	$actions = array ( 'fire_taxo_step', 'fire_clean_db_step' );
