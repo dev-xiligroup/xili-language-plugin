@@ -97,7 +97,7 @@ function xl_import_previous_pll_aliases ( $result ) {
  */
 function recreate_links_from_pll( $messages = array() ) {
 	global $xili_language;
-
+	$i = 0;
 	//update_option( 'xili_language_pll_languages', array('en'=>'en_us','fr'=>'fr_fr','de'=>'de_de') );
 
 	register_taxonomy( 'post_translations', null , array('label' => false, 'public' => false, 'query_var' => false, 'rewrite' => false));
@@ -183,6 +183,70 @@ function pll_list_messages( $messages, $count = 0 ) {
 	return array ('message' => $message, 'click' => $click );
 }
 add_filter ( 'previous_install_list_messages', 'pll_list_messages', 10, 2 ); // messages in xl-class-admin
+
+/**
+ * Copy category and post_tag group
+ *
+ * to be used by XD and XTT
+ *
+ * @since 2.20.3
+ */
+function pll_copy_taxonomies_datas() {
+	if ( ! current_user_can('activate_plugins') )
+	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.', 'xili-language') );
+
+	$term_ids = array();
+	register_taxonomy( 'term_translations', null , array('label' => false, 'public' => false, 'query_var' => false, 'rewrite' => false));
+	foreach ( get_terms( 'term_translations', array('hide_empty'=>false)) as $term ) {
+		$term_id = (int) $term->term_id;
+		$pll_links = unserialize( $term->description );
+		if ( ! empty( $pll_links ) ) {
+
+			// which default taxonomy
+			$term_id = (int)reset ($pll_links);
+			if ( term_exists ( $term_id, 'category' ) ) {
+				$term_ids['category'][] = array ( 'pll_links' => $pll_links );
+			}
+			if ( term_exists ( $term_id, 'post_tag' ) ) {
+				$term_ids['post_tag'][] = array ( 'pll_links' => $pll_links );
+			}
+		}
+	}
+	if ( !empty( $term_ids['category'] ) ) update_option( 'xili_language_pll_term_category_groups', $term_ids['category'] );
+	if ( !empty( $term_ids['post_tag'] ) ) {
+		update_option( 'xili_language_pll_term_post_tag_groups', $term_ids['post_tag'] );
+
+		if ( class_exists('xili_tidy_tags') ) {
+			global $xili_tidy_tags;
+			// create groups - wp_update_term
+			foreach ( $term_ids['post_tag'] as $pll_links_group) {
+				if ( count( $pll_links_group['pll_links'] ) > 1 ) {
+					$c = 0;
+					foreach ( $pll_links_group['pll_links'] as $key_pll => $linked_term_id) {
+						if ( $c ) {
+							$alias = get_term_by( 'id', (int)$alias_of, 'post_tag' );
+							if ( $alias ) {
+								$a = wp_update_term( (int)$linked_term_id, 'post_tag' , array( 'alias_of' => $alias->slug ) );
+							}
+						} else {
+							$c++;
+							$alias_of = $linked_term_id;
+						}
+					}
+				}
+			}
+			$pll_languages = get_option( 'xili_language_pll_languages', false ); // pll=>xl_slug
+			// add in xtt group
+			foreach ( $term_ids['post_tag'] as $pll_links_group) {
+				foreach ( $pll_links_group['pll_links'] as $key_pll => $linked_term_id) {
+					$target_lang = $pll_languages[$key_pll];
+					$res = term_exists ( $target_lang, $xili_tidy_tags->tidy_taxonomy ); // xtt group in this lang
+					wp_set_object_terms((int) $linked_term_id, (int) $res ['term_id'], $xili_tidy_tags->tidy_taxonomy, false );
+				}
+			}
+		}
+	}
+}
 
 /**
  * Clean polylang db records - customized functions from original uninstall file
@@ -291,11 +355,17 @@ function pll_list_forms_action() {
 		switch ( $step ) {
 			case 2: // 2 = achieved
 
-				$label = __('Launch taxonomy importation.','xili-language');
+				$label = __( 'Launch taxonomy importation.','xili-language' );
+
+				if ( !class_exists( 'xili_tidy_tags' ) && get_terms ( 'post_tag', array ( 'hide_empty' => false ) ) ) {
+					$label .= '<br />(<em><strong>' . __( 'Be aware that xili_tidy_tags plugin is not active. Multilingual importation will be incomplete !', 'xili-language' ) . '</strong></em> )';
+				}
+
 				$submit_id = 'fire_taxo_step';
 				break;
 
 			case 3:
+
 				$label = __('Launch db cleaning.','xili-language');
 				$submit_id = 'fire_clean_db_step';
 				break;
@@ -317,9 +387,9 @@ function pll_list_forms_action() {
 			$plugin_dir = trailingslashit( $plugin_dir );
 
 			if ( file_exists ( $plugin_dir . "polylang.php" ) ) {
-				echo '<em>' . __('Now the imporation process is achieved, you can delete the Polylang plugin files.','xili-language') . '</em>';
+				echo '<em>' . __('Now the importation process is achieved, you can delete the Polylang plugin files.','xili-language') . '</em>';
 			} else {
-				echo '<em>' . __('Now the imporation process is achieved, Polylang plugin is deleted.','xili-language') . '</em>';
+				echo '<em>' . __('Now the importation process is achieved, Polylang plugin is deleted.','xili-language') . '</em>';
 				$xili_language->xili_settings['pll_cleaned'] = 5 ;
 				update_option( 'xili_language_settings', $xili_language->xili_settings );
 			}
@@ -335,10 +405,11 @@ add_action ('import_list_forms_action', 'pll_list_forms_action');
  *
  *
  * @since 2.20.3
+ * @param ($_POST array )
  */
-function pll_list_of_actions( $post_array ) {
+function pll_list_of_actions( $message, $post_array ) {
 	if ( ! current_user_can('activate_plugins') )
-	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.','xili-language') );
+	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.', 'xili-language') );
 
 	global $xili_language;
 	$actions = array ( 'fire_taxo_step', 'fire_clean_db_step' );
@@ -355,11 +426,14 @@ function pll_list_of_actions( $post_array ) {
 		switch ( $action ) {
 			case 'fire_taxo_step': // 2 = achieved
 				$step = 3;
+				pll_copy_taxonomies_datas();
+				$message = __('Importation of taxonomies multilingual features done.', 'xili-language');
 				break;
 
 			case 'fire_clean_db_step':
 				$step = 4;
 				pll_clean_db_records();
+				$message = __('Polylang datas are cleaned from database.', 'xili-language');
 				break;
 
 			default:
@@ -369,6 +443,7 @@ function pll_list_of_actions( $post_array ) {
 		$xili_language->xili_settings['pll_cleaned'] = $step;
 		update_option( 'xili_language_settings', $xili_language->xili_settings );
 	}
+	return $message;
 }
-add_action ('import_list_of_actions', 'pll_list_of_actions');
+add_filter ( 'import_list_of_actions', 'pll_list_of_actions', 10, 2 );
 ?>

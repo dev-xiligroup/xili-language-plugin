@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xili_language\n"
 "Report-Msgid-Bugs-To: http://dev.xiligroup.com/\n"
-"POT-Creation-Date: 2015-09-22 20:23+0200\n"
-"PO-Revision-Date: 2015-09-22 20:23+0200\n"
+"POT-Creation-Date: 2015-09-23 19:39+0200\n"
+"PO-Revision-Date: 2015-09-23 19:42+0200\n"
 "Last-Translator: dev.xiligroup <contact@xiligroup.com>\n"
 "Language-Team: dev.xiligroup.com <contact@xiligroup.com>\n"
 "Language: fr_FR\n"
@@ -40,45 +40,62 @@ msgstr ""
 msgid "Links between translated posts and pages need to be refreshed!"
 msgstr "Les liens entre les posts et pages doivent être regénérés !"
 
-#: xili-includes/pll_functions.php:180 xili-includes/pll_functions.php:313
+#: xili-includes/pll_functions.php:180 xili-includes/pll_functions.php:383
 msgid "Start"
 msgstr "Lancer"
 
-#: xili-includes/pll_functions.php:198 xili-includes/pll_functions.php:341
+#: xili-includes/pll_functions.php:196 xili-includes/pll_functions.php:262
+#: xili-includes/pll_functions.php:412
 msgid "You do not have sufficient permissions to manage plugins for this site."
 msgstr ""
 "Vous n’avez pas les permissions suffisantes pour gérer les extensions de ce "
 "site."
 
-#: xili-includes/pll_functions.php:288
+#: xili-includes/pll_functions.php:352
 msgid "This multilingual website was formerly driven by Polylang."
 msgstr "Ce site internet multilingue a été précédemment piloté par Polylang."
 
-#: xili-includes/pll_functions.php:294
+#: xili-includes/pll_functions.php:358
 msgid "Launch taxonomy importation."
 msgstr "Lancer les importations de taxinomies."
 
-#: xili-includes/pll_functions.php:299
+#: xili-includes/pll_functions.php:361
+msgid ""
+"Be aware that xili_tidy_tags plugin is not active. Multilingual importation "
+"will be incomplete !"
+msgstr ""
+"Attention, l’extension xili-tidy-tags n’est pas active. L’importation "
+"multilingue sera incomplète !"
+
+#: xili-includes/pll_functions.php:369
 msgid "Launch db cleaning."
 msgstr "Lancer le nettoyage de la base."
 
-#: xili-includes/pll_functions.php:308
+#: xili-includes/pll_functions.php:378
 msgid "Polylang importation last actions"
 msgstr "Dernières étapes de l’importation des éléments de Polylang"
 
-#: xili-includes/pll_functions.php:320
+#: xili-includes/pll_functions.php:390
 msgid ""
-"Now the imporation process is achieved, you can delete the Polylang plugin "
+"Now the importation process is achieved, you can delete the Polylang plugin "
 "files."
 msgstr ""
 "L’importation est maintenant achevée, il est possible de supprimer les "
 "fichiers de l’extension Polylang."
 
-#: xili-includes/pll_functions.php:322
-msgid "Now the imporation process is achieved, Polylang plugin is deleted."
+#: xili-includes/pll_functions.php:392
+msgid "Now the importation process is achieved, Polylang plugin is deleted."
 msgstr ""
 "Maintenant, le processus d’importation est atteint, l’extension Polylang est "
 "supprimée."
+
+#: xili-includes/pll_functions.php:430
+msgid "Importation of taxonomies multilingual features done."
+msgstr "Importation des fonctionnalités multilingues des taxinomies achevée."
+
+#: xili-includes/pll_functions.php:436
+msgid "Polylang datas are cleaned from database."
+msgstr "Les données de Polylang dans la base ont été nettoyées."
 
 #: xili-includes/theme-multilingual-classes.php:91
 #: xili-includes/theme-multilingual-classes.php:151
@@ -3740,6 +3757,18 @@ msgid ""
 msgstr ""
 "L'installation de xili-language et bbPress nécessite un fichier d'ajouts au "
 "bon endroit."
+
+#~ msgid ""
+#~ "Now the imporation process is achieved, you can delete the Polylang "
+#~ "plugin files."
+#~ msgstr ""
+#~ "L’importation est maintenant achevée, il est possible de supprimer les "
+#~ "fichiers de l’extension Polylang."
+
+#~ msgid "Now the imporation process is achieved, Polylang plugin is deleted."
+#~ msgstr ""
+#~ "Maintenant, le processus d’importation est atteint, l’extension Polylang "
+#~ "est supprimée."
 
 #~ msgid "Alias imported from Polylang."
 #~ msgstr "Alias importés de Polylang."
