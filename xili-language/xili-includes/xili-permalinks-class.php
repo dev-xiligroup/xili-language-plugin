@@ -15,6 +15,7 @@
  *
  * @updated 2.16.4 - 2015-03-15 - fixes View term links in admin side
  * @updated 2.16.6 - 2015-04-12 - adapted for JSON REST API (in dev)
+ * @updated 2.20.3 - 2015-09-24 - tag links from multilingual group like trademark
  *
  */
 
@@ -476,6 +477,11 @@ class XL_Permalinks_rules {
 
 				if ( $tag_langs ) {
 					$the_tag_lang = xili_language_trans_slug_qv ( $tag_langs[0]->slug );
+					$termlink = str_replace( $this->rew_reqtag, $the_tag_lang, $termlink);
+					return $termlink;
+				} else { // 2.20.3
+					// for tags grouped in multilingual group like trademark
+					$the_tag_lang = xili_language_trans_slug_qv ( $xili_language->get_default_slug() );
 					$termlink = str_replace( $this->rew_reqtag, $the_tag_lang, $termlink);
 					return $termlink;
 				}
