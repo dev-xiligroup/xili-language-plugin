@@ -1431,10 +1431,10 @@ class xili_language_admin extends xili_language {
 			$action=$_POST['action'];
 		}
 
-		if (isset($_GET['action'])) :
+		if ( isset($_GET['action']) )
 			$action=$_GET['action'];
+		if ( isset($_GET['term_id']) )
 			$term_id = $_GET['term_id'];
-		endif;
 
 
 		$theme_name = get_option("current_theme"); // full name
@@ -2030,15 +2030,20 @@ class xili_language_admin extends xili_language {
 			break;
 
 			default:
-				# do action set in importer functions - 2.20.3
-				if ( isset( $_POST ) )
-					do_action ( 'import_list_of_actions', $_POST );
+				# do action via filters  set in importer functions - 2.20.3
+				if ( isset( $_POST ) ) {
+					$optionmessage = apply_filters ( 'import_list_of_actions', '', $_POST );
+					if ( $optionmessage ) $msg = 1; // green
+				}
 			break;
 		}
 
+		$box_expert_title = ( has_filter ('clean_previous_languages_list') ) ?
+			__('Special settings and actions','xili-language') : __('Special settings (JetPack,...)','xili-language'); //2.20.3
+
 		add_meta_box('xili-language-box-3', __('Navigation menus','xili-language'), array(&$this,'on_box_expert'), $this->thehook4 , 'normal', 'high');
 		add_meta_box('xili-language-sidebox-special', __('Special','xili-language'), array(&$this,'on_sidebox_for_specials'), $this->thehook4 , 'normal', 'high');
-		add_meta_box('xili-language-box-3-2', __('Special settings (JetPack,...)','xili-language'), array(&$this,'on_box_plugins_expert'), $this->thehook4 , 'normal', 'high');
+		add_meta_box('xili-language-box-3-2', $box_expert_title , array(&$this,'on_box_plugins_expert'), $this->thehook4 , 'normal', 'high');
 		$themessages[1] = $optionmessage ;
 		$data = array(
 			'action'=>$action, 'list_in_nav_enable' => $this->xili_settings['in_nav_menu']

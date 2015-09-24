@@ -129,8 +129,8 @@ function recreate_links_from_pll( $messages = array() ) {
 		}
 
 		$xili_language->xili_settings['pll_cleaned'] = 2;
-
-		$message =  sprintf (__( '%d multilingual groups and %d  posts were updated !', 'xili-language'), $g, $i );
+		$expert_page = '<a href="' . admin_url('options-general.php?page=language_expert') . '" >' . __( 'Settings for experts', 'xili-language' ) . '</a>';
+		$message =  sprintf ( __( '%1$d multilingual groups and %2$d  posts were updated ! Go to page: %3$s to continue importation process.', 'xili-language' ), $g, $i, $expert_page );
 
 	} else {
 		$xili_language->xili_settings['pll_cleaned'] = 99;
@@ -194,7 +194,7 @@ add_filter ( 'previous_install_list_messages', 'pll_list_messages', 10, 2 ); // 
 function pll_copy_taxonomies_datas() {
 	if ( ! current_user_can('activate_plugins') )
 	wp_die( __( 'You do not have sufficient permissions to manage plugins for this site.', 'xili-language') );
-
+	$results = array( __('no imported categories', 'xili-language') );
 	$term_ids = array();
 	register_taxonomy( 'term_translations', null , array('label' => false, 'public' => false, 'query_var' => false, 'rewrite' => false));
 	foreach ( get_terms( 'term_translations', array('hide_empty'=>false)) as $term ) {
@@ -212,12 +212,16 @@ function pll_copy_taxonomies_datas() {
 			}
 		}
 	}
-	if ( !empty( $term_ids['category'] ) ) update_option( 'xili_language_pll_term_category_groups', $term_ids['category'] );
+	if ( !empty( $term_ids['category'] ) ) {
+		update_option( 'xili_language_pll_term_category_groups', $term_ids['category'] );
+		$results[0] = __('category fields imported for xili-dictionary', 'xili-language');
+	}
 	if ( !empty( $term_ids['post_tag'] ) ) {
 		update_option( 'xili_language_pll_term_post_tag_groups', $term_ids['post_tag'] );
 
 		if ( class_exists('xili_tidy_tags') ) {
 			global $xili_tidy_tags;
+			$qu = 0;
 			// create groups - wp_update_term
 			foreach ( $term_ids['post_tag'] as $pll_links_group) {
 				if ( count( $pll_links_group['pll_links'] ) > 1 ) {
@@ -242,10 +246,13 @@ function pll_copy_taxonomies_datas() {
 					$target_lang = $pll_languages[$key_pll];
 					$res = term_exists ( $target_lang, $xili_tidy_tags->tidy_taxonomy ); // xtt group in this lang
 					wp_set_object_terms((int) $linked_term_id, (int) $res ['term_id'], $xili_tidy_tags->tidy_taxonomy, false );
+					$qu++;
 				}
 			}
+			$results[] = sprintf(__('%s post tags assigned to language for xili-tidy-tags', 'xili-language'), $qu ) ;
 		}
 	}
+	return implode (', ', $results );
 }
 
 /**
@@ -356,11 +363,19 @@ function pll_list_forms_action() {
 			case 2: // 2 = achieved
 
 				$label = __( 'Launch taxonomy importation.','xili-language' );
-
-				if ( !class_exists( 'xili_tidy_tags' ) && get_terms ( 'post_tag', array ( 'hide_empty' => false ) ) ) {
-					$label .= '<br />(<em><strong>' . __( 'Be aware that xili_tidy_tags plugin is not active. Multilingual importation will be incomplete !', 'xili-language' ) . '</strong></em> )';
+				if ( get_terms ( 'post_tag', array ( 'hide_empty' => false ) ) ) {
+					if ( !class_exists( 'xili_tidy_tags' ) ) {
+						$label .= '<br />(<em><strong>' . __( 'Be aware that xili-tidy-tags plugin is not active. Multilingual importation will be incomplete !', 'xili-language' ) . '</strong></em> )';
+					} else {
+						// test and create post_tag groups
+						if ( version_compare( XILITIDYTAGS_VER, '1.11.1', '>' ) ) {
+							global $xili_tidy_tags_admin ;
+							$xili_tidy_tags_admin->xili_langs_import_terms();
+						} else {
+							$label .= '<br />(<em><strong>' . __( 'Be aware that xili-tidy-tags plugin version is not recent. Update it or goto xili-tidy-tags settings page to create language group !', 'xili-language' ) . '</strong></em> )';
+						}
+					}
 				}
-
 				$submit_id = 'fire_taxo_step';
 				break;
 
@@ -426,8 +441,8 @@ function pll_list_of_actions( $message, $post_array ) {
 		switch ( $action ) {
 			case 'fire_taxo_step': // 2 = achieved
 				$step = 3;
-				pll_copy_taxonomies_datas();
-				$message = __('Importation of taxonomies multilingual features done.', 'xili-language');
+				$res = pll_copy_taxonomies_datas();
+				$message = sprintf( __( 'Importation of taxonomies multilingual features done. ( %s )', 'xili-language' ), $res );
 				break;
 
 			case 'fire_clean_db_step':

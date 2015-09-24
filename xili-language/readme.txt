@@ -2,7 +2,7 @@
 Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: theme,post,plugin,posts,page,category,admin,multilingual, bilingual, taxonomy,dictionary,.mo file,.po file,localization, widget, language, international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack
-Requires at least: 4.2.4
+Requires at least: 4.1.4
 Tested up to: 4.3
 Stable tag: 2.20.3
 License: GPLv2
