@@ -4910,34 +4910,49 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	 */
 	function xili_language_widgets_head_style( $style_lines ) {
 
-		$style_lines .= '<!--- Xili-language widgets loop css -->' . "\n"; // iteration
-		$style_lines .= '<style type="text/css">';
-		// same in widget function
-		//$style_lines .= '.widget.xili-language_Widgets {margin-bottom:10px}'. "\n";
-		//$style_lines .= '.xililanguagelist {list-style: none; margin:0}'. "\n";
-		//$style_lines .= '.xililanguagelist li {display:inline-block;}'. "\n";
-		//$style_lines .= '.xililanguagelist li a {display:block;}'. "\n";
+		if ( current_theme_supports( 'custom_xili_flag' ) ) {
+			$style_lines .= '<!--- Xili-language widgets loop css -->' . "\n"; // iteration
+			$style_lines .= '<style type="text/css">';
+			// same in widget function
+			//$style_lines .= '.widget.xili-language_Widgets {margin-bottom:10px}'. "\n";
+			//$style_lines .= '.xililanguagelist {list-style: none; margin:0}'. "\n";
+			//$style_lines .= '.xililanguagelist li {display:inline-block;}'. "\n";
+			//$style_lines .= '.xililanguagelist li a {display:block;}'. "\n";
 
-		// loop lines / lang
-		$i = 0;
-		$loop_style_lines = "";
-		foreach ( $this->langs_ids_array as $slug => $id ) {
-			if ( $i == 0 ) {
-				$img_infos = $this->xili_multilingual_flag( array( 'lang'=>$slug, 'src' => 1)); // return size values
-				$i++;
+			// loop lines / lang
+			$i = 0;
+			$loop_style_lines = "";
+			foreach ( $this->langs_ids_array as $slug => $id ) {
+				if ( $i == 0 ) {
+					$img_infos = $this->xili_multilingual_flag( array( 'lang'=>$slug, 'src' => 1)); // return size values
+					$i++;
+				}
+				$url = do_shortcode( "[xili-flag lang={$slug}]" ) ;
+				if ( !$url ) { // temporary search a file in plugin itself
+					$url = $this->plugin_url . '/xili-css/flags/' .  $slug .'.png';
+					if ( !file_exists( $this->plugin_path . 'xili-css/flags/'.  $slug .'.png' ) ) {
+						$url = $this->plugin_url . '/xili-css/flags/' .  'xx_xx' .'.png'; // show a dummy image
+					}
+				}
+				$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a {background-image: url('{$url}') }\n";
+				$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a:hover {background-image: url('{$url}') !important;}\n";
 			}
-			$url = do_shortcode( "[xili-flag lang={$slug}]" ) ;
-			$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a {background-image: url('{$url}') }\n";
-			$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a:hover {background-image: url('{$url}') !important;}\n";
-		}
-		// common lines
-		$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"]:hover {background-color:#f5f5f5;}' ."\n";
-		$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a {width:'. ((int)$img_infos[1] + 2) .'px; height:'. ((int)$img_infos[2] + 2) .'px; background:transparent no-repeat center 1px; margin:0 1px;}' ."\n";
-		$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a:hover {background:transparent no-repeat; }' ."\n";
-		// loop lines after
-		$style_lines .= $loop_style_lines ;
+			// common lines
+			$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"]:hover {background-color:#f5f5f5;}' ."\n";
+			$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a {background:transparent no-repeat center 1px; margin:0 1px;}' ."\n";
+			if ( $img_infos ) {
+				$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a {width:'. ((int)$img_infos[1] + 2) .'px; height:'. ((int)$img_infos[2] + 2) .'px;}' ."\n";
+			} else { // no flags detected in theme or plugin
+				$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a {width:18px; height:13px;}' ."\n";
+			}
+			$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a:hover {background:transparent no-repeat; }' ."\n";
+			// loop lines after
+			$style_lines .= $loop_style_lines ;
 
-		$style_lines .= '</style>';
+			$style_lines .= '</style>';
+		} else {
+			$style_lines .= '<!--- Xili-language - this theme do not support custom xili-flags -->' . "\n";
+		}
 		return $style_lines;
 	}
 

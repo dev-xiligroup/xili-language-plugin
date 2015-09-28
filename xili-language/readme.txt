@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/extend/plugins/xili-language/changelog/) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.20.3 =
-* Last Updated 2015-09-23
+= Version 2.21.0 =
+* Last Updated 2015-09-28
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -309,8 +309,11 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 
 == Changelog ==
 
+= version 2.21.0 (2015-09-28) =
+* widget xili-language list now has 3 styles (list, with images/flags, both images+texts) - generates css only if widget(s) active and visible
+* more deep tests to recover Polylang previous install with xili-tidy-tags (1.11.2) and xili-dictionary (2.12.2+) (see https://github.com/dev-xiligroup/) - the process is semi-automatic and needs a special preparation (backup, activation,...) Soon docs... Ask in support form.
 = version 2.20.3 (2015-09-17) =
-* new option to add widget form, visibility rules according current language.
+* new option to add in widgets form, visibility rules according current language.
 
 > this new option is not set by default because in some multilingual themes, the visibility according language is set at the sidebar level (and not at each widget level).
 
@@ -682,7 +685,7 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 20150917 - MS - dev.xiligroup.com
+© 20150928 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.

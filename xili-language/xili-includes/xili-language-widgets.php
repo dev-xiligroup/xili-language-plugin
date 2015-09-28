@@ -501,13 +501,22 @@ class xili_language_Widgets extends WP_Widget {
 
 	?>
 	<br /><label for="<?php echo $this->get_field_id('hidden'); ?>"><?php _e('Do not display hidden languages:','xili-language'); ?>&nbsp;<input id="<?php echo $this->get_field_id('hidden'); ?>" name="<?php echo $this->get_field_name('hidden'); ?>" type="checkbox" value="hidden" <?php checked( $hidden, 'hidden' ); ?> /></label>
-	<br />
-	<label for="<?php echo $this->get_field_id('flagstyle'); ?>"><?php _e('Display style:','xili-language'); ?>
+	<hr />
+	<label for="<?php echo $this->get_field_id('flagstyle'); ?>"><?php _e('Display style:', 'xili-language'); ?>
 	<select name="<?php echo $this->get_field_name('flagstyle'); ?>" id="<?php echo $this->get_field_id('flagstyle'); ?>">
-		<option value="" <?php selected( $flagstyle, '' ); ?> ><?php _e('only text','xili-language'); ?></option>
-		<option value="flagstyle" <?php selected( $flagstyle, 'flagstyle'); ?> ><?php _e('with flag','xili-language'); ?></option>
-		<option value="flagstyletext" <?php selected( $flagstyle, 'flagstyletext'); ?> ><?php _e('with flag and text','xili-language'); ?></option>
+		<option value="" <?php selected( $flagstyle, '' ); ?> ><?php _e('only text', 'xili-language'); ?></option>
+		<option value="flagstyle" <?php selected( $flagstyle, 'flagstyle'); ?> ><?php _e('with flag', 'xili-language'); ?></option>
+		<option value="flagstyletext" <?php selected( $flagstyle, 'flagstyletext'); ?> ><?php _e('with flag and text', 'xili-language'); ?></option>
 	</select></label>
+	<?php
+	echo '<br /><small>';
+	if ( current_theme_supports( 'custom_xili_flag' ) ) {
+		_e( 'The current theme supports flags, see Media and Appearance xili flag options submenu.', 'xili-language' );
+	} else {
+		printf( __( 'The current theme needs to support xili_flags (%s).', 'xili-language' ), 'custom_xili_flag');
+	}
+	echo '</small>';
+	?>
 	<br /><br />
 	<fieldset style="margin:2px; padding:3px; border:1px solid #ccc;"><legend><?php _e('HTML tags of list','xili-language'); ?></legend>
 	<label title="<?php esc_attr_e('if flag style, do not erase xililanguagelist class','xili-language'); ?>" for="<?php echo $this->get_field_id('beforelist'); ?>"><?php _e('before list','xili-language'); ?></label>:
