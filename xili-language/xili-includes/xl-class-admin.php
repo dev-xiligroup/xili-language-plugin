@@ -434,8 +434,8 @@ class xili_language_admin extends xili_language {
 	function xili_tool_bar_links() {
 
 		$link = plugins_url( 'images/xililang-logo-24.png', $this->file_file ) ;
-		$alt = __( 'Languages by ©xiligroup' ,'xili-language');
-		$title = __( 'Languages menu by ©xiligroup' ,'xili-language');
+		$alt = esc_attr__( 'Languages by ©xiligroup' ,'xili-language');
+		$title = esc_attr__( 'Languages menu by ©xiligroup' ,'xili-language');
 		// Add the Parent link.
 		$this->add_node_if_version( array(
 			'title' => sprintf("<img src=\"%s\" alt=\"%s\" title=\"%s\" />", $link, $alt, $title ),
@@ -1120,7 +1120,7 @@ class xili_language_admin extends xili_language {
 	 *
 	 */
 	function localize_admin_js( $case_news, $news_id ) {
-		$about = __('Docs about xili-language', 'xili-language');
+		$about = esc_attr__('Docs about xili-language', 'xili-language');
 
 		//$pointer_Offset = '';
 		$pointer_edge = '';
@@ -3509,7 +3509,7 @@ class xili_language_admin extends xili_language {
 					<h4><a href="<?php echo $this->repositorylink; ?>" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
 							<img style="vertical-align:bottom; margin-right:10px" src="<?php echo plugins_url( 'images/xililang-logo-32.png', $this->file_file ) ; ?>" alt="xili-language logo"/>
 						</a>&nbsp;&nbsp;&nbsp;©&nbsp;
-						<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2015 - v. <?php echo XILILANGUAGE_VER; ?>
+						<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php esc_attr_e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2015 - v. <?php echo XILILANGUAGE_VER; ?>
 					</h4>
 
 				</div>
@@ -4563,7 +4563,7 @@ class xili_language_admin extends xili_language {
 				if ( count ( $key_slug ) == 1 ) {
 					$line .= '<td>' . $alias_val . '</td>';
 				} else {
-					$line .= sprintf( '<td><span class="red-alert" title="%s">', esc_html('the default alias needs to be defined', 'xili-language' ) ) . $alias_val . '</span></td>';
+					$line .= sprintf( '<td><span class="red-alert" title="%s">', esc_attr('the default alias needs to be defined', 'xili-language' ) ) . $alias_val . '</span></td>';
 				}
 			}
 
@@ -4858,7 +4858,7 @@ class xili_language_admin extends xili_language {
 
 			if ( $otherpost && $language->slug != $postlang ) {
 				$linepost = $this->temp_get_post ( $otherpost );
-				$display_link = sprintf('<a href="%s" title="%s" target="_blank" >' . $otherpost . '</a>', get_permalink($otherpost), __('Display this post', 'xili-language') ); // 2.18.2
+				$display_link = sprintf('<a href="%s" title="%s" target="_blank" >' . $otherpost . '</a>', get_permalink($otherpost), esc_attr__('Display this post', 'xili-language') ); // 2.18.2
 
 				if ( $linepost ) {
 
@@ -4902,10 +4902,10 @@ class xili_language_admin extends xili_language {
 				} else {
 					// delete post_meta - not target post
 					delete_post_meta ( $post_ID, QUETAG.'-'.$language->slug );
-					$search = '<a class="hide-if-no-js" onclick="findPosts.open( \'lang[]\',\''.$language->slug.'\' );return false;" href="#the-list" title="'.__( 'Search linked post', 'xili-language' ).'"> '.__( 'Search', 'xili-language' ).'</a>';
+					$search = '<a class="hide-if-no-js" onclick="findPosts.open( \'lang[]\',\''.$language->slug.'\' );return false;" href="#the-list" title="'.esc_attr__( 'Search linked post', 'xili-language' ).'"> '.__( 'Search', 'xili-language' ).'</a>';
 
 					echo '<tr'.$tr_class.'><th>'.$checkline.'</th><td>'. $hiddeninput.' </td><td>'.__('not yet translated', 'xili-language')
-						.'&nbsp;&nbsp;'.sprintf( '<a href="%s" title="%s">'.$creation_edit.'</a>', 'post.php?post='.$post_ID.'&action=edit&xlaction=transcreate&xllang='.$language->slug, sprintf(__('For create a linked draft translation in %s', 'xili-language'), $language->name )  ). '&nbsp;|&nbsp;'.  $search
+						.'&nbsp;&nbsp;'.sprintf( '<a href="%s" title="%s">'.$creation_edit.'</a>', 'post.php?post='.$post_ID.'&action=edit&xlaction=transcreate&xllang='.$language->slug, sprintf(esc_attr__('For create a linked draft translation in %s', 'xili-language'), $language->name )  ). '&nbsp;|&nbsp;'.  $search
 						.'</td><td>&nbsp;</td><td>'. $search
 						. '&nbsp;'
 						. '</td></tr>';
@@ -4946,7 +4946,7 @@ class xili_language_admin extends xili_language {
 
 				if ( in_array( $post->post_status, array ( 'draft', 'pending', 'future', 'publish', 'private' ) ) && $postlang != '' ) {
 
-					$search = '<a class="hide-if-no-js" onclick="findPosts.open( \'lang[]\',\''.$language->slug.'\' );return false;" href="#the-list" title="'.__( 'Search linked post', 'xili-language' ).'"> '.__( 'Search' ).'</a>';
+					$search = '<a class="hide-if-no-js" onclick="findPosts.open( \'lang[]\',\''.$language->slug.'\' );return false;" href="#the-list" title="'.esc_attr__( 'Search linked post', 'xili-language' ).'"> '.__( 'Search' ).'</a>';
 
 					echo '<tr'.$tr_class.'><th>'.$checkline.'</th><td>' . $hiddeninput .'</td><td>'
 					. sprintf(__('not yet translated in %s', 'xili-language'), $language->description )
@@ -4996,11 +4996,11 @@ class xili_language_admin extends xili_language {
 	function post_status_addons ( $post_ID, $curlang ) {
 		$notundefinedlang = ( $curlang != "" ) ? $curlang : $this->authorbrowserlanguage; // set in left box
 		$un_id = ( $curlang == "" ) ? '&nbsp;('. $post_ID .')' : '';
-		$refresh = sprintf( '<a href="%s" title="%s">%s</a> ', 'post.php?post='.$post_ID.'&action=edit&xlaction=refresh', __('Refresh links series', 'xili-language'), __('Refresh links', 'xili-language') );
+		$refresh = sprintf( '<a href="%s" title="%s">%s</a> ', 'post.php?post='.$post_ID.'&action=edit&xlaction=refresh', esc_attr__('Refresh links series', 'xili-language'), __('Refresh links', 'xili-language') );
 		?>
 		<p><?php echo $refresh; ?>
 		<?php if ( '' != $curlang && current_user_can ('xili_language_clone_tax') && is_object_in_taxonomy( get_post_type($post_ID), 'category') ) { //2.6.3
-			printf( '&nbsp|&nbsp;<a href="%s" title="%s">%s</a> ', 'post.php?post='.$post_ID.'&action=edit&xlaction=propataxo', __('Propagate categories', 'xili-language'), __('Propagate categories', 'xili-language') );
+			printf( '&nbsp|&nbsp;<a href="%s" title="%s">%s</a> ', 'post.php?post='.$post_ID.'&action=edit&xlaction=propataxo', esc_attr__('Propagate categories', 'xili-language'), __('Propagate categories', 'xili-language') );
 		} ?></p>
 		<label for="xili_language_check" class="selectit"><?php _e( 'set post to:', 'xili-language') ?>&nbsp;<input id="xili_language_check" name="xili_language_set" type="radio" value="undefined" <?php checked( $notundefinedlang, "", true ); ?> />&nbsp;<?php _e('undefined','xili-language'); echo $un_id; ?></label>
 		<?php
@@ -6057,10 +6057,10 @@ class xili_language_admin extends xili_language {
 				$output .= ', ';
 
 			if ( current_user_can ('activate_plugins') ) {
-				$output .= '<span class="curlang lang-'. $term->slug .'"><a href="' . 'options-general.php?page=language_page'.'" title="'.sprintf(__('Post in %s. Link to see list of languages…','xili-language'), $term->description ) .'" >'; /* see more precise link ?*/
+				$output .= '<span class="curlang lang-'. $term->slug .'"><a href="' . 'options-general.php?page=language_page'.'" title="'.sprintf(esc_attr__('Post in %s. Link to see list of languages…','xili-language'), $term->description ) .'" >'; /* see more precise link ?*/
 				$output .= $term->name .'</a></span>';
 			} else {
-				$output .= '<span title="'. sprintf(__('Post in %s.','xili-language'), $term->description ) .'" class="curlang lang-'. $term->slug .'">' . $term->name . '</span>' ;
+				$output .= '<span title="'. esc_attr( sprintf(__('Post in %s.','xili-language'), $term->description ) ) .'" class="curlang lang-'. $term->slug .'">' . $term->name . '</span>' ;
 			}
 
 			$output .= '<input type="hidden" id="'.QUETAG.'-'.$id.'" value="'.$term->slug.'" >'; // for Quick-Edit - 1.8.9
@@ -6649,11 +6649,11 @@ class xili_language_admin extends xili_language {
 
 		if ( $mode == "list" ) {
 
-			$output = ( $thelist == array() ) ? '<br /><small><span style="color:black" title="'.__("No translations saved in theme's .mo files","xili-dictionary").'">**</span></small>' : '<br /><small><span style="color:green" title="'.__("Original with translations saved in theme's files: ","xili-dictionary").'" >'. implode(' ',$thelist).'</small></small>';
+			$output = ( $thelist == array() ) ? '<br /><small><span style="color:black" title="'.esc_attr__("No translations saved in theme's .mo files","xili-dictionary").'">**</span></small>' : '<br /><small><span style="color:green" title="'.__("Original with translations saved in theme's files: ","xili-dictionary").'" >'. implode(' ',$thelist).'</small></small>';
 
 			if ( is_multisite() ) {
 
-				$outputsite = ( $thelistsite == array()) ? '<br /><small><span style="color:black" title="'.__("No translations saved in site's .mo files","xili-dictionary").'">**</span></small>' : '<br /><small><span style="color:green" title="'.__("Original with translations saved in site's files: ","xili-dictionary").'" >'. implode(', ',$thelistsite).'</small></small>';
+				$outputsite = ( $thelistsite == array()) ? '<br /><small><span style="color:black" title="'.esc_attr__("No translations saved in site's .mo files","xili-dictionary").'">**</span></small>' : '<br /><small><span style="color:green" title="'.__("Original with translations saved in site's files: ","xili-dictionary").'" >'. implode(', ',$thelistsite).'</small></small>';
 
 			}
 

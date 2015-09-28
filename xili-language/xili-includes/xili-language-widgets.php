@@ -398,8 +398,10 @@ class xili_language_Widgets extends WP_Widget {
 
 	function __construct() {
 
-		$widget_ops = array('classname' => 'xili-language_Widgets', 'description' => __( "List of available languages by xili-language plugin", 'xili-language' ).' © v. '.XILILANGUAGE_VER );
-		parent::__construct('xili_language_widgets', '[©xili] ' . __("List of languages", 'xili-language'), $widget_ops);
+		$widget_ops = array('classname' => 'xili-language_Widgets',
+			'description' => __( "List of available languages by xili-language plugin", 'xili-language' ).' © v. '.XILILANGUAGE_VER );
+		parent::__construct('xili_language_widgets',
+			'[©xili] ' . __("List of languages", 'xili-language'), $widget_ops );
 		$this->alt_option_name = 'xili_language_widgets_options';
 	}
 
@@ -426,7 +428,15 @@ class xili_language_Widgets extends WP_Widget {
 			if ( function_exists( 'xili_language_list' ) ) {
 				$hidden = ( $instance['hidden'] == 'hidden' ) ? true : false ;
 				$output .= $instance['beforelist'];
-				$output .= xili_language_list( $instance['beforeline'], $instance['afterline'], $instance['theoption'], false, $hidden );
+				// $output .= xili_language_list( $instance['beforeline'], $instance['afterline'], $instance['theoption'], false, $hidden );
+				$output .= xili_language_list( array(
+					'before' => $instance['beforeline'],
+					'after' => $instance['afterline'],
+					'option' => $instance['theoption'],
+					'echo' => false,
+					'hidden' => $instance['hidden'],
+					'flagstyle' => $instance['flagstyle'],
+					) );
 				$output .= $instance['afterlist'];
 			}
 			$output .= $after_widget;
@@ -446,6 +456,7 @@ class xili_language_Widgets extends WP_Widget {
 		$instance['thecondition'] = strip_tags(stripslashes($new_instance['thecondition'])); // 1.8.4
 		$instance['theparams'] = strip_tags(stripslashes($new_instance['theparams']));
 		$instance['hidden'] = isset($new_instance['hidden']) ? $new_instance['hidden'] : '' ;  // 2.4.0 checkbox
+		$instance['flagstyle'] = $new_instance['flagstyle']; // 2.20.3
 		return $instance;
 	}
 
@@ -460,6 +471,7 @@ class xili_language_Widgets extends WP_Widget {
  		$thecondition =  isset($instance['thecondition']) ? stripslashes($instance['thecondition']) : '' ;
  		$theparams =  isset($instance['theparams']) ? stripslashes($instance['theparams']) : '' ;
  		$hidden = isset($instance['hidden']) ? $instance['hidden'] : '' ; // 1.8.9.1
+ 		$flagstyle = isset($instance['flagstyle']) ? $instance['flagstyle'] : '' ; // 2.20.3
 
 	?>
 	<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
@@ -477,8 +489,7 @@ class xili_language_Widgets extends WP_Widget {
 		echo '<br /><label for="'.$this->get_field_id('theoption').'">'.__('Type','xili-language').':';
 		echo '<select name="'.$this->get_field_name('theoption').'" id="'.$this->get_field_id('theoption').'">';
 		foreach ($xili_language->langs_list_options as $typeoption) {
-			if ( false === strpos( $typeoption[0], 'navmenu' ) ) { // 2.0.1
-				//$selectedoption = ($theoption == $typeoption[0]) ? 'selected = "selected"':'';
+			if ( empty($typeoption[0]) || false === strpos( $typeoption[0], 'navmenu' ) ) { // 2.0.1
 				echo '<option value="'.$typeoption[0].'" '. selected( $theoption, $typeoption[0], false ) . ' >' . $typeoption[1] .'</option>';
 			}
 		}
@@ -488,10 +499,17 @@ class xili_language_Widgets extends WP_Widget {
 	}
 
 	?>
-	<br /><label for="<?php echo $this->get_field_id('hidden'); ?>"><?php _e('Do not display hidden languages:','xili-language'); ?>&nbsp;<input id="<?php echo $this->get_field_id('hidden'); ?>" name="<?php echo $this->get_field_name('hidden'); ?>" type="checkbox" value="hidden" <?php echo ($hidden == 'hidden') ? 'checked="checked"' : '' ; ?> /></label>
+	<br /><label for="<?php echo $this->get_field_id('hidden'); ?>"><?php _e('Do not display hidden languages:','xili-language'); ?>&nbsp;<input id="<?php echo $this->get_field_id('hidden'); ?>" name="<?php echo $this->get_field_name('hidden'); ?>" type="checkbox" value="hidden" <?php checked( $hidden, 'hidden' ); ?> /></label>
+	<br />
+	<label for="<?php echo $this->get_field_id('flagstyle'); ?>"><?php _e('Display style:','xili-language'); ?>
+	<select name="<?php echo $this->get_field_name('flagstyle'); ?>" id="<?php echo $this->get_field_id('flagstyle'); ?>">
+		<option value="" <?php selected( $flagstyle, '' ); ?> ><?php _e('only text','xili-language'); ?></option>
+		<option value="flagstyle" <?php selected( $flagstyle, 'flagstyle'); ?> ><?php _e('with flag','xili-language'); ?></option>
+		<option value="flagstyletext" <?php selected( $flagstyle, 'flagstyletext'); ?> ><?php _e('with flag and text','xili-language'); ?></option>
+	</select></label>
 	<br /><br />
 	<fieldset style="margin:2px; padding:3px; border:1px solid #ccc;"><legend><?php _e('HTML tags of list','xili-language'); ?></legend>
-	<label for="<?php echo $this->get_field_id('beforelist'); ?>"><?php _e('before list','xili-language'); ?></label>:
+	<label title="<?php esc_attr_e('if flag style, do not erase xililanguagelist class','xili-language'); ?>" for="<?php echo $this->get_field_id('beforelist'); ?>"><?php _e('before list','xili-language'); ?></label>:
 	<input class="widefat" id="<?php echo $this->get_field_id('beforelist'); ?>" name="<?php echo $this->get_field_name('beforelist'); ?>" type="text" value="<?php echo $beforelist; ?>" />
 
 	<label for="<?php echo $this->get_field_id('beforeline'); ?>"><?php _e('before line','xili-language'); ?></label>:
@@ -511,6 +529,89 @@ class xili_language_Widgets extends WP_Widget {
 	<?php
 	}
 }
+
+/**
+ * Insert style in <head>
+ * not in dropdown
+ *
+ * @since 2.20.3
+ *
+ */
+function xili_language_list_widget_style () {
+	if ( is_active_widget( false, false, 'xili_language_widgets') ) {
+		//
+		$insert_style = array();
+		$styletext = array();
+		if ( $widgets_xll = get_option( 'widget_xili_language_widgets' ) ) {
+			foreach ( $widgets_xll as $key => $one_xll ) {
+				if ( isset( $one_xll['flagstyle'] ) && in_array( $one_xll['flagstyle'],  array ('flagstyle', 'flagstyletext' ) ) ) {
+					$insert_style[] = $key;
+					$styletext[$key] = ( $one_xll['flagstyle'] == 'flagstyletext' ) ? true : false ;
+				}
+			}
+		}
+		if ( $insert_style != array() ) {
+			//
+			$style_lines = '<!--- Xili-language widgets css -->' . "\n";
+			$style_lines .= '<style type="text/css">';
+
+			$style_lines .= '.widget.xili-language_Widgets {margin-bottom:10px}'. "\n"; // depends theme
+			$style_lines .= '.xililanguagelist {list-style: none; margin:0}'. "\n";
+			$style_lines .= '.xililanguagelist li a {display:block;}'. "\n";
+			$style_lines .= '</style>';
+
+			/**
+			 * Filter whether widgets need commun style css/js in head.
+			 *
+			 * @since 2.20.3
+			 *
+			 * @param int       ID of the active widget
+			 */
+			echo apply_filters ( 'xili_language_widgets_head', $style_lines );
+			foreach ( $insert_style as $key ) {
+				/**
+ 				 * Filter action whether a widget needs flag css.
+				 *
+				 * @since 2.20.3
+				 *
+				 * @param int       ID of the active widget
+				 */
+				do_action ( 'xili_language_widgets_list_head', $key, $styletext[$key] ); // see example below
+			}
+		}
+	}
+}
+add_action( 'wp_head', 'xili_language_list_widget_style', 13 ); // after menu style
+
+
+/**
+ * Insert style in <head> for one instanciation
+ *
+ *
+ * @since 2.20.3
+ *
+ */
+function xili_language_widgets_head_test ( $key,  $styletext ) {
+	$widget_uid = 'xili_language_widgets-' . $key;
+	$name = is_active_widget( false, $widget_uid, 'xili_language_widgets');
+	if ( $name ) {
+		printf('<!--- Xili-language list widget ID %s in %s -->', $key, $name ); // only active and visible in sidebar with $name
+		$style_lines = '<style type="text/css">';
+		if ( $styletext ) {
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {text-indent:30px;}'. "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {width:100%; height:100%; background-position: left 1px; }'. "\n"; // cancel image size
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a:hover {background-position: left 2px !important; }'. "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li {display:list-item;}'. "\n";
+		} else {
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {text-indent:-9999px;}'. "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a:hover {background-position: center 2px !important;}' ."\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li {display:inline-block;}'. "\n";
+		}
+		$style_lines .= '</style>';
+		echo $style_lines;
+	}
+}
+add_action( 'xili_language_widgets_list_head', 'xili_language_widgets_head_test', 10, 2 );
 
 /**
  * Categories widget class with counter according current language

@@ -427,18 +427,19 @@ class xili_language {
 
 		$this->is_permalink = ( '' == get_option( 'permalink_structure' ) ) ? false : true; // 2.8.4
 
-		add_action( 'init', array(&$this,'init_plugin_textdomain'), 10 ); // 2.20  changed to init
-		add_action( 'init', array(&$this,'init_theme_textdomain'), 10 ); // 2.20  changed to 10
 		add_action( 'init', array(&$this,'init_and_register_language_post_taxonomy'), 9 );
-
 		add_action( 'init', array(&$this,'init_vars'), 9 ); //2.8.4 level 9 - these previous lines - to be before XD 130122
 
+		add_action( 'init', array(&$this,'init_plugin_textdomain'), 10 ); // 2.20  changed to init
+		add_action( 'init', array(&$this,'init_theme_textdomain'), 10 ); // 2.20  changed to 10
+		add_action( 'init', array(&$this,'init_translatable_vars'), 10 ); // 2.20.3
+
 		add_action( 'init', array(&$this,'add_link_taxonomy'), 13 ); // 1.8.5
+
 		/* special to detect theme changing since 1.1.9 */
 		add_action( 'switch_theme', array(&$this,'theme_switched') );
 
 		/* query filters */
-
 		add_filter( 'posts_join', array(&$this,'posts_join_tax_lang'), 10, 2 ); // 2.16.4
 		add_filter( 'posts_where', array(&$this,'posts_where_lang'), 10, 2 );
 
@@ -578,6 +579,8 @@ class xili_language {
 		add_action ( 'after_setup_theme', array(&$this,'bundled_themes_support_flag' ), 12 ); // bundled themes
 		// used if config.xml set an array of theme_mod values - 2.18.2
 		add_action ( 'after_setup_theme', array(&$this,'theme_mod_create_filters' ), 13 ); // if array theme_mod_to_be_filtered set before
+
+		add_action( 'xili_language_widgets_head', array(&$this,'xili_language_widgets_head_style' ) ); // 2.20.3 - global css
 		//
 		if ( $this->xili_settings['lang_permalink'] == 'updated' ) // 2.20
 			add_action ( 'after_setup_theme', array(&$this,'update_lang_permalink' ), 13 );
@@ -815,18 +818,6 @@ class xili_language {
 	 *
 	 */
 	function init_vars () {
-		// type of languages list see options in xili_language_list or navmenu - third param = title for option
-		$this->langs_list_options = array(
-			array('', __('Nav to home', 'xili-language'), __('Links redirect to home.', 'xili-language')),
-			array('typeone', __('Nav to home (w/o cur lang.)', 'xili-language'), __('Current language is not inserted and links redirect to home.', 'xili-language')),
-			array('typeonenew', __('Nav to Singular (w/o cur lang.)', 'xili-language'), __('Current language is not inserted and links redirect to post or page if exists in other languages.', 'xili-language')),
-			array('navmenu', __('Nav Menu', 'xili-language'), __('List of all languages are inserted and links redirect to home.', 'xili-language')),
-			array('navmenu-a', __('Nav Menu (w/o current lang.)', 'xili-language'), __('Current language is not inserted and links redirect to home.', 'xili-language')) ,
-			array('navmenu-1', __('Nav Menu Singular', 'xili-language'), __('List of all languages are inserted and links redirect to post or page if exists in other languages.', 'xili-language')),
-			array('navmenu-1a', __('Nav Menu Singular (w/o current lang.)', 'xili-language'), __('Current language is not inserted and links redirect to post or page if exists in other languages.', 'xili-language')),
-			array('navmenu-1ao', __('Nav Menu Singular (w/o curr. lang and if exists)', 'xili-language'), __('Current language is not inserted and links appears and redirect to post or page if exists in other languages.', 'xili-language'))
-		);
-
 
 		/* default values */
 		$wplang = $this->get_WPLANG();
@@ -961,6 +952,26 @@ class xili_language {
 		return get_terms(TAXONAME, array('hide_empty' => false, 'get' => 'all', 'cache_domain' => 'core2'.$cache_suffix));
 	}
 
+	/**
+	 * init localisable vars
+	 * fired after load_plugin_text_domain
+	 *
+	 * @since 2.20.3
+	 *
+	 */
+	function init_translatable_vars() {
+	// type of languages list see options in xili_language_list or navmenu - third param = title for option
+		$this->langs_list_options = array(
+			array('', __('Nav to home', 'xili-language'), esc_attr__('Links redirect to home.', 'xili-language')),
+			array('typeone', __('Nav to home (w/o cur lang.)', 'xili-language'), esc_attr__('Current language is not inserted and links redirect to home.', 'xili-language')),
+			array('typeonenew', __('Nav to Singular (w/o cur lang.)', 'xili-language'), esc_attr__('Current language is not inserted and links redirect to post or page if exists in other languages.', 'xili-language')),
+			array('navmenu', __('Nav Menu', 'xili-language'), esc_attr__('List of all languages are inserted and links redirect to home.', 'xili-language')),
+			array('navmenu-a', __('Nav Menu (w/o current lang.)', 'xili-language'), esc_attr__('Current language is not inserted and links redirect to home.', 'xili-language')) ,
+			array('navmenu-1', __('Nav Menu Singular', 'xili-language'), esc_attr__('List of all languages are inserted and links redirect to post or page if exists in other languages.', 'xili-language')),
+			array('navmenu-1a', __('Nav Menu Singular (w/o current lang.)', 'xili-language'), esc_attr__('Current language is not inserted and links redirect to post or page if exists in other languages.', 'xili-language')),
+			array('navmenu-1ao', __('Nav Menu Singular (w/o curr. lang and if exists)', 'xili-language'), esc_attr__('Current language is not inserted and links appears and redirect to post or page if exists in other languages.', 'xili-language'))
+		);
+	}
 	/**
 	 * Safe language term creation
 	 *
@@ -3317,12 +3328,10 @@ class xili_language {
 		}
 	}
 
-
-
 	/**
 	 * Set language plugin
 	 *
-	 * @updated 2.8.9 (plugins_loaded level 11)
+	 *
 	 */
 	function init_plugin_textdomain() {
 		load_plugin_textdomain('xili-language', false, 'xili-language/languages' );
@@ -3344,8 +3353,8 @@ class xili_language {
 		} else {
 			$this->domaindetectmsg = __('no load_theme_textdomain in functions.php','xili-language');
 		}
-
 	}
+
 	// deprecated
 	function searchpath( $path, $filename ) {
 		$this->xili_settings['langs_folder'] = str_replace( $this->get_template_directory, '', $path );
@@ -3579,18 +3588,32 @@ class xili_language {
 	 * @return list of languages of site for sidebar list.
 	 */
 	function xili_language_list( $before = '<li>', $after ='</li>', $option='', $echo = true, $hidden = false ) {
+		// new way to add parameters now and in future
+
+		if ( is_array ( $before ) ) {
+			$default = array (
+				'before' => '<li>>',
+				'after' => '</li>',
+				'option' => '',
+				'echo' => true,
+				'hidden' => false,
+				'flagstyle' => false,
+			);
+			extract( shortcode_atts ( $default, $before ));
+		}
+
 		global $post, $wp_query;
 		$lang_perma = $this->lang_perma; // since 2.1.1
 
 		$before_class = false ;
-		if ( substr($before,-2) == '.>' ) { // tips to add dynamic class in before
+		if ( substr($before,-2) == '.>' || !empty( $flagstyle ) ) { // tips to add dynamic class in before - now flagstyle since 2.20.3
 			$before_class = true ;
 			$before = str_replace('.>','>',$before);
 		}
 		$listlanguages = $this->get_listlanguages();
 		$a = ''; // 1.6.1
 
-		if ($option == 'typeone') {
+		if ( $option == 'typeone' ) {
 			/* the rules : don't display the current lang if set and add link of category if is_category()*/
 
 			foreach ($listlanguages as $language) {
@@ -3608,11 +3631,20 @@ class xili_language {
     							), $currenturl
 							);
 
-					$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'. __( $language->description, $this->thetextdomain ) .'</a>'.$after;
+					if ( $flagstyle ) { // 2.20.3
+						$beforee = '<li' . $class . '>';
+						$a .= $beforee .'<a href="'.$link.'" title="'
+						. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'.
+						 __( $language->description, $this->thetextdomain )
+						.'</a>' . $after;
+					} else {
+						$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
+						$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'. __( $language->description, $this->thetextdomain ) .'</a>' . $after;
+					}
 				}
 			}
 			$this->doing_list_language = false;
-		} elseif ($option == 'typeonenew') { // 2.1.0
+		} elseif ( $option == 'typeonenew' ) { // 2.1.0
 			/* the rules : don't display the current lang if set and add link of category if is_category() but display linked singular */
 
 			foreach ($listlanguages as $language) {
@@ -3621,7 +3653,7 @@ class xili_language {
 				$language_qv = $this->lang_slug_qv_trans ( $language->slug );
 				$display = ( $hidden && ( $this->xili_settings['lang_features'][$language->slug]['hidden'] == 'hidden' ) ) ? false : true ;
 				if ($language->slug != the_curlang() && $display ) {
-					$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
+
 					$class = ' class="lang-'.$language->slug.'"';
 
 					if ( ( is_single() || is_page() ) && !is_front_page() ) {
@@ -3639,7 +3671,19 @@ class xili_language {
 						$title = sprintf (__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x($language->description, 'linktitle', $this->thetextdomain ) ) ;
 					}
 
-					$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( $title ) .'" >'. __($language->description, $this->thetextdomain ) .'</a>' . $after;
+					if ( $flagstyle ) { // 2.20.3
+						$beforee = '<li' . $class . '>';
+						$a .= $beforee .'<a href="'.$link.'" title="'
+						. esc_attr( $title ) .'" >'
+						. __( $language->description, $this->thetextdomain )
+						.'</a>' . $after;
+					} else {
+						$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
+						$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'
+						. esc_attr( $title ) .'" >'
+						. __($language->description, $this->thetextdomain )
+						.'</a>' . $after;
+					}
 				}
 			}
 			$this->doing_list_language = false;
@@ -3747,12 +3791,20 @@ class xili_language {
     								), get_bloginfo('url')
 								);
 
-					$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
-					$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'. __( $language->description, $this->thetextdomain ) .'</a>' . $after;
+					if ( $flagstyle ) { // 2.20.3
+						$beforee = '<li' . $class . '>';
+						$a .= $beforee .'<a href="'.$link.'" title="'
+						. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'.
+						 __( $language->description, $this->thetextdomain )
+						.'</a>' . $after;
+					} else {
+						$beforee = ( $before_class && $before == '<li>' ) ? '<li class="lang-'.$language->slug.'" >': $before;
+						$a .= $beforee .'<a '.$class.' href="'.$link.'" title="'. esc_attr( sprintf(__($this->xili_settings['list_link_title']['post_selected'], $this->thetextdomain ), _x( $language->description, 'linktitle', $this->thetextdomain ) ) ) .'" >'. __( $language->description, $this->thetextdomain ) .'</a>' . $after;
+					}
 				}
 			}
 		}
-		if ($echo)
+		if ( $echo )
 			echo $a;
 		else
 			return $a;
@@ -4121,6 +4173,7 @@ class xili_language {
 	/**
 	 * For widget - the list of options above
 	 * @since 1.6.0
+	 * obsolete
 	 */
 	function xili_language_list_options () {
 		$this->langs_list_options = array( array('','default'), array('typeone','Type n°1'), array('typeonenew','Type for single') );
@@ -4550,15 +4603,15 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 						$text_title = translate( 'A similar post in %s', $this->thetextdomain ) ;
 						$language_name = translate( $description, $this->thetextdomain ) ;
 					}
-					$title = esc_html( sprintf (   $text_title  ,  $language_name ) ) ;
+					$title = esc_attr( sprintf (   $text_title  ,  $language_name ) ) ;
 				} else {
-					$title = esc_html( __( 'Error with target post #', 'xili-language' ) ) . $otherpost;
+					$title = esc_attr( __( 'Error with target post #', 'xili-language' ) ) . $otherpost;
 				}
 			}
 			$output = '<a href="' . get_permalink($otherpost) . '" title="' . $title . '">' . $content . '</a>';
 			/* this link above can be enriched by image or flag inside $content */
 		} else {
-			$output = '<a href="#" title="' . __('Error: other post not present !!!', 'xili-language') . '">' . $content . '</a>';
+			$output = '<a href="#" title="' . esc_attr__('Error: other post not present !!!', 'xili-language') . '">' . $content . '</a>';
 		}
 		return $output;
 	}
@@ -4830,8 +4883,8 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				if (file_exists( sprintf( $path, '', $path_root ))) {
 					$args[$one_language->slug] = array(
 						'path' => $path,
-						'height'				=> 16,
-						'width'					=> 11
+						'height'				=> 11,
+						'width'					=> 16
 					);
 				}
 			}
@@ -4846,6 +4899,48 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 			add_theme_support ( 'custom_xili_flag', $args );
 		}
 	}
+
+	/**
+	 * Insert style for flag in widget xili-language list
+	 *
+	 * called by action xili_language_widgets_head ( in widgets file)
+	 *
+	 * @since 2.20.3
+	 *
+	 */
+	function xili_language_widgets_head_style( $style_lines ) {
+
+		$style_lines .= '<!--- Xili-language widgets loop css -->' . "\n"; // iteration
+		$style_lines .= '<style type="text/css">';
+		// same in widget function
+		//$style_lines .= '.widget.xili-language_Widgets {margin-bottom:10px}'. "\n";
+		//$style_lines .= '.xililanguagelist {list-style: none; margin:0}'. "\n";
+		//$style_lines .= '.xililanguagelist li {display:inline-block;}'. "\n";
+		//$style_lines .= '.xililanguagelist li a {display:block;}'. "\n";
+
+		// loop lines / lang
+		$i = 0;
+		$loop_style_lines = "";
+		foreach ( $this->langs_ids_array as $slug => $id ) {
+			if ( $i == 0 ) {
+				$img_infos = $this->xili_multilingual_flag( array( 'lang'=>$slug, 'src' => 1)); // return size values
+				$i++;
+			}
+			$url = do_shortcode( "[xili-flag lang={$slug}]" ) ;
+			$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a {background-image: url('{$url}') }\n";
+			$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a:hover {background-image: url('{$url}') !important;}\n";
+		}
+		// common lines
+		$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"]:hover {background-color:#f5f5f5;}' ."\n";
+		$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a {width:'. ((int)$img_infos[1] + 2) .'px; height:'. ((int)$img_infos[2] + 2) .'px; background:transparent no-repeat center 1px; margin:0 1px;}' ."\n";
+		$style_lines .= '.xililanguagelist ' . 'li[class*="lang-"] a:hover {background:transparent no-repeat; }' ."\n";
+		// loop lines after
+		$style_lines .= $loop_style_lines ;
+
+		$style_lines .= '</style>';
+		return $style_lines;
+	}
+
 
 
 } /* **************** end of xili-language class ******************* */
@@ -5823,7 +5918,7 @@ function xili_nav_page_home_item( $item_output, $item, $depth, $args ) {
     		QUETAG => $curlang,
     	), get_option('siteurl') ) ;
 
-		$attributes  = ! empty( $item->attr_title ) ? ' title="'	. __( esc_attr( $item->attr_title ), $xili_language->thetextdomain ) .'"' : ''; //
+		$attributes  = ! empty( $item->attr_title ) ? ' title="'	. esc_attr__( $item->attr_title, $xili_language->thetextdomain ) .'"' : ''; //
 		$attributes .= ! empty( $item->target )		? ' target="'	. esc_attr( $item->target ) .'"' : '';
 		$attributes .= ! empty( $item->xfn )		? ' rel="'		. esc_attr( $item->xfn ) .'"' : '';
 		$attributes .= ! empty( $item->url )		? ' href="'		. esc_attr( $link ) .'"' : ''; // 2.9.22

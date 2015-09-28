@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xili_language\n"
 "Report-Msgid-Bugs-To: http://dev.xiligroup.com/\n"
-"POT-Creation-Date: 2015-09-24 17:19+0200\n"
-"PO-Revision-Date: 2015-09-24 17:24+0200\n"
+"POT-Creation-Date: 2015-09-25 16:33+0200\n"
+"PO-Revision-Date: 2015-09-26 13:41+0200\n"
 "Last-Translator: dev.xiligroup <contact@xiligroup.com>\n"
 "Language-Team: dev.xiligroup.com <contact@xiligroup.com>\n"
 "Language: fr_FR\n"
@@ -594,7 +594,7 @@ msgstr "Type&nbsp;"
 
 #: xili-includes/xili-language-widgets.php:491
 msgid "Do not display hidden languages:"
-msgstr "Ne pas afficher les languages à marquer :"
+msgstr "Ne pas afficher les languages à masquer :"
 
 #: xili-includes/xili-language-widgets.php:493
 msgid "HTML tags of list"
