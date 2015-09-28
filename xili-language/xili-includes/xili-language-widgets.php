@@ -426,7 +426,8 @@ class xili_language_Widgets extends WP_Widget {
 				$output .= $before_title . $title . $after_title;
 
 			if ( function_exists( 'xili_language_list' ) ) {
-				$hidden = ( $instance['hidden'] == 'hidden' ) ? true : false ;
+				//$hidden = ( $instance['hidden'] == 'hidden' ) ? true : false ;
+				$flagstyle = isset($instance['flagstyle']) ? $instance['flagstyle'] : '' ; // update
 				$output .= $instance['beforelist'];
 				// $output .= xili_language_list( $instance['beforeline'], $instance['afterline'], $instance['theoption'], false, $hidden );
 				$output .= xili_language_list( array(
@@ -435,7 +436,7 @@ class xili_language_Widgets extends WP_Widget {
 					'option' => $instance['theoption'],
 					'echo' => false,
 					'hidden' => $instance['hidden'],
-					'flagstyle' => $instance['flagstyle'],
+					'flagstyle' => $flagstyle,
 					) );
 				$output .= $instance['afterlist'];
 			}
