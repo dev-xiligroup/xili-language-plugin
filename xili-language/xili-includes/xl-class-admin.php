@@ -2059,7 +2059,7 @@ class xili_language_admin extends xili_language {
 			<?php if (0!= $msg ) { ?>
 			<div id="message" class="updated fade"><p><?php echo $themessages[$msg]; ?></p></div>
 			<?php } ?>
-			<form name="add" id="add" method="post" action="options-general.php?page=language_expert">
+			<form name="expert" id="expert" method="post" action="options-general.php?page=language_expert">
 				<?php wp_nonce_field('xili-language-expert'); ?>
 				<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
 				<?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );

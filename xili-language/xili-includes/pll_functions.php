@@ -391,7 +391,7 @@ function pll_list_forms_action() {
 		}
 		if ( $step < 4) {
 			echo sprintf( '<fieldset id="pll-box" class="box"><legend>%s</legend>', __("Polylang importation last actions",'xili-language') ) ;
-			wp_nonce_field( $submit_id );
+			wp_nonce_field( $submit_id , 'pll_cleaned' );
 			echo sprintf( '<label for="%s" class="selectit">&nbsp;', 'pll_action' );
 			echo sprintf( '<input name="%1$s" id="%1$s" type="checkbox" value="enable">', 'pll_action' );
 			echo sprintf( '&nbsp;%s</label>',$label);
@@ -436,7 +436,7 @@ function pll_list_of_actions( $message, $post_array ) {
 		}
 	}
 	if ( !$action ) return;
-	check_admin_referer( $action );
+	check_admin_referer( $action, 'pll_cleaned' );
 	if ( isset($post_array['pll_action']) ) {
 		switch ( $action ) {
 			case 'fire_taxo_step': // 2 = achieved
