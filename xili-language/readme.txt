@@ -3,8 +3,8 @@ Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: theme,post,plugin,posts,page,category,admin,multilingual, bilingual, taxonomy,dictionary,.mo file,.po file,localization, widget, language, international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack, polylang
 Requires at least: 4.1.4
-Tested up to: 4.3
-Stable tag: 2.21.0
+Tested up to: 4.4.1
+Stable tag: 2.21.1
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/extend/plugins/xili-language/changelog/) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.21.0 =
-* Last Updated 2015-09-28
+= Version 2.21.1 =
+* Last Updated 2016-01-24
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -311,6 +311,8 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 
 Also read latest news (and infos) on this [multilingual website](http://2014.extend.xiligroup.org/en/category/news/).
 
+= version 2.21.1 (2016-01-24) =
+* default mo behaviour (parent priority)
 = version 2.21.0 (2015-09-28) =
 * widget xili-language list now has 3 styles (list, with images/flags, both images+texts) - generates css only if widget(s) active and visible
 * more deep tests to recover Polylang previous install with xili-tidy-tags (1.11.2) and xili-dictionary (2.12.2+) (see https://github.com/dev-xiligroup/) - the process is semi-automatic and needs a special preparation (backup, activation,...) Soon docs... Ask in support form.
@@ -687,7 +689,7 @@ Also read latest news (and infos) on this [multilingual website](http://2014.ext
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 20150928 - MS - dev.xiligroup.com
+© 20160124 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.
@@ -749,4 +751,4 @@ More informations about other plugins in the website [dev.xiligroup.com](http://
 *The plugin is frequently updated*. Visit [Other versions](https://wordpress.org/extend/plugins/xili-language/developers/).
 See also the [dev.xiligroup Forum](http://dev.xiligroup.com/?forum=xili-language-plugin).
 
-© 2008-2015 - MS - dev.xiligroup.com
+© 2008-2016 - MS - dev.xiligroup.com

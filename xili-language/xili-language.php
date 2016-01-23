@@ -5,11 +5,12 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.20.3
+Version: 2.21.1
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
+# updated 151104 - 2.21.1 - default mo behaviour (parent) - 2016 infos
 # updated 150927 - 2.21.0 - includes detection of previous PLL install - source cleaned and improved
 # updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
 # updated 150914 - 2.20.2 - updated language list (Jetpack 3.7) - updated commun messages (pointer)
@@ -113,11 +114,11 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.20.3'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.21.1'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
-define('XILILANGUAGE_WP_TESTED', '4.3 Billie'); /* 2.17.1 - used in version pointer infos */
+define('XILILANGUAGE_WP_TESTED', '4.4 Clifford'); /* 2.17.1 - used in version pointer infos */
 define('XILILANGUAGE_PLL_TESTED', '1.7.9'); /* 2.20.3 - newest PLL tested */
 define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 
@@ -126,6 +127,13 @@ define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log
 /********************* the CLASS **********************/
 
 class xili_language {
+
+	/**
+	 * Holds the singleton instance of this class
+	 * @since 2.21.1
+	 * @var xili_language
+	 */
+	static $instance = false;
 
 	var $xili_settings; /* saved in options */
 
@@ -260,6 +268,12 @@ class xili_language {
 
 	public function __construct( $locale_method = false, $show = false, $class_admin = false ) {
 
+		if ( self::$instance && !is_admin() ) {
+			if ( defined ('WP_DEBUG') && WP_DEBUG )
+				error_log ('*** WARNING: xili_language class cannot be constructed twice time !!! Use global $xili_language ! ***');
+			return;
+		}
+		self::$instance = true ;
 		// 2.6 - class admin in separate file
 		$this->file_file = __FILE__ ; // see in construct below
 		$this->file_basename = basename(__FILE__) ;
@@ -427,6 +441,20 @@ class xili_language {
 
 		$this->is_permalink = ( '' == get_option( 'permalink_structure' ) ) ? false : true; // 2.8.4
 
+
+		/**
+		 * do_action - wp-settings.php - #337
+		 */
+		add_action ( 'after_setup_theme', array(&$this,'bundled_themes_support_flag' ), 12 ); // bundled themes
+		// used if config.xml set an array of theme_mod values - 2.18.2
+		add_action ( 'after_setup_theme', array(&$this,'theme_mod_create_filters' ), 13 ); // if array theme_mod_to_be_filtered set before
+		// if permalink
+		if ( $this->xili_settings['lang_permalink'] == 'updated' ) // 2.20
+			add_action ( 'after_setup_theme', array(&$this,'update_lang_permalink' ), 13 );
+
+		/**
+		 * do_action - wp-settings.php - #353
+		 */
 		add_action( 'init', array(&$this,'init_and_register_language_post_taxonomy'), 9 );
 		add_action( 'init', array(&$this,'init_vars'), 9 ); //2.8.4 level 9 - these previous lines - to be before XD 130122
 
@@ -436,12 +464,15 @@ class xili_language {
 
 		add_action( 'init', array(&$this,'add_link_taxonomy'), 13 ); // 1.8.5
 
+
 		/* special to detect theme changing since 1.1.9 */
 		add_action( 'switch_theme', array(&$this,'theme_switched') );
 
-		/* query filters */
-		add_filter( 'posts_join', array(&$this,'posts_join_tax_lang'), 10, 2 ); // 2.16.4
+		/**
+		 * query filters
+		 */
 		add_filter( 'posts_where', array(&$this,'posts_where_lang'), 10, 2 );
+		add_filter( 'posts_join', array(&$this,'posts_join_tax_lang'), 10, 2 ); // 2.16.4
 
 		add_filter( 'posts_search', array(&$this,'posts_search_filter'), 10, 2 ); //2.2.3
 		add_action( 'pre_get_posts', array(&$this,'xiliml_modify_querytag') );
@@ -576,14 +607,7 @@ class xili_language {
 
 		add_action ( 'wp_head', array(&$this,'insert_xili_flag_css_in_header' ), 12 ); // 2.15 after bundled old version
 
-		add_action ( 'after_setup_theme', array(&$this,'bundled_themes_support_flag' ), 12 ); // bundled themes
-		// used if config.xml set an array of theme_mod values - 2.18.2
-		add_action ( 'after_setup_theme', array(&$this,'theme_mod_create_filters' ), 13 ); // if array theme_mod_to_be_filtered set before
-
 		add_action( 'xili_language_widgets_head', array(&$this,'xili_language_widgets_head_style' ) ); // 2.20.3 - global css
-		//
-		if ( $this->xili_settings['lang_permalink'] == 'updated' ) // 2.20
-			add_action ( 'after_setup_theme', array(&$this,'update_lang_permalink' ), 13 );
 	}
 
 	/**
@@ -628,7 +652,7 @@ class xili_language {
 											'current_post' => 'Current post in %s',
 											'latest_posts' => 'Latest posts in %s', // used in xili-language list (and XD)
 											'view_all_posts' => 'View all posts in %s' ), // used in the_category
-				'mo_parent_child_merging' => '',	// 2.12
+				'mo_parent_child_merging' => 'parent-priority',	// 2.21.1 to parent-priority
 				'parent_langs_folder' => '',
 				'enable_fc_theme_class' => 'enable', // 2.11.1 - priority to theme Featured Content Class and not jetpack
 				'theme_alias_cache' => array(),
@@ -6245,6 +6269,8 @@ add_action( 'plugins_loaded', 'xili_permalink_init', 1);
 add_action( 'plugins_loaded', 'xili_language_start', 13 ); // before xili-dictionary (20) and xili_tidy_tags (15) - 2.7.1
 
 
+/****************** Customization for bbPress *****************/
+
 /**
  * Detect older plugin xili-xl-bbp-addon.php until 1.7.1
  * avoid red message
@@ -6274,6 +6300,8 @@ if ( class_exists('bbPress') && $subfolder = get_option( 'xl-bbp-addon-activated
 		return;
 	}
 }
+
+/****************** Customization for JetPack *****************/
 
 // special jetpack to live change admin side language - 2.8.9 (was before tested with bbPress addon)
 function xili_jetpack_lang_init ( ) {
