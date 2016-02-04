@@ -5,11 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.21.1
+Version: 2.21.2
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
+# updated 160131 - 2.21.2 - introduces new taxonomy language class (WP 4.4+)
+
 # updated 151104 - 2.21.1 - default mo behaviour (parent) - 2016 infos
 # updated 150927 - 2.21.0 - includes detection of previous PLL install - source cleaned and improved
 # updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
@@ -114,8 +116,8 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.21.1'); /* used in admin UI*/
-define('XILILANGUAGE_WP_VER', '4.0'); /* minimal version - used in error - see at end */
+define('XILILANGUAGE_VER', '2.21.2'); /* used in admin UI*/
+define('XILILANGUAGE_WP_VER', '4.3'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
 define('XILILANGUAGE_WP_TESTED', '4.4 Clifford'); /* 2.17.1 - used in version pointer infos */
@@ -6179,7 +6181,10 @@ function xili_language_start () {
 		add_action( 'admin_notices', 'xili_language_need_31' );
 		return;
 	} else {
-
+		// 2.21.2
+		if ( version_compare($wp_version, 4.4, '>=' ) ) {
+			require_once ( plugin_dir_path( __FILE__ ) . 'xili-includes/class-xili-language-term.php' );
+		}
 		// new sub-folder since 2.6
 		require_once ( plugin_dir_path( __FILE__ ) . 'xili-includes/xili-language-widgets.php' );
 		require_once ( plugin_dir_path( __FILE__ ) . 'xili-includes/theme-multilingual-classes.php' ); // since 2.20.0
