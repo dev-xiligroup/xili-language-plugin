@@ -3693,10 +3693,12 @@ class xili_language_admin extends xili_language {
 	 */
 	function on_sidebox_4_theme_info( $data ) {
 		$template_directory = $this->get_template_directory;
+		$current_theme_obj = wp_get_theme();
 		if ( is_child_theme() ) { // 1.8.1 and WP 3.0
-			$theme_name = get_option("current_theme") . ' </strong>' . __('child of','xili-language') . ' <strong>'.get_option("template");
+			$parent_theme_obj = wp_get_theme( get_option("template") );
+			$theme_name = $current_theme_obj['Name'] . ' </strong>' . __('child of','xili-language') . ' <strong>' . $parent_theme_obj['Name']; //replace slug of theme
 		} else {
-			$theme_name = get_option("current_theme");
+			$theme_name = $current_theme_obj['Name']; // get_option("current_theme"); // name of theme
 		}
 		?>
 		<fieldset class="themeinfo"><legend><?php echo __("Theme type and domain:",'xili-language'); ?></legend>

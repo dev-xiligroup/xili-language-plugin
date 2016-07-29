@@ -142,7 +142,7 @@ class xili_language_term {
 	 * @access public
 	 * @var strings array
 	 */
-	public $termmetas = array ( 'text_direction' => 'rtl',
+	public $termmetas = array ( 'text_direction' => 'ltr',
 								'native_name' => '',
 								'visibility' => 1,
 								'charset' => '' ,
@@ -269,6 +269,59 @@ class xili_language_term {
 				}
 				return $data;
 				break;
+		}
+	}
+
+	/**
+	 * Populate term metas with values saved in former versions in xili-language_settings.
+	 * example 1: error_log ( serialize ( $lang_test = xili_language_term::get_instance( $language->term_id )));
+     *
+	 *
+	 * @since 2.21.2
+	 * @access public
+	 *
+	 * @return mixed object as language_data
+	 */
+	public static function upgrade_instance( $term_id ) {
+
+		$a_language = xili_language_term::get_instance( $term_id ) ;
+
+		if ( $a_language && !is_wp_error( $a_language ) ) {
+			$xili_settings = get_option( 'xili_language_settings', false );
+			if ( $xili_settings && version_compare( $xili_settings['version'], '2.21.2', '<' ) ) {
+
+				$one_language = $a_language->language_data; // metas in object
+
+				// array('charset'=>"",'hidden'=>"");
+				$one_language->visibility = 1 - $xili_settings['lang_features'][$one_language->slug]['hidden'];
+				$one_language->charset = $xili_settings['lang_features'][$one_language->slug]['charset'];
+				$one_language->alias = ( isset ( $xili_settings['lang_features'][$one_language->slug]['alias'] ) ) ? $xili_settings['lang_features'][$one_language->slug]['alias'] : $one_language->slug ;
+
+				// values from GP_locale (by ISO)
+
+				$locale = GP_Locales::by_field( 'wp_locale', $one_language->iso_name );
+
+				$one_language->text_direction = ( $locale ) ? ( (isset($locale->rtl) ) ? 'rtl' : 'ltr') : 'ltr';
+				$one_language->native_name = ( $locale ) ? $locale->native_name : '' ;
+
+				// UX info
+
+				// 'front_back_side' => 'both',
+				// 'flag' => '',
+
+				// update termmetas
+				// fill meta keys with term meta values
+				$meta_keys = array_keys( $a_language->termmetas );
+
+				foreach ( $meta_keys as $term_meta_key) {
+					update_term_meta( $term_id, $term_meta_key, $one_language->{$term_meta_key} );
+					//error_log( '$one_language->termmetas[$term_meta_key]: ' . $term_meta_key . " = " . $one_language->{$term_meta_key} );
+				}
+				return $one_language;
+			}
+
+		} else {
+			return false;
 		}
 	}
 
