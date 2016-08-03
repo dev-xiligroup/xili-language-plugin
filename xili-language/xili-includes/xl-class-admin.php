@@ -49,6 +49,7 @@
  * 2015-09-13 - 2.20.2 - sources (vars), doc optimized
  * 2015-09-16 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
  *
+ * 2016-07-29 - 2.21.2 - wp_get_theme
  * @package xili-language
  */
 
@@ -325,12 +326,14 @@ class xili_language_admin extends xili_language {
 	 */
 	function post_submit_permalink_option() {
 		global $post;
-		$translation_state = get_post_meta ( $post->ID, $this->translation_state, true );
-		if ( $translation_state != '' && false !== strpos( $translation_state , "initial" ) ) {
-			$perma = ( get_option('permalink_structure') ) ? __('(permalink)', 'xili-language') : '';
-			?>
-			<p><label for="xl_permalink_option" class="selectit"><input name="xl_permalink_option" type="checkbox" id="xl_permalink_option" value="slug" /> <?php printf(__( 'Renew slug %s with title', 'xili-language' ), $perma ) ?></label></p>
-			<?php
+		if ( $post ) {
+			$translation_state = get_post_meta ( $post->ID, $this->translation_state, true );
+			if ( $translation_state != '' && false !== strpos( $translation_state , "initial" ) ) {
+				$perma = ( get_option('permalink_structure') ) ? __('(permalink)', 'xili-language') : '';
+				?>
+				<p><label for="xl_permalink_option" class="selectit"><input name="xl_permalink_option" type="checkbox" id="xl_permalink_option" value="slug" /> <?php printf(__( 'Renew slug %s with title', 'xili-language' ), $perma ) ?></label></p>
+				<?php
+			}
 		}
 	}
 
@@ -3696,9 +3699,9 @@ class xili_language_admin extends xili_language {
 		$current_theme_obj = wp_get_theme();
 		if ( is_child_theme() ) { // 1.8.1 and WP 3.0
 			$parent_theme_obj = wp_get_theme( get_option("template") );
-			$theme_name = $current_theme_obj['Name'] . ' </strong>' . __('child of','xili-language') . ' <strong>' . $parent_theme_obj['Name']; //replace slug of theme
+			$theme_name = $current_theme_obj->get('Name') . ' </strong>' . __('child of','xili-language') . ' <strong>' . $parent_theme_obj->get('Name'); //replace slug of theme
 		} else {
-			$theme_name = $current_theme_obj['Name']; // get_option("current_theme"); // name of theme
+			$theme_name = $current_theme_obj->get('Name'); // get_option("current_theme"); // name of theme
 		}
 		?>
 		<fieldset class="themeinfo"><legend><?php echo __("Theme type and domain:",'xili-language'); ?></legend>
@@ -3800,11 +3803,11 @@ class xili_language_admin extends xili_language {
 		?>
 		<fieldset class="themeinfo"><legend><?php echo __("Header infos",'xili-language'); ?></legend>
 		<?php
-			echo '<p>Name: '. $the_theme->Name . '</p>';
-			echo '<p>Author: '. $the_theme->Author . '</p>';
-			echo '<p>Version: '. $the_theme->Version . '</p>';
+			echo '<p>Name: '. $the_theme->get('Name') . '</p>'; // fix get value
+			echo '<p>Author: '. $the_theme->get('Author') . '</p>';
+			echo '<p>Version: '. $the_theme->get('Version') . '</p>';
 			if ( is_child_theme() ) {
-				echo '<p>Template: '. $the_theme->Template . '</p>';
+				echo '<p>Template: '. $the_theme->get('Template') . '</p>';
 			};
 		if ( $textdomain = $the_theme->get('TextDomain') ) {
 			echo '<p>Text Domain: '. $textdomain . '</p>';

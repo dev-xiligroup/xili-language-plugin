@@ -665,6 +665,7 @@ class xili_language {
 				'lang_permalink' => '', // 2.20
 				'widget_visibility' => '',
 				'show_page_on_front_array' => array(), // 2.20.3 - thanks to Stephanie DE
+				'link_categories_settings' => array() // avoid notice
 		);
 	}
 
@@ -1036,14 +1037,14 @@ class xili_language {
 		if ( $id_exists = $term_data->error_data['term_exists'] ) { // id of existing term
 			$term_id = term_exists( $id_exists, TAXOLANGSGROUP ) ;
 			if ( is_array( $term_id ) ) { // yet in group because array
-					return false; 
+					return false;
 			} else {
 				wp_set_object_terms( $id_exists, 'the-langs-group', TAXOLANGSGROUP);
-				if ( $language_order ) update_term_order ( $id_exists, $this->langs_group_tt_id, $language_order ); 
+				if ( $language_order ) update_term_order ( $id_exists, $this->langs_group_tt_id, $language_order );
 				return true;
 			}
 		}
-		return false;	
+		return false;
 	}
 
 	/**
@@ -3463,34 +3464,44 @@ class xili_language {
 		$cur_lang = $this->curlang;
 		// rules depending category and settings in xili-language
 		$cat_settings = $this->xili_settings['link_categories_settings'] ; //array ( 'all'=> true, 'category' => array ( '2' => false , '811' => true ) );
+
 		$sub_select = false;
-		if ( $widget_args['category'] ) {
+		if ( $widget_args['category'] && isset ( $cat_settings['category'] ) ) {
 			$sub_select = $cat_settings['category'][$widget_args['category']] ;
 		} else {
 			$sub_select = $cat_settings['all'];
-			// if ( $sub_select ) $widget_args['categorize'] = 0;
+			//if ( $sub_select ) $widget_args['categorize'] = 0;
 		}
 
 		if ( $sub_select ) {
-			$linklang = term_exists($cur_lang,'link_'.TAXONAME) ;
-			$linklang_ever = term_exists('ev_er','link_'.TAXONAME) ; // the dummy lang - shown ever with selected language
+			$catname = "";
+			$linklang = term_exists( $cur_lang, 'link_'.TAXONAME ) ;
+			$linklang_ever = term_exists('ev_er', 'link_'.TAXONAME ) ; // the dummy lang - shown ever with selected language
 			if ( $cur_lang && $linklang ) {
+
 				if ( $widget_args['category'] ) {
 					$cat = get_term( $widget_args['category'], 'link_category' );
 					$catname = apply_filters( "link_category", $cat->name );
 				}
 				$the_link_ids = array ();
 
-				$the_link_ids_cat = get_objects_in_term( array( $widget_args['category'] ), 'link_category' ) ;
 				$the_link_ids = get_objects_in_term( array( $linklang['term_id'], $linklang_ever['term_id'] ), 'link_'.TAXONAME ) ; // lang + ever
-				$the_link_ids_all = array_intersect ($the_link_ids , $the_link_ids_cat );
-				if ( $widget_args['category'] ) $widget_args['categorize'] = 0; // no sub list in one cat asked
+
+				if ( $widget_args['category'] ) {
+					$the_link_ids_cat = get_objects_in_term( array( $widget_args['category'] ), 'link_category' ) ;
+					$the_link_ids_all = array_intersect ( $the_link_ids_cat, $the_link_ids );
+					$widget_args['categorize'] = 0; // no sub list in one cat asked
+				} else {
+				 	$the_link_ids_all = $the_link_ids;
+				}
+
 				$widget_args['include'] = implode (',' , $the_link_ids_all );
-				$widget_args['category'] = ''; // because implode of intersect
+				$widget_args['category'] =  ''; // because implode of intersect $widget_args['include']; //
 				$widget_args['title_li'] = $catname ;
 
 			}
 		}
+
 		return $widget_args ;
 	}
 
@@ -3933,7 +3944,7 @@ class xili_language {
 							if ( !in_array ( $new_menu_item->url , array ( $this->insertion_point_dummy_link_menu, $this->insertion_point_dummy_link_page, $this->insertion_point_dummy_link ) ) ) {
 
 								$new_classes = array("insertion-point");
-								
+
 								if ( $new_menu_item->menu_item_parent == 0 )
 									$new_menu_item->menu_item_parent = $menu_object->menu_item_parent; // heritate from insertion point
 
@@ -4865,7 +4876,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				$default['css_li_a_hover'] = 'background: no-repeat center 17px !important;';
 				break;
 			case 'twentyfourteen' :
-			
+
 			default:
 		}
 		return apply_filters ( 'get_default_xili_flag_options', $default, $current_parent_theme );
