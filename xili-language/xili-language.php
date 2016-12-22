@@ -2400,13 +2400,19 @@ class xili_language {
 
 			if ( ! ( $loaded = load_textdomain( $themetextdomain, $mofile ) ) ) {
 				$mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
-				load_textdomain( $themetextdomain, $mofile );
+				if ( ! ( $loaded = load_textdomain( $themetextdomain, $mofile ) ) ) {
+					// unload default language as admin - 2.22
+					unload_textdomain( $themetextdomain );
+				}
 			}
 			// parent mo downloaded without priority
 			if ( $parent_mofile && $this->xili_settings['mo_parent_child_merging'] == 'child-priority' ) {
 				if ( !$parent_load = load_textdomain( $themetextdomain, $parent_mofile ) ) { // now same rules for parent file if not in parent theme dir // 2.16.0
 					$parent_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
-					load_textdomain( $themetextdomain, $parent_mofile );
+					if ( !$parent_load = load_textdomain( $themetextdomain, $parent_mofile ) ) {
+						// unload default language as admin - 2.22
+						unload_textdomain( $themetextdomain );
+					}
 				}
 			}
 
