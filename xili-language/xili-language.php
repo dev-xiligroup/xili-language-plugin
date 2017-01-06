@@ -5105,6 +5105,12 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				$default['css_li_a'] = 'text-indent:-9999px; width:10px; background:transparent no-repeat center 16px; margin:0;';
 				$default['css_li_a_hover'] = 'background: no-repeat center 17px !important;';
 				break;
+			case 'twentyseventeen' : // 2.22.1
+				$default['css_ul_nav_menu'] = 'ul.menu' ;
+				$default['css_li_hover'] = 'background-color:#f5f5f5;' ;
+				$default['css_li_a'] = 'text-indent:-9999px; width:10px; background:transparent no-repeat center 20px; margin:0;';
+				$default['css_li_a_hover'] = 'background: no-repeat center 21px !important;';
+				break;
 			case 'twentyfourteen' :
 
 			default:
@@ -5134,11 +5140,11 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	function bundled_themes_support_flag () {
 		$current_parent_theme = get_option ('template') ;
 		$current_theme = get_option ('stylesheet') ;
-		if ( in_array( $current_parent_theme , array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen' ) ) ) {
+		if ( in_array( $current_parent_theme , array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen', 'twentyseventeen' ) ) ) {
 			add_theme_support ( 'custom_xili_flag' ); // same name as used in context of image
 		}
 
-		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili' ) ) ) {
+		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili', 'twentyseventeen-xili' ) ) ) {
 
 			remove_theme_support ( 'custom_xili_flag' ) ;
 			$args = array();
@@ -5146,7 +5152,9 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 
 			foreach ( $listlanguages as $one_language ) {
 				$path_root = get_stylesheet_directory();
-				$path = '%2$s/images/flags/'.$one_language->slug.'.png';
+				$assets = ( in_array( $current_theme, array( 'twentyseventeen-xili' ) ) ) ? '/assets' : '';
+				$path = '%2$s' . $assets . '/images/flags/' . $one_language->slug.'.png';
+
 				if (file_exists( sprintf( $path, '', $path_root ))) {
 					$args[$one_language->slug] = array(
 						'path' => $path,
