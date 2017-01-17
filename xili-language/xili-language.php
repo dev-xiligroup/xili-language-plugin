@@ -435,7 +435,7 @@ class xili_language {
 			if ( $this->xili_settings['version'] !== $current_xl_version ) update_option( 'xili_language_settings', $this->xili_settings );
 			// redundant !
 			if ( $this->xili_settings['version'] !== '2.22') { // repair or restart from new
-				$this->initial_settings ();
+				$this->xili_settings = $this->initial_settings (); // 2.22
 				update_option( 'xili_language_settings', $this->xili_settings );
 				set_transient( '_xl_activation_redirect', 1, 30 ); // 2.20
 			}
