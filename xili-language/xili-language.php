@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.1
+Version: 2.22.3
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 170310 - 2.22.3 - fixes for 4.6 & 4.7 / notices fixes when changing theme
 # updated 161213 - 2.22.1 - fixes for 4.6 & 4.7
 # updated 160810 - 2.22.0 - language taxonomy settings are saved in term metas ( need WP 4.4 )
 
@@ -121,11 +122,11 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.1'); /* used in admin UI*/
-define('XILILANGUAGE_WP_VER', '4.5'); /* minimal version - used in error - see at end */
+define('XILILANGUAGE_VER', '2.22.3'); /* used in admin UI*/
+define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
-define('XILILANGUAGE_WP_TESTED', '4.5 Coleman Hawkins'); /* 2.17.1 - used in version pointer infos */
+define('XILILANGUAGE_WP_TESTED', '4.7 Sarah Vaughan'); /* 2.17.1 - used in version pointer infos */
 define('XILILANGUAGE_PLL_TESTED', '1.7.9'); /* 2.20.3 - newest PLL tested */
 define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 
@@ -1629,8 +1630,13 @@ class xili_language {
 		// $rtlarray = explode ('-',$this->rtllanglist);
 		// $dir = ( in_array(substr(strtolower($lang_slug), 0, 2 ),$rtlarray) ) ? 'rtl' : 'ltr';
 		// return $dir;
-		$ISO_name = $this->langs_slug_name_array[$lang_slug];
-		$locale = GP_Locales::by_field( 'wp_locale', $ISO_name );
+		// notice if changing theme 170310
+		if ( $lang_slug ) {
+			$ISO_name = $this->langs_slug_name_array[$lang_slug];
+			$locale = GP_Locales::by_field( 'wp_locale', $ISO_name );
+		} else {
+			$locale = "";
+		}
 		return ( $locale ) ? $locale->text_direction : 'ltr';
 
 	}
@@ -2055,14 +2061,17 @@ class xili_language {
 		if ( !is_admin() ) {
 			$this->curlang = $this->get_curlang_action_wp(); // see hooks in that function
 			// 2.22
-			$this->cur_language = $this->set_cur_xili_language_term( $this->curlang );
-			$this->curlang_dir = $this->cur_language->text_direction ;
+			// if changing theme 170310
+			if ( $this->curlang ) {
+				$this->cur_language = $this->set_cur_xili_language_term( $this->curlang );
+				$this->curlang_dir = $this->cur_language->text_direction ;
 
-			// $this->curlang_dir = $this->get_dir_of_cur_language( $this->curlang ); /* general dir of the theme */
-			if ( $this->locale_method ) {
-				$this->xiliml_load_theme_textdomain ( $this->thetextdomain ); /* new method for cache compatibility - tests */
-			} else {
-				$this->set_mofile( $this->curlang );
+				// $this->curlang_dir = $this->get_dir_of_cur_language( $this->curlang ); /* general dir of the theme */
+				if ( $this->locale_method ) {
+					$this->xiliml_load_theme_textdomain ( $this->thetextdomain ); /* new method for cache compatibility - tests */
+				} else {
+					$this->set_mofile( $this->curlang );
+				}
 			}
 		}
 		xili_xl_error_log ( '# '. __LINE__ .' ****** END WP *** *** ' . $this->curlang );
