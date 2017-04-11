@@ -1,7 +1,7 @@
 === xili-language ===
 Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
-Tags: theme,post,plugin,posts,page,category,admin,multilingual, bilingual, taxonomy,dictionary,.mo file,.po file,localization, widget, language, international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack, polylang
+Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.3.5
 Tested up to: 4.7.3
 Stable tag: 2.22.3
@@ -28,7 +28,7 @@ xili-language lets you create and manage multilingual WP site in several languag
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
 = Version 2.21.3 =
-* Last Updated 2016-08-05
+* Last Updated 2017-04-11
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -694,7 +694,7 @@ Also read latest news (and infos) on this [multilingual website](http://2014.ext
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 20160805 - MS - dev.xiligroup.com
+© 2017-04-11 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.
@@ -756,4 +756,6 @@ More informations about other plugins in the website [dev.xiligroup.com](http://
 *The plugin is frequently updated*. Visit [Other versions](https://wordpress.org/extend/plugins/xili-language/developers/).
 See also the [dev.xiligroup Forum](http://dev.xiligroup.com/?forum=xili-language-plugin).
 
-© 2008-2016 - MS - dev.xiligroup.com
+* Tags from previous readme : theme, post, plugin,posts,page,category,admin, bilingual, dictionary,.po file, widget,international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack, polylang
+
+© 2008-2017 - MS - dev.xiligroup.com
