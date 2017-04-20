@@ -28,7 +28,7 @@ xili-language lets you create and manage multilingual WP site in several languag
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
 = Version 2.21.3 =
-* Last Updated 2017-04-11
+* Last Updated 2017-04-20
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -310,6 +310,9 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 == Changelog ==
 
 Also read latest news (and infos) on this [multilingual website](http://2014.extend.xiligroup.org/en/category/news/).
+
+= version 2.22.3 =
+* comment-form updated (according wp-includes/comment-template.php)
 
 = version 2.21.3 =
 * locale file updated (JetPack 4.1.1)
@@ -694,7 +697,7 @@ Also read latest news (and infos) on this [multilingual website](http://2014.ext
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 2017-04-11 - MS - dev.xiligroup.com
+© 2017-04-20 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.

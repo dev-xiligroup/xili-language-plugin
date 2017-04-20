@@ -174,20 +174,21 @@ class xili_language {
 
 	var $langs_list_options = array (); // now set in init 2.8.6
 
-	var $comment_form_labels = array ( // since 1.6.0 for comment_form - updated 2.16.0
-		'name' => 'Name',
+	var $comment_form_labels = array ( // since 1.6.0 for comment_form - updated 2.16.0, 2.22.3 (comment-template)
+		'name' => 'Name', // field: author
 		'email' => 'Email',
-		'website' => 'Website',
-		'comment' => 'Comment',
-		'youmustbe' => 'You must be <a href="%s">logged in</a> to post a comment.',
-		'loggedinas' => 'Logged in as <a href="%1$s">%2$s</a>. <a href="%3$s" title="Log out of this account">Log out?</a>',
-		'emailnotpublished' => 'Your email address will not be published.',
+		'website' => 'Website', // field: url
+		'comment' => 'Comment', // _x noun
+		'youmustbe' => 'You must be <a href="%s">logged in</a> to post a comment.', // field: must_log_in
+		'loggedinas' => '<a href="%1$s" aria-label="%2$s">Logged in as %3$s</a>. <a href="%4$s">Log out?</a>',
+		'loggedinas_edit' => 'Logged in as %s. Edit your profile.', // field:logged_in_as
+		'emailnotpublished' => 'Your email address will not be published.', // field: comment_notes_before
 		'requiredmarked' => 'Required fields are marked %s',
-		'youmayuse' => 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s',
-		'leavereply' => 'Leave a Reply',
-		'replyto' => 'Leave a Reply to %s',
-		'cancelreply' => 'Cancel reply',
-		'postcomment' => 'Post Comment'
+		// 'youmayuse' => 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s',
+		'leavereply' => 'Leave a Reply', // field: title_reply
+		'replyto' => 'Leave a Reply to %s', // field: title_reply_to
+		'cancelreply' => 'Cancel reply', // field: cancel_reply_link
+		'postcomment' => 'Post Comment' // field: label_submit
 		);
 
 	var $sticky_keep_original = false ; // since 1.6.1 see translate_sticky_posts_ID function
@@ -2936,20 +2937,36 @@ class xili_language {
 
 		$xilidefaults = array(
 
-		'comment_field'        => '<p class="comment-form-comment"><label for="comment">' . _x( $this->comment_form_labels['comment'], 'noun', $this->thetextdomain ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>',
+		'comment_field'        => '<p class="comment-form-comment"><label for="comment">' . _x( $this->comment_form_labels['comment'], 'noun', $this->thetextdomain ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p>',
 		'must_log_in'          => '<p class="must-log-in">' . sprintf( __( $this->comment_form_labels['youmustbe'], $this->thetextdomain ), wp_login_url( apply_filters( 'the_permalink', get_permalink( $post->ID ) ) ) ) . '</p>',
-		'logged_in_as'         => '<p class="logged-in-as">' . sprintf( __( $this->comment_form_labels['loggedinas'], $this->thetextdomain ), admin_url( 'profile.php' ), $user_identity, wp_logout_url( apply_filters( 'the_permalink', get_permalink( $post->ID ) ) ) ) . '</p>',
-		'comment_notes_before' => '<p class="comment-notes">' . __( $this->comment_form_labels['emailnotpublished'], $this->thetextdomain ) . ( $req ? $required_text : '' ) . '</p>',
+		'logged_in_as'         => '<p class="logged-in-as">' . sprintf(
+		                              /* translators: 1: edit user link, 2: accessibility text, 3: user name, 4: logout URL */
+		                              __( $this->comment_form_labels['loggedinas'], $this->thetextdomain ),
+		                              get_edit_user_link(),
+		                              /* translators: %s: user name */
+		                              esc_attr( sprintf( __( $this->comment_form_labels['loggedinas_edit'], $this->thetextdomain ), $user_identity ) ),
+		                              $user_identity,
+		                              wp_logout_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) )
+		                          ) . '</p>',
+		'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">' . __( $this->comment_form_labels['emailnotpublished'], $this->thetextdomain ) . ( $req ? $required_text : '' ) . '</p>',
 
-		'comment_notes_after'  => '<p class="form-allowed-tags" id="form-allowed-tags">' . sprintf( __( $this->comment_form_labels['youmayuse'], $this->thetextdomain ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
+		'comment_notes_after'  => '',
 		'id_form'              => 'commentform',
 		'id_submit'            => 'submit',
+		'class_form'           => 'comment-form',
 		'class_submit'         => 'submit',
 		'name_submit'          => 'submit',
 		'title_reply'          => __( $this->comment_form_labels['leavereply'], $this->thetextdomain ),
 		'title_reply_to'       => __( $this->comment_form_labels['replyto'], $this->thetextdomain ),
+		'title_reply_before'   => '<h3 id="reply-title" class="comment-reply-title">',
+		'title_reply_after'    => '</h3>',
+		'cancel_reply_before'  => ' <small>',
+		'cancel_reply_after'   => '</small>',
 		'cancel_reply_link'    => __( $this->comment_form_labels['cancelreply'], $this->thetextdomain ),
 		'label_submit'         => __( $this->comment_form_labels['postcomment'], $this->thetextdomain ),
+		'submit_button'        => '<input name="%1$s" type="submit" id="%2$s" class="%3$s" value="%4$s" />',
+		'submit_field'         => '<p class="form-submit">%1$s %2$s</p>',
+		'format'               => 'xhtml',
 		);
 		$args = wp_parse_args( $xilidefaults, $defaults);
 		return $args;
