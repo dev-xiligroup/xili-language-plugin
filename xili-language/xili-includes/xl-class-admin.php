@@ -5624,11 +5624,14 @@ class xili_language_admin extends xili_language {
 						$target_id = get_post_meta( $post_ID, QUETAG.'-'.$language->slug, true );
 						if ( $target_id != "" ) {
 							delete_post_meta( $target_id, QUETAG.'-'.$previous_lang );
+							delete_post_meta( $post_ID, QUETAG.'-'.$language->slug ); // 2.22
 						}
 					}
+
 					// now undefined
 					// wp_delete_object_term_relationships( $post_ID, TAXONAME );
-					$this->multiple_languages_set( 'delete', $post_ID, $previous_lang);
+					$this->multiple_languages_set( 'undefine', $post_ID, $previous_lang);
+					delete_post_meta( $post_ID, '_multiple_lang' ); // 2.22.4
 				}
 
 				$curlang = $this->get_cur_language( $post_ID ) ; // array
@@ -5681,7 +5684,14 @@ class xili_language_admin extends xili_language {
 	function multiple_languages_set ( $mode, $post_ID, $sellang = '' ) {
 		if ( $this->multiple_lang ) {
 			// analyze multiple lang in form
-			if ( $mode == 'delete') {
+			if ( $mode == 'undefine') {
+				if ( metadata_exists( 'post', $post_ID, '_multiple_lang' ) && $lang_array = get_post_meta ( $post_ID, '_multiple_lang', true ) ) {
+					foreach ($lang_array as $onelang) {
+						wp_remove_object_terms( $post_ID, $onelang, TAXONAME );
+					}
+				}
+				$this->multiple_language_update_meta ( $post_ID, $sellang, 0, 'delete' );
+			} else if ( $mode == 'delete') {
 				if ( !isset( $_POST['multi_lang_' . $sellang] ) && !isset( $_POST['xili_language_'.QUETAG.'-'. $sellang] ) )  {
 					wp_remove_object_terms( $post_ID, $sellang, TAXONAME );
 					$this->multiple_language_update_meta ( $post_ID, $sellang, 0, 'delete' );
@@ -5721,7 +5731,7 @@ class xili_language_admin extends xili_language {
 	 * @since 2.22
 	 */
 	function multiple_language_update_meta( $post_ID, $lang_slug, $lang_order = 0, $mode = 'update' ) {
-		$lang_array = get_post_meta( $post_ID, 'multiple_lang', true );
+		$lang_array = get_post_meta( $post_ID, '_multiple_lang', true );
 
 		if ( !$lang_array ) $lang_array = array();
 
@@ -5733,7 +5743,7 @@ class xili_language_admin extends xili_language {
 					$temp = $lang_array[$lang_order];
 					$lang_array[$lang_order] = $lang_slug;
 					$lang_array[$key] = $temp;
-					return update_post_meta( $post_ID, 'multiple_lang', $lang_array );
+					return update_post_meta( $post_ID, '_multiple_lang', $lang_array );
 				}
 
 			} else {
@@ -5742,17 +5752,17 @@ class xili_language_admin extends xili_language {
 				} else {
 					$lang_array[$lang_order] = $lang_slug;
 				}
-				return update_post_meta( $post_ID, 'multiple_lang', $lang_array );
+				return update_post_meta( $post_ID, '_multiple_lang', $lang_array );
 			}
 		} else if ( $mode == 'delete' ) {
 			$key = array_search( $lang_slug, $lang_array );
 			$new_lang_post = $this->get_post_language ( $post_ID );
 			if ( $new_lang_post == '' ){
 				// ?? delete other secondary language ???
-				delete_post_meta( $post_ID, 'multiple_lang' );
+				delete_post_meta( $post_ID, '_multiple_lang' );
 			} else if ( $key ){
 				array_splice( $lang_array, $key );
-				return update_post_meta( $post_ID, 'multiple_lang', $lang_array );
+				return update_post_meta( $post_ID, '_multiple_lang', $lang_array );
 			}
 		} else {
 			return false;
@@ -6432,22 +6442,37 @@ class xili_language_admin extends xili_language {
 		if( $name != TAXONAME )
 			return;
 		$output = '';
-		$terms = wp_get_object_terms( $id, TAXONAME );
-		$first = true;
-		foreach( $terms AS $term ) {
-			if ( $first )
-				$first = false;
-			else
-				$output .= ', ';
-
-			if ( current_user_can ('activate_plugins') ) {
-				$output .= '<span class="curlang lang-'. $term->slug .'"><a href="' . 'options-general.php?page=language_page'.'" title="'.sprintf(esc_attr__('Post in %s. Link to see list of languages…','xili-language'), $term->description ) .'" >'; /* see more precise link ?*/
-				$output .= $term->name .'</a></span>';
+		$terms = wp_get_object_terms( $id, TAXONAME ); // get languages
+		if ( $terms ) {
+			if ( metadata_exists( 'post', $id, '_multiple_lang' ) && $lang_array = get_post_meta ( $id, '_multiple_lang', true ) ) {
+				// sorted terms
+				$sorted_languages = array();
+				foreach( $terms AS $term ) {
+					if ( $term->slug == $lang_array[0] ) {
+						array_unshift( $sorted_languages, $term );
+					} else {
+						$sorted_languages[] = $term;
+					}
+				}
 			} else {
-				$output .= '<span title="'. esc_attr( sprintf(__('Post in %s.','xili-language'), $term->description ) ) .'" class="curlang lang-'. $term->slug .'">' . $term->name . '</span>' ;
+				$sorted_languages = $terms;
 			}
+			$first = true;
+			foreach( $sorted_languages AS $term ) {
+				if ( $first )
+					$first = false;
+				else
+					$output .= ', ';
 
-			$output .= '<input type="hidden" id="'.QUETAG.'-'.$id.'" value="'.$term->slug.'" >'; // for Quick-Edit - 1.8.9
+				if ( current_user_can ('activate_plugins') ) {
+					$output .= '<span class="curlang lang-'. $term->slug .'"><a href="' . 'options-general.php?page=language_page'.'" title="'.sprintf(esc_attr__('Post in %s. Link to see list of languages…','xili-language'), $term->description ) .'" >'; /* see more precise link ?*/
+					$output .= $term->name .'</a></span>';
+				} else {
+					$output .= '<span title="'. esc_attr( sprintf(__('Post in %s.','xili-language'), $term->description ) ) .'" class="curlang lang-'. $term->slug .'">' . $term->name . '</span>' ;
+				}
+
+				$output .= '<input type="hidden" id="'.QUETAG.'-'.$id.'" value="'.$term->slug.'" >'; // for Quick-Edit - 1.8.9
+			}
 		}
 		$xdmsg = ( defined ('XDMSG') ) ? XDMSG : '' ;
 
@@ -6546,7 +6571,7 @@ class xili_language_admin extends xili_language {
 			echo ".langquickedit { background: #E4EAF8; padding:0 5px 4px !important; border:1px solid #ccc; width:140px !important; float:right !important;}\n";
 			echo ".toppost { margin: 0 20px 2px 7px; } \n";
 			echo ".toppage { margin: -40px 20px 2px 7px; } \n";
-			echo "span.curlang a { display:inline-block; font-size:80%; height:18px; width:60px; } \n";
+			echo "span.curlang a { display:inline-block; font-size:80%; height:18px; width:20px; } \n";
 			echo "span.translated-in a { display:inline-block; text-indent:-9999px; width:25px; border:0px solid red;} \n";
 			if ( $insert_flags ) {
 				echo 'div.taxinmos span[class|="lang"] { display:inline-block; text-indent:-9999px; width:20px; border:0px solid red; }'. "\n";

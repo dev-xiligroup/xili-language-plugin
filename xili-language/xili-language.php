@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.3
+Version: 2.22.4
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 170420 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language)
 # updated 170310 - 2.22.3 - fixes for 4.6 & 4.7 / notices fixes when changing theme
 # updated 161213 - 2.22.1 - fixes for 4.6 & 4.7
 # updated 160810 - 2.22.0 - language taxonomy settings are saved in term metas ( need WP 4.4 )
@@ -122,7 +123,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.3'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.22.4'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -1337,7 +1338,7 @@ class xili_language {
 				$obj_term = $ress[0]; // today only one language per post
 			} else { // since 2.22 - multiple lang
 
-				if ( metadata_exists( 'post', $post_ID, 'multiple_lang' ) && $lang_array = get_post_meta ( $post_ID, 'multiple_lang', true ) ) {
+				if ( metadata_exists( 'post', $post_ID, '_multiple_lang' ) && $lang_array = get_post_meta ( $post_ID, '_multiple_lang', true ) ) {
 					$primary_slug = $lang_array[0];
 					$obj_term = '';
 					foreach ( $ress as $one_term ) {

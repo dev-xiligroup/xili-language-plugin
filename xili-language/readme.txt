@@ -313,6 +313,8 @@ Also read latest news (and infos) on this [multilingual website](http://2014.ext
 
 = version 2.22.3 =
 * comment-form updated (according wp-includes/comment-template.php)
+* finalize multiple languages per post
+* now undefining a post will break all links with posts
 
 = version 2.21.3 =
 * locale file updated (JetPack 4.1.1)
