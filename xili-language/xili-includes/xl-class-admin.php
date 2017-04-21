@@ -52,6 +52,8 @@
  * 2016-07-29 - 2.21.2 - wp_get_theme
  * 2016-12-13 - 2.22.1 - fixes for 4.6 & 4.7
  *
+ * 2017-04-21 - 2.22.4 - multilingual per post option - bulk edit
+ *
  * @package xili-language
  */
 
@@ -150,7 +152,8 @@ class xili_language_admin extends xili_language {
 		$this->langs_slug_shortqv_array = &$this->parent->langs_slug_shortqv_array;
 		$this->langs_shortqv_slug_array = &$this->parent->langs_shortqv_slug_array;
 
-		add_action( 'admin_init', array( &$this, 'init_roles') );	// 2.8.8
+		add_action( 'admin_init', array( &$this, 'init_roles') ); // 2.8 (in main file)
+		add_action( 'admin_init', array( &$this, 'init_filters') );	// 2.22
 
 		add_action( 'admin_head', array(&$this,'xd_flush_permalinks') ); // 2.11
 		add_filter( 'wp_get_nav_menus', array(&$this,'_update_menus_insertion_points'), 10, 2 ); // 2.13
@@ -245,7 +248,7 @@ class xili_language_admin extends xili_language {
 		add_filter( 'manage_media_columns', array(&$this,'xili_manage_column_name')); // 2.6.3
 
 		$custompoststype = $this->xili_settings['multilingual_custom_post'] ; // 2.8.1
-			if ( $custompoststype != array()) {
+			if ( $custompoststype != array() ) {
 			foreach ( $custompoststype as $key => $customtype ) {
 				if ( ( !class_exists( 'bbPress') && $customtype['multilingual'] == 'enable' ) || ( class_exists( 'bbPress') && ! in_array( $key, array( bbp_get_forum_post_type(), bbp_get_topic_post_type(), bbp_get_reply_post_type() ) ) && $customtype['multilingual'] == 'enable' ) ) {
 					add_filter( 'manage_'.$key.'_posts_columns', array(&$this,'xili_manage_column_name'));
@@ -272,11 +275,8 @@ class xili_language_admin extends xili_language {
 		add_action( 'quick_edit_custom_box', array(&$this,'languages_custom_box'), 10, 2);
 		add_action( 'admin_head-edit.php', array(&$this,'quick_edit_add_script') );
 		add_action( 'bulk_edit_custom_box', array(&$this,'hidden_languages_custom_box'), 10, 2); // 1.8.9.3
-
 		add_action( 'wp_ajax_save_bulk_edit', array(&$this,'save_bulk_edit_language') ); // 2.9.10
-
 		add_action( 'wp_ajax_get_menu_infos', array(&$this,'ajax_get_menu_infos') ); // 2.9.10
-
 
 		// sub-select in admin/edit.php 1.8.9
 		add_action( 'restrict_manage_posts', array(&$this,'restrict_manage_languages_posts') );
@@ -320,6 +320,35 @@ class xili_language_admin extends xili_language {
 		add_action( 'contextual_help', array( &$this,'add_help_text' ), 10, 3 ); /* 1.7.0 */
 
 		xili_xl_error_log ('# ADMIN '. __LINE__ .' ************* only_construct = ' . __CLASS__ );
+	}
+
+	/**
+	 * Add filters according multiple_lang options
+	 *
+	 * @since 2.22.4
+	 *
+	 */
+	function init_filters () {
+
+		if ( $this->multiple_lang ) {
+
+			add_filter( 'bulk_actions-edit-post', array(&$this,'register_my_bulk_post_actions') );
+			add_filter( 'bulk_actions-edit-page', array(&$this,'register_my_bulk_post_actions') );
+			add_filter( 'handle_bulk_actions-edit-post', array(&$this,'bulk_action_handlers'), 10, 3 );
+			add_filter( 'handle_bulk_actions-edit-page', array(&$this,'bulk_action_handlers'), 10, 3 );
+
+			$custompoststype = $this->xili_settings['multilingual_custom_post'] ; // 2.8.1
+			if ( $custompoststype != array() ) {
+				foreach ( $custompoststype as $key => $customtype ) {
+					if ( ( !class_exists( 'bbPress') && $customtype['multilingual'] == 'enable' ) ||
+							( class_exists( 'bbPress') && ! in_array( $key, array( bbp_get_forum_post_type(), bbp_get_topic_post_type(), bbp_get_reply_post_type() ) ) && $customtype['multilingual'] == 'enable' ) ) {
+						add_filter( 'bulk_actions-edit-'.$key, array(&$this,'register_my_bulk_post_actions') );
+						add_filter( 'handle_bulk_actions-edit-'.$key, array(&$this,'bulk_action_handlers'), 10, 3 );
+					}
+				}
+			}
+			add_action( 'admin_notices', array(&$this,'my_bulk_action_admin_notice') );
+		}
 	}
 
 	/**
@@ -5069,9 +5098,10 @@ class xili_language_admin extends xili_language {
 		?>
 		<table id="postslist" class="widefat">
 		<thead>
-		<tr><th class="language" ><?php _e('Language','xili-language'); ?></th>
+		<tr>
+		<?php echo '<th class="language" title="'. __('Select the main language','xili-language') .'" >'.__('Language','xili-language'); ?></th>
 		<?php if ( $this->multiple_lang ) { // 2.22
-			echo '<th class="language" >' . __('multi','xili-language') . '</th>';
+			echo '<th class="language" title="'. __('Check other language if necessary...','xili-language') .'" >' . __('Other','xili-language') . '</th>';
 		}
 		?>
 		<th class="postid"><?php _e('ID', 'xili-language'); ?></th><th class="title"><?php _e('Title','xili-language'); ?></th><th class="status" ><?php _e('Status'); ?></th><th class="action" ><?php _e('Edit'); ?></th></tr>
@@ -6616,6 +6646,60 @@ class xili_language_admin extends xili_language {
 		if ( $this->exists_style_ext && $this->xili_settings['external_xl_style'] == "on" ) wp_enqueue_style( 'xili_language_stylesheet' );
 	}
 
+
+	/**
+	 * Bulk actions
+	 * Thanks to wpengineer.com
+	 * @since 2.22.4 [<description>]
+	 */
+	function register_my_bulk_post_actions($bulk_actions) {
+  		$bulk_actions['bulk_remove_multiple_languages_action'] = __( 'Remove secondary languages', 'xili-language');
+  		//$bulk_actions['my_other_bulk_action'] = __( 'My Other Bulk Action', 'xili-language');
+  		return $bulk_actions;
+	}
+
+	function bulk_action_handlers( $redirect_to, $action_name, $post_ids ) {
+
+		if ( 'bulk_remove_multiple_languages_action' === $action_name ) {
+			foreach ( $post_ids as $post_id ) {
+
+		      	if ( metadata_exists( 'post', $post_id, '_multiple_lang' ) && $lang_array = get_post_meta ( $post_id, '_multiple_lang', true ) ) {
+		      		foreach ($lang_array as $key => $onelang) {
+		      			if ( $key > 0 )
+		      				wp_remove_object_terms( $post_id, $onelang, TAXONAME );
+		      		}
+		      		$new_array = array( $lang_array[0] ); // only the main
+		      		update_post_meta ( $post_id, '_multiple_lang', $new_array );
+		      	}
+			}
+		    $redirect_to = add_query_arg( 'bulk_posts_processed', count( $post_ids ), $redirect_to );
+			return $redirect_to;
+
+		} else if ( 'my_other_bulk_action' === $action_name ) {
+			foreach ( $post_ids as $post_id ) {
+		      	// $post = get_post($post_id);
+		      	// process $post wp_update_post($post);
+		    }
+			$redirect_to = add_query_arg( 'other_bulk_posts_precessed', count( $post_ids ), $redirect_to );
+			return $redirect_to;
+
+		} else {
+		    return $redirect_to;
+		}
+	}
+
+	function my_bulk_action_admin_notice() {
+		if ( ! empty( $_REQUEST['bulk_posts_processed'] ) ) {
+			global $post_type;
+			$post_type_object = get_post_type_object( $post_type );
+
+			$posts_count = intval( $_REQUEST['bulk_posts_processed'] );
+			echo '<div class="notice notice-success is-dismissible">';
+			printf( ' ' . _n( 'Processed %1$s %2$s.', 'Processed %1$s %3$s.', $posts_count, 'xili-language' ) . '<br />' . __('Secondary languages deleted.', 'xili-language') , $posts_count, $post_type_object->labels->singular_name, $post_type_object->label );
+			echo '</div>';
+		}
+	}
+
 	/**
 	 * Insert translation for taxonomies columns in edit.php - only dashboard yet
 	 *
@@ -6781,6 +6865,7 @@ class xili_language_admin extends xili_language {
 						$target_id = get_post_meta( $post_ID, QUETAG.'-'.$language->slug, true );
 						if ( $target_id != "" ) {
 							delete_post_meta( $target_id, QUETAG.'-'.$previous_lang );
+							delete_post_meta( $post_ID, QUETAG.'-'.$language->slug ); // 2.22.4 - break the link
 						}
 					}
 

@@ -4,7 +4,7 @@ Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.3.5
 Tested up to: 4.7.3
-Stable tag: 2.22.3
+Stable tag: 2.22.4
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/extend/plugins/xili-language/changelog/) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.21.3 =
-* Last Updated 2017-04-20
+= Version 2.21.4 =
+* Last Updated 2017-04-21
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -313,7 +313,7 @@ Also read latest news (and infos) on this [multilingual website](http://2014.ext
 
 = version 2.22.3 =
 * comment-form updated (according wp-includes/comment-template.php)
-* finalize multiple languages per post
+* finalize multiple languages per post - bulk action added to remove
 * now undefining a post will break all links with posts
 
 = version 2.21.3 =

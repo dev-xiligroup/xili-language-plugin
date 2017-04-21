@@ -1,5 +1,6 @@
 # xili-language-plugin
 multilingual plugin for WordPress since 2009
+The first using custom taxonomy introduced in WP 2.3 (here named language).
 
 The readme file is now one of the files of plugin opened for GitHub contributors to improve this content in english.
 When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-language/), the text is divided in tabs.

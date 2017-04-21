@@ -11,7 +11,7 @@ Text Domain: xili-language
 Domain Path: /languages/
 */
 
-# updated 170420 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language)
+# updated 170421 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language) - bulk actions
 # updated 170310 - 2.22.3 - fixes for 4.6 & 4.7 / notices fixes when changing theme
 # updated 161213 - 2.22.1 - fixes for 4.6 & 4.7
 # updated 160810 - 2.22.0 - language taxonomy settings are saved in term metas ( need WP 4.4 )

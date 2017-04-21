@@ -5,6 +5,7 @@ Now as api
 */
 /*
 Changelog:
+2.22.4 - 2017-04-21 - text domain same XL
 2.18.0 - now as xili-language api if bbPress active and option set
 2.17.0 - test with 4.2-RC1
 2.16.4 - test with 4.2-beta2
@@ -34,17 +35,17 @@ Changelog:
 /**
  * @package xili-language
  */
-define('XILIXLBBPADDON_VER','2.18.0');
+define('XILIXLBBPADDON_VER','2.22.0');
 
 class xili_xl_bbp_addon {
 
 	var $plugin_name = 'xili-xl-bbp-addon'; // filename and folder
 	var $plugin_folder = 'xili-language';
-	var $display_plugin_name = '©xili xl-bbPress add-on'; // menu and top
+
 	var $settings_name = 'xili-xl-bbp-addon_settings'; // The settings string name for this plugin in options table
 	var $xili_settings = array();
 	var $xili_settings_ver = '1.0';
-	var $plugin_local = "xili_xl_bbp_addon"; // text domain
+	//var $plugin_local = "xili_xl_bbp_addon"; // text domain
 	var $settings_list = "xili_xl_bbp_addon_list"; // used by settings sections and fields in settings page
 	var $url = '';
 	var $urlpath = ''; // The path to this plugin - see construct
@@ -58,10 +59,6 @@ class xili_xl_bbp_addon {
 	function __construct(){
 
 		$this->debug = ( defined ('WP_DEBUG') ) ? WP_DEBUG : false ;
-
-		load_plugin_textdomain( 'xili_xl_bbp_addon', false, $this->plugin_folder.'/languages' );
-
-		//register_activation_hook( __FILE__, array(&$this,'get_xili_settings') ); // first activation
 
 		$this->url = plugins_url(basename(__FILE__), __FILE__);
 		$this->urlpath = plugins_url('', __FILE__);
@@ -222,7 +219,7 @@ class xili_xl_bbp_addon {
 			if ( $result == '' ) {
 				$output .= '.' ;
 			} else {
-				$output .= __('linked in:', 'xili_xl_bbp_addon') ;
+				$output .= __('linked in:', 'xili-language') ;
 				$output .= '&nbsp;<span class="translated-in">' . $result .'</span>';
 			}
 		}
@@ -346,7 +343,7 @@ class xili_xl_bbp_addon {
 	 * Adds the options subpanel
 	 */
 	function admin_menu_link() {
-		add_options_page( $this->plugin_name, __($this->display_plugin_name, 'xili_xl_bbp_addon'), 'manage_options', __FILE__, array(&$this,'admin_options_page'));
+		add_options_page( $this->plugin_name, __( '©xili xl-bbPress add-on', 'xili-language'), 'manage_options', __FILE__, array(&$this,'admin_options_page'));
 		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array(&$this, 'filter_plugin_actions'), 10, 2 );
 	}
 
@@ -355,15 +352,15 @@ class xili_xl_bbp_addon {
 	 */
 	function admin_init() {
 		register_setting ($this->settings_name, $this->settings_name, array(&$this,'xili_settings_validate_options') );
-		add_settings_section ( $this->settings_list.'_section_1', __('List of options ', 'xili_xl_bbp_addon') , array(&$this,'xili_settings_section_1_draw') , $this->settings_list );
+		add_settings_section ( $this->settings_list.'_section_1', __('List of options ', 'xili-language') , array(&$this,'xili_settings_section_1_draw') , $this->settings_list );
 
-		add_settings_field ( $this->settings_list.'_css-theme-folder', __('bbPress default style file in theme', 'xili_xl_bbp_addon'), array(&$this,'xili_settings_field_1_draw'), $this->settings_list, $this->settings_list.'_section_1');
-		add_settings_field ( $this->settings_list.'_reply-keep-tags', __('Repliers cannot delete topic tags', 'xili_xl_bbp_addon'), array(&$this,'xili_settings_field_2_draw'), $this->settings_list, $this->settings_list.'_section_1');
+		add_settings_field ( $this->settings_list.'_css-theme-folder', __('bbPress default style file in theme', 'xili-language'), array(&$this,'xili_settings_field_1_draw'), $this->settings_list, $this->settings_list.'_section_1');
+		add_settings_field ( $this->settings_list.'_reply-keep-tags', __('Repliers cannot delete topic tags', 'xili-language'), array(&$this,'xili_settings_field_2_draw'), $this->settings_list, $this->settings_list.'_section_1');
 
 	}
 
 	function xili_settings_section_1_draw () {
-		echo '<p>'. __('This plugin shipped with xili-language package is an addon to activate multilingual features to bbPress with xili-language. Some other options are possible.', 'xili_xl_bbp_addon') . '</p>';
+		echo '<p>'. __('This plugin shipped with xili-language package is an addon to activate multilingual features to bbPress with xili-language. Some other options are possible.', 'xili-language') . '</p>';
 
 	}
 
@@ -406,7 +403,7 @@ class xili_xl_bbp_addon {
 	function admin_options_page() { ?>
 		<div class="wrap">
 			<?php screen_icon(); ?>
-			<h2><?php printf(__( '%s settings', 'xili_xl_bbp_addon'), $this->display_plugin_name ); ?></h2>
+			<h2><?php printf(__( '%s settings', 'xili-language'), '©xili xl-bbPress add-on' ); ?></h2>
 			<form action="options.php" method="post" >
 				<?php
 				do_settings_sections( $this->settings_list );
@@ -414,7 +411,7 @@ class xili_xl_bbp_addon {
 				?>
 				<?php submit_button( __('Save Changes'), 'secondary' ); // 'primary' = by default ?>
 			</form>
-			<h4><a href="http://dev.xiligroup.com/<?php echo $this->plugin_name; ?>" title="Plugin page and docs" target="_blank" style="text-decoration:none" ><img style="vertical-align:bottom; margin-right:10px" src="<?php echo plugins_url( 'images/'.$this->plugin_name.'-logo-32.png', __FILE__ ) ; ?>" alt="<?php echo $this->display_plugin_name; ?> logo"/>&nbsp;<?php echo $this->display_plugin_name; ?> </a> - © <a href="http://dev.xiligroup.com" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2013 - v. <?php echo XILIXLBBPADDON_VER; ?></h4>
+			<h4><a href="http://dev.xiligroup.com/<?php echo $this->plugin_name; ?>" title="Plugin page and docs" target="_blank" style="text-decoration:none" ><img style="vertical-align:bottom; margin-right:10px" src="<?php echo plugins_url( 'images/'.$this->plugin_name.'-logo-32.png', __FILE__ ) ; ?>" alt="<?php echo '©xili xl-bbPress add-on'; ?> logo"/>&nbsp;<?php echo '©xili xl-bbPress add-on'; ?> </a> - © <a href="http://dev.xiligroup.com" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2013 - v. <?php echo XILIXLBBPADDON_VER; ?></h4>
 		</div>
 
 
@@ -429,30 +426,30 @@ class xili_xl_bbp_addon {
 	function add_help_text($contextual_help, $screen_id, $screen) {
 		$more_infos =
 			'<p><strong>' . __('For more information:') . '</strong></p>' .
-			'<p>' . __('<a href="http://wiki.xiligroup.org" target="_blank">Xili Plugins Documentation and WIKI</a>', 'xili_xl_bbp_addon') . '</p>' .
-			'<p>' . __('<a href="http://dev.xiligroup.com/" target="_blank">Xili Plugins news</a>','xili_xl_bbp_addon') . '</p>' .
-			'<p>' . __('<a href="http://codex.wordpress.org/" target="_blank">WordPress Documentation</a>','xili_xl_bbp_addon') . '</p>' .
-			'<p>' . __('<a href="http://dev.xiligroup.com/?post_type=forum/" target="_blank">Support Forums</a>','xili_xl_bbp_addon') . '</p>' ;
+			'<p>' . __('<a href="http://wiki.xiligroup.org" target="_blank">Xili Plugins Documentation and WIKI</a>', 'xili-language') . '</p>' .
+			'<p>' . __('<a href="http://dev.xiligroup.com/" target="_blank">Xili Plugins news</a>','xili-language') . '</p>' .
+			'<p>' . __('<a href="http://codex.wordpress.org/" target="_blank">WordPress Documentation</a>','xili-language') . '</p>' .
+			'<p>' . __('<a href="http://dev.xiligroup.com/?post_type=forum/" target="_blank">Support Forums</a>','xili-language') . '</p>' ;
 
 		if ( 'settings_page_xili-language/xili-xl-bbp-addon' == $screen->id ) {
 			$about_infos =
-				'<p>' . __('Things to remember to set xili xl-bbPress add-on:','xili_xl_bbp_addon') . '</p>' .
+				'<p>' . __('Things to remember to set xili xl-bbPress add-on:','xili-language') . '</p>' .
 				'<ul>' .
-				'<li>' . __('Activate this plugin only if bbPress plugin is activated.','xili_xl_bbp_addon') . '</li>' .
-				'<li>' . __('Remember that a forum is assigned to one language. Consequences: topics and replies are assigned to this language.','xili_xl_bbp_addon') . '</li>' .
-				'<li>' . __('If xili-tidy-tags plugin is activated, a new instance is created for Topic-Tags. So it is possible to group Topic-Tags in clouds (by language or semantic group).', 'xili_xl_bbp_addon') . '</li>' .
-				'<li>' . __('This first version contains basic features. Pre-tested with bbPress 2.3beta', 'xili_xl_bbp_addon') . '</li>' .
-				'<li>' . __('The options below are provided to customize style (css in theme) or change behaviour (Repliers cannot delete tags).', 'xili_xl_bbp_addon') . '</li>' .
+				'<li>' . __('Activate this plugin only if bbPress plugin is activated.','xili-language') . '</li>' .
+				'<li>' . __('Remember that a forum is assigned to one language. Consequences: topics and replies are assigned to this language.','xili-language') . '</li>' .
+				'<li>' . __('If xili-tidy-tags plugin is activated, a new instance is created for Topic-Tags. So it is possible to group Topic-Tags in clouds (by language or semantic group).', 'xili-language') . '</li>' .
+				'<li>' . __('This first version contains basic features. Pre-tested with bbPress 2.3beta', 'xili-language') . '</li>' .
+				'<li>' . __('The options below are provided to customize style (css in theme) or change behaviour (Repliers cannot delete tags).', 'xili-language') . '</li>' .
 				'</ul>' ;
 
 			$screen->add_help_tab( array(
 				'id'	=> 'about-xili-xl-bbp-addon',
-				'title' => __('About xili xl-bbPress add-on','xili_xl_bbp_addon'),
+				'title' => __('About xili xl-bbPress add-on','xili-language'),
 				'content' => $about_infos,
 			));
 			$screen->add_help_tab( array(
 				'id'	=> 'more-infos',
-				'title' => __('For more infos','xili_xl_bbp_addon'),
+				'title' => __('For more infos','xili-language'),
 				'content' => $more_infos,
 			));
 
