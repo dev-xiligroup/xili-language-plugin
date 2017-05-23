@@ -3,7 +3,7 @@ Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.3.5
-Tested up to: 4.7.3
+Tested up to: 4.8-beta2
 Stable tag: 2.22.4
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.

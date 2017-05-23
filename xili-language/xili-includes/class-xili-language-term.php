@@ -339,7 +339,7 @@ class xili_language_term {
 				$one_language = $a_language->language_data; // metas in object
 
 				// array('charset'=>"",'hidden'=>"");
-				$one_language->visibility = 1 - $xili_settings['lang_features'][$one_language->slug]['hidden'];
+				$one_language->visibility = 1 - (int) $xili_settings['lang_features'][$one_language->slug]['hidden'];
 				$one_language->charset = $xili_settings['lang_features'][$one_language->slug]['charset'];
 				$one_language->alias = ( isset ( $xili_settings['lang_features'][$one_language->slug]['alias'] ) ) ? $xili_settings['lang_features'][$one_language->slug]['alias'] : $one_language->slug ;
 
@@ -349,6 +349,10 @@ class xili_language_term {
 
 				$one_language->text_direction = ( $locale ) ? $locale->text_direction : 'ltr'; // rtl changed
 				$one_language->native_name = ( $locale ) ? $locale->native_name : '' ;
+
+				// add alias by default
+				$slugs = explode('_', $one_language->slug) ;
+				$one_language->alias = ( $locale ) ? ( ( $locale->lang_code_iso_639_1 ) ? $locale->lang_code_iso_639_1 : $locale->lang_code_iso_639_2 )  : $slugs[0] ;
 
 				// UX info
 
@@ -411,7 +415,9 @@ class xili_language_term {
 
 				$one_language->text_direction = ( $locale ) ? $locale->text_direction : 'ltr'; // rtl changed
 				$one_language->native_name = ( $locale ) ? $locale->native_name : '' ;
-
+				// add alias by default
+				$slugs = explode('_', $one_language->slug) ;
+				$one_language->alias = ( $locale ) ? ( ( $locale->lang_code_iso_639_1 ) ? $locale->lang_code_iso_639_1 : $locale->lang_code_iso_639_2 )  : $slugs[0] ;
 				// UX info
 
 				// 'front_back_side' => 'both',

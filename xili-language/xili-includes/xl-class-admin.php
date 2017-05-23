@@ -4337,7 +4337,7 @@ class xili_language_admin extends xili_language {
 	}
 
 	/**
-	 * form to create or edit one language
+	 * form to create or edit one language (under the list)
 	 */
 	function on_box_lang_form_content( $data ) {
 		extract($data);
@@ -4611,7 +4611,6 @@ class xili_language_admin extends xili_language {
 			$alias_val = ( $language_data->alias == "" ) ? ' ? ' : $language_data->alias ;
 
 			$key_slug = array_keys ( $this->langs_slug_shortqv_array, $alias_val ) ;
-
 			if ( count ( $key_slug ) == 1 ) {
 				$line .= '<td>' . $alias_val . '</td>';
 			} else {
