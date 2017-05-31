@@ -210,8 +210,9 @@ class xili_language_admin extends xili_language {
 		add_action( 'admin_print_scripts-post.php', array(&$this,'find_post_script') ); // 2.2.2
 		add_action( 'admin_print_scripts-post-new.php', array(&$this,'find_post_script') );
 
-		// 2.9.10
-		add_action( 'wp_ajax_find_post_types', array(&$this,'wp_ajax_find_post_types') );
+		add_action( 'wp_ajax_find_post_types', array(&$this,'wp_ajax_find_post_types') ); // 2.9.10
+		add_action( 'wp_ajax_display_gp_locale', array(&$this,'wp_ajax_display_gp_locale') ); // 2.22.6
+		add_action( 'admin_print_scripts-settings_page_language_page', array(&$this, 'display_gp_locale') );
 
 		add_action( 'admin_print_styles-post.php', array(&$this, 'print_styles_cpt_edit') );
 		add_action( 'admin_print_styles-post-new.php', array(&$this, 'print_styles_cpt_edit') );
@@ -4353,12 +4354,14 @@ class xili_language_admin extends xili_language {
 
 			<input type="hidden" name="language_nicename" value="<?php echo $language->slug ?>" />
 		<?php endif; ?>
+		<?php wp_nonce_field( 'display-gp-locale-nonce', 'display-gp-locale-nonce', false ); ?>
+		
 		<table class="editform" width="100%" cellspacing="2" cellpadding="5">
 			<tr>
-				<th width="33%" scope="row" valign="middle" align="right"><label for="language_name_list"><?php _e('Examples', 'xili-language') ?></label>:&nbsp;</th>
+				<th width="33%" scope="row" valign="top" align="right"><label for="language_name_list"><?php _e('Examples', 'xili-language') ?></label>:&nbsp;</th>
 				<td width="67%"><select name="language_name_list" id="language_name_list">
 					<?php $this->example_langs_list($language->name, $action); ?>
-				</select>&nbsp;<small> <a href="http://www.gnu.org/software/hello/manual/gettext/Usual-Language-Codes.html#Usual-Language-Codes" target="_blank"><?php _e('ISO Language-Codes','xili-language'); ?></a></small>&nbsp;_&nbsp;<small><a href="http://www.gnu.org/software/hello/manual/gettext/Country-Codes.html#Country-Codes" target="_blank"><?php _e('ISO Country-Codes','xili-language'); ?></a></small><br />&nbsp;</td>
+				</select>&nbsp;<small> <a href="http://www.gnu.org/software/hello/manual/gettext/Usual-Language-Codes.html#Usual-Language-Codes" target="_blank"><?php _e('ISO Language-Codes','xili-language'); ?></a></small>&nbsp;_&nbsp;<small><a href="http://www.gnu.org/software/hello/manual/gettext/Country-Codes.html#Country-Codes" target="_blank"><?php _e('ISO Country-Codes','xili-language'); ?></a></small><br /><div id="gplocale-info"></div></td>
 			</tr>
 			<tr>
 				<th scope="row" valign="middle" align="right"><label for="language_name"><?php _e('ISO Name', 'xili-language') ?></label>:&nbsp;</th>
@@ -4466,6 +4469,43 @@ class xili_language_admin extends xili_language {
 			echo '<option value="' . $key . '" ' . $selected . '>' . $value . ' (' . $key . ')</option>';
 		}
 	}
+
+	/**
+	 * private functions for admin page : display full language infos from example_langs_list
+	 * @since 2.22.6
+	 */
+ 	function wp_ajax_display_gp_locale() {
+ 		check_ajax_referer( 'display-gp-locale-nonce' );
+
+ 		$wp_locale_slug = $_POST['wp_locale_slug'] ;
+		$locale_infos = GP_Locales::by_field( 'wp_locale', $wp_locale_slug );
+
+ 		if ( !$locale_infos ) {
+ 			// split names
+ 			$locale_names = explode ('/', $_POST['locale_names'] );
+			$locale_english_name = $locale_names[0];
+ 			$locale_infos = GP_Locales::by_field( 'english_name', $locale_english_name );
+ 		}
+
+ 		$html = '<table style="text-align:left;"><thead><th><small>'. __('Properties','xili-language') .'</small></th><tr></tr></thead>';
+ 		$html .= '<tr><th>' . __('English Name','xili-language') . '</th><td>' . $locale_infos->english_name . '</td></tr>';
+ 		$html .= '<tr><th>' . __('Native Name','xili-language') . '</th><td>' . $locale_infos->native_name . '</td></tr>';
+ 		$html .= '<tr><th>' . __('WP Locale','xili-language') . '</th><td>' . $locale_infos->wp_locale . '</td></tr>';
+ 		$html .= '<tr><th>' . __('Iso 639-1','xili-language') . '</th><td><span id="iso_639_1">' . $locale_infos->lang_code_iso_639_1 . '</span></td></tr>';
+ 		$html .= '<tr><th>' . __('Iso 639-2','xili-language') . '</th><td><span id="iso_639_2">' . $locale_infos->lang_code_iso_639_2 . '</span></td></tr>';
+ 		$html .= '<tr><th>' . __('Country code','xili-language') . '</th><td>' . $locale_infos->country_code . '</td></tr>';
+ 		$html .= '</table>';
+ 		wp_send_json_success( $html );
+ 	}
+
+ 	function wp_ajax_display_gp_locale_hook ( $hook ) {
+ 		error_log ('****' . $hook );
+ 	}
+
+ 	function display_gp_locale() {
+ 		$suffix = defined( 'WP_DEBUG') && WP_DEBUG ? '.dev' : '.min'; // 2.8.8
+		wp_enqueue_script( 'display_gp_locale', plugin_dir_url ( $this->file_file ) . 'js/xili-display_gp_locale'.$suffix.'.js','' , XILILANGUAGE_VER );
+ 	}
 
 	/**
 	 * add styles in options
