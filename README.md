@@ -9,11 +9,13 @@ The other files are available for comments or fixes. Only the version in [WordPr
 
 ## Master Branch
 
-Since 2016-12-14, master branch contains dev version 2.22.1 with some futures new features and fixes for WP 4.6 and WP 4.7.
+Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to WP 4.8.
 
-Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new object is created to contain all language features.
+Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new "language" object (*) is created to contain all language features.
 
 ...
+
+(*) thanks to JetPack to maintain a locale.php file with a huge list of languages of the world.
 
 ## Preliminary infos:
 
@@ -23,3 +25,4 @@ Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new obj
 Thanks for your contribution.
 
 M.
+(I will be present in WordCamp Europe in Paris in June 2017)
