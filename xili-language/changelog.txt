@@ -1,0 +1,356 @@
+= version 2.20.2 (2015-09-14) - 2.20.1 (2015-09-03) =
+* updated languages list (JetPack 3.7)
+* updated commun messages
+* fixes error "/theme-multilingual-classes.php on line 1014"
+= version 2.20.0 (2015-08-31) =
+* now includes special optional functions provided in example themes (201x-xili child series) to insert language at beginning for the permalink. Options are now in expert tab. (These functions were reserved formerly for donators and contributors)
+
+> If using or customizing 201x-xili child-theme series: it is fully recommanded to (re)visit and verify languages list and permalink settings page (flush fired).
+
+* first tests with twentysixteen new theme v 0.1 (see https://github.com/dev-xiligroup/twentysixteen-xili)
+* tests with WP 4.3 shipped
+* add "alternate x-default" in head
+* notices, fixes with WooCommerce wizard
+
+= version 2.19.3 (2015-08-16) =
+* tests with WP 4.3-RC2 and WooCommerce 2.4.4 (kit)
+* limitations with WP 4.3-RC2: don't use new theme customizer to set dynamic menus with insertion points. Bundled theme translations need to be updated (ex. 2015 v1.3)
+* fixes `show_in_nav_menus` param
+* add param `show_in_rest` for REST API plugin
+
+= version 2.19.0 (2015-07-05) 2.19.1 (2015-07-08) =
+* add link in post edit to view
+* add shortcode [linked-post-in] as `[linked-post-in lang="fr_fr"]Voir cet article[/linked-post-in]`
+* ready to translate theme_mob values (like in config.xml) see multilingual child theme twentyfifteen-xili example
+* pre-tests with WP 4.3-beta1: fixes for WP Theme Customizer Menus
+* fixes
+
+= version 2.18.1 (2015-06-01) =
+* fixes, improves media editing page (cloning part, admin side)
+= version 2.18.0 (2015-05-14) =
+* integration of xl-bbp-addon (no more a plugin),
+* fixes/adds 'menu-item-has-children' class in menus build by selector (as used in twentyfourteen / twentyfifteen theme css for sub-menu on left sidebar to show small arrow),
+* fixes propagation options,
+* better management of dashboard language and user profil (thanks to Renoir),
+* selected value of languages in general settings set to get_option('WPLANG') (and not filtered locale).
+
+= version 2.17.1 (2015-04-24) =
+* tested with WP 4.2
+* detect pre-registered xili-widgets in theme
+* online help updated (flags)
+* adds get_the_archive_description filter [twenty-fifteen-xili example theme](http://2015.extend.xiligroup.org) dont need child archive.php
+* (security) fixes
+= version 2.17.0 (2015-04-17) =
+* tested with WP 4.2-RC1
+* tested with WP JSON REST API version 1.2.1 - [see tests for Webapp with Framework7](https://github.com/dev-xiligroup/framework7)
+* WARNING : users of child theme examples (bundled series like twentyten to twentyfifteen-xili) must update and use latest releases soon available in [github](https://github.com/dev-xiligroup?tab=repositories) - *backup before langs subfolder to keep previous translations* -
+
+= version 2.16.6 (2015-04-01) =
+* WP-REST-API - json compatibility
+* fixes is_main_query and option stickies
+
+= version 2.16.4 (2015-03-23) =
+* intermediate version before 2.17 for WP 4.2 (tested with beta2) - used with WP 4.1.x
+* custom_xili_flag for admin side (admin side flag are uploadable - no need to take attention to name or type (.png, .jpg, gif)
+* custom_xili_flag (frontend): if not ready or declared in customised theme, search in subfolder theme/images/flags (only .png)
+* better selection of active widgets (new Categories widget with good counting if language selection must be enabled in 5th tab)
+* improved permalink class (View term links in admin side)
+* improved code in core query
+
+= version 2.16.3 (2015-03-06) =
+* fixes warning of archives link w/o perma
+* widget archives filtered if curlang
+* add xili_Widget_Categories class (need registering by author)
+= version 2.16.2 (2015-02-28) =
+* fixes warning if dropdown categories,
+* improves translation
+
+= version 2.16.1 (2014-12-21) =
+* fixes find_files if no wp-content/languages/themes
+
+= version 2.16.0 (2014-12-18) =
+* ready for Twenty Fifteen and 4.1 Dinah, see [multilingual child theme named twentyfifteen-xili](http://2015.extend.xiligroup.org) !
+* now search also parent mo files in WP_LANG_DIR/themes if not in theme folder
+= version 2.15.4 (2014-12-16) =
+* ready for twentyfifteen and 4.1-RC1
+* fixes links rights
+* new filters for description (nav menu of Twenty Fifteen new bundled theme)
+
+= version 2.15.3 (2014-11-17) =
+* ready for WP 4.1 beta1 and Twenty Fifteen new bundled theme
+
+= version 2.15.2 (2014-09-08) =
+* change WP_LANG constant to get_WPLANG() to be compatible with WPLANG option since WP 4.0 (and obsolete constant)
+* fixes bbPress compatibility
+= version 2.15.1 (2014-08-24) =
+* params in add_theme_support ( 'custom_xili_flag', $args ) - possible default flags in theme (see twentythirteen-xili as example) - Default flags provided in bundled child theme came from [famfamfam](http://www.famfamfam.com/lab/icons/flags/)
+* improved get_listlanguages() function
+
+= Version 2.15.0 (2014-07-27) =
+* new way to use flag in language list (switcher) style new 'current_theme_supports' named 'custom_xili_flag' (automatically set for 5 bundled themes like 2014)
+* new shortcode xili-flag (url of custom flag) `[xili-flag lang='fr_FR']` returns url of french flag
+= Version 2.14.1 (2014-06-15) =
+* settings news pointer, css improved
+* add debug options
+* fixes xili-findposts.js (WP 3.9 broken)
+
+= Version 2.14.0 (2014-06-10) =
+* Richer ways to manage plugin terms translations,
+* permalinks class improved for CPT and CT,
+* new shortcode `[xili-show-if lang=fr_FR ]contenu de la page boutique multilingue[/xili-show-if]` - content displayed if lang = current language...
+
+= Version 2.13.2 b (2014-06-02) =
+* fixes settings for new CPT, authorized_custom_post_type fixed
+* better selector (msgid for XD), XD again in bar admin,
+* widget language file merged in main file of plugin
+
+= Version 2.13.1 (2014-05-28) =
+* fixes theme customize broken,
+* issue fixed with xx-YY.mo file if no child
+
+= Version 2.13.0 (2014-05-26) =
+* xml import improved,
+* GlotPress importation improved.
+
+= Version 2.12.1 (2014-05-16) =
+* improved choice in parent/child .mo files priority,
+* try to search local-xx_YY in wp-content/languages/themes (WP_LANG_DIR)
+* improved *All content* xml export for all authorized CPTs.
+
+= Version 2.12.0 (2014-05-12) =
+* 2nd tab in settings UI reorganized to adjust front side (visitor side).
+* 5th tab to set dashboard side (authoring and various technical settings).
+* includes authoring propagate options *previously available only in theme's class* (see new 5th tab in settings UI).
+* WARNING : users of child theme examples (bundled series like twentyten to twentyfifteen-xili) must update and use latest releases now available in [github](https://github.com/dev-xiligroup?tab=repositories) - *backup before langs subfolder to keep previous translations* -
+* widgets adapted for theme customize appearance screen (WP 3.9+).
+* fixes - returns from developers and webmasters are welcome.
+* code cleanup.
+* tested with WP 3.9.1
+
+= Version 2.11.3 (2014-04-21) =
+* minor fixes - style improved in translations metabox
+= Version 2.11.2 (2014-04-13) =
+* more tests with 3.9
+* accurate counter for CPT
+* improving nav menu classes assignation with _wp_menu_item_classes_by_context - ancestor and parent class are now available in menus insertion point results
+= Version 2.11.1 (2014-03-17) =
+* add filter to enable Featured_Content class of current theme and disable Featured_Content class of JetPack.
+* improved languages list for post_format and date (permalinks option - donators)
+* first adaptation for WP 3.9 (beta1): Ajax/Json findposts js
+= Version 2.11.0 (2014-03-10) =
+* function added is_xili_curlang( $lang ).
+* improves infos in form for alias refreshing in permalinks,
+* new locales (based on jetpack)
+* clean wp-pointer params
+
+= Version 2.10.1 (2014-02-27) =
+* fixes issues and improves permalink class
+* new type of menu for singular (dont display menu item if linked post in target language dont exists)
+* fixes style in menu insertion point
+
+= Version 2.10.0 (2014-02-01) =
+* new versioning rules
+* improved GlotPress and Automattic downloading of mo files (recent changes in these servers...)
+* screenshots in assets
+* updated help
+* full tests with WP 3.8.1
+= Version 2.9.30 (2013-12-12) =
+* new class for permalinks options (reserved for donators and contributors)
+* W A R N I N G : in customized themes with language incorporated inside permalinks, `multilingual-permalinks.php` file must be updated, contact us !
+* pre-tests for WP 3.8
+* fixes in insertion points loop (.min)
+
+= Version 2.9.22 (2013-12-08) =
+* improves widget latest posts (remove xlrp), widget latest comments (new selection) with recent classes
+
+= Version 2.9.21 (2013-11-24) =
+* improves frontpage as page language,
+* improves browser preferred languages priority
+* pre-tested on WP 3.8 beta1
+
+= Version 2.9.20 (2013-11-10) =
+* add a new way to create parts of menu assigned to a language via menu insertion point.
+* short description [here in 2013 child website](http://2013.extend.xiligroup.org/en/524/xili-language-version-2-9-20-a-new-insertion-point-in-navigation-menu/)
+= Version 2.9.11 (2013-11-03) =
+* fixes CPT find_posts ajax for each post_type,
+* improved theme multilingual_class,
+* tested with 3.7.1,
+* inline edit and bulk edit improved,
+* incorporate a new feature : List of a sub-selection of pages (according current language of webpage) can be inserted everywhere in nav menu. A powerful way to create very dynamic menus (with a bit of patience!)
+
+= Version 2.9.2, 2.9.3 (2013-10-11) =
+* restrict home queries to fixe issue of nextgen gallery plugin 2.0 (is_home true in admin side :-( ) CPT queries !
+
+= Version 2.9.1 (2013-10-02) =
+* improved theme for options classes (multilingual-classes.php)
+* fixes rare notice
+* language list menu adapted for [xili-tidy-tags v1.9](https://wordpress.org/extend/plugins/xili-tidy-tags/) new multilingual groups of tags.
+* addon bbPress adapted for xtt groups
+
+= Version 2.9.0 (2013-08-20) =
+* tested with WP 3.6 final,
+* more accurate warning message if `load_theme_textdomain` not available in child or parent theme,
+
+= Version 2.8.10 (2013-07-16) =
+* tested with WP 3.6 RC1,
+* class for theme improved,
+* fixes
+* new icons and logo by Patrice R.
+
+= Version 2.8.9 (2013-05-26) =
+* class for -xili child theme improved (see [twentythirteen-xili](http://2013.extend.xiligroup.org) example ).
+* jetpack: live change of admin UI language.
+* fixes, __construct in widget classes (php5).
+= Version 2.8.8 (2013-05-12, 2013-05-19) =
+* New way - via Menus builder - to insert languages list
+* Includes class usable to build child theme multilingual features admin UI
+* try to find .mo files at Automattic svn and GlotPress
+* best title in href language list
+* new filter - xl_propagate_post_attributes - to personalize post's attributes propagation during translation generation. - Filters demo in twentythirteen-xili child theme [example](http://2013.extend.xiligroup.org).
+* better filter in menu/widget title (right quotation fixes)
+* fixes findposts js to search linkable post.
+* fixes notice with bbPress 2.3 - Tracs #2309
+* for installation in WP network, option to erase settings of the current site if deactivation (the settings are not changed in other sites).
+* add capabilities removing when deactivating.
+* the_other_posts function improved.
+* Continues tests with WP 3.6 beta3 and Twenty Thirteen theme
+* 2013-05-19 - temporary fixes for ka_GE (replace ge_GE for Georgian) - changes https to http for GlotPress (WP server changed)
+
+= Version 2.8.7 (2013-04-16) =
+* fixes lang_perma if search,
+* fixes IE matching(z8po), add option 'Posts selected in' for language_list title link (used by XD)
+
+= 2.8.4, 2.8.6 (2013-03-22) =
+
+* Fixes security issues
+* Improves searchform
+* more option in automatic nav menu insertion
+* cleaning sources after test phases (2.8.4.x)
+* pre-tests with WP 3.6 alpha and Twenty Thirteen theme
+* testing phase before releasing 2.8.5 as current
+* plugin domain switching improved, clean __construct source, fixes
+* media cloning again available in WP 3.5.x, add infos about attached
+* add page_for_posts features
+* fixes get_terms cache at init
+* fixes support settings issue
+* improved admin UI
+
+= 2.8.3.1 (2013-01-06) =
+* Maintenance release, fixes class exists in bbp addon
+
+= Version 2.8.0, 2.8.1 (2012-09-21) =
+* Improvements for bbPress >= 2.1 with multilingual forums. See this [post in wiki](http://wiki.xiligroup.org/index.php/Xili-language:_multilingual_forums_with_bbPress_add-on).
+* Dashboard language choosen by each user (if WP .mo locale files are available),
+* Improved preset list of languages
+* Fixes
+
+= Version 2.7.0, 2.7.1 (2012-08-20) =
+* multilingual features in media library, see [wiki xili about media attached texts](http://wiki.xiligroup.org/index.php/Xili-language:_Media_and_language_of_title_and_caption_or_description)
+* fixes - for best results, update xili_dictionary to 2.1.3 and xili_tidy_tags to 1.8.
+= Version 2.6.0 to 2.6.3 (2012-07-08)=
+* Able to detect and use local files (local-xx_XX.mo) containing translations of local website datas created by xili-dictionary >= 2.1.
+* More infos in categories list about translations. Links with xili-dictionary.
+* Incorporate news pointer widget to hightlight infos (some need to be dismissed two times !)
+* MAJOR UPDATE: See short presentation of new in the [wiki xili](http://wiki.xiligroup.org/index.php/Xili-language_v2.6:_what%27s_new_with_xili-dictionary_v2.1))
+
+= Version 2.5.0 (2012-04-18) =
+* A new metabox now contains the list of (now and future) linked translated posts. The new design benefits from the gains of the concept of xili-dictionary 2.0.
+* This box replaces the previous two metaboxes designed at the origin of xili-language. For more info, visit the [wiki website](http://wiki.xiligroup.org).
+
+= Versions 2.4.0, 2.4.4 (2012-03-29) =
+* Settings pages are now organized in 4 tabs with more online infos.
+* automatic rtl.css adding if present in theme like twentyten or twentyeleven - So supports better arabic, persian, hebraic and other *right to left* languages.
+* new way and options to manage dates translation using class wp_locale - before activation: read carefully [this keynote](http://dev.xiligroup.com/?p=2275)
+* ready for the new version of xili-dictionary 2 that uses now custom post type to store msg lines.
+* compatible with themes with language files in sub-sub-folder of theme.
+
+= 2.3.0, 2.3.2 (2011-11-13) =
+* fixes and avoid notices, fixes support emailing
+* optimized findposts ajax for linked posts
+* IMPORTANT: DON'T FORGET TO BACKUP BEFORE UPGRADING.
+* ready for multi nav menus [see this post](http://2011.wpmu.xilione.com/?p=160)
+* ready for enlarged selection of undefined posts
+= 2.2.0, 2.2.3 (2011-10-08) =
+* improved code - clean warning - permalink rare issues solved when page switch on front (next)
+* fixes - `wp_list_pages` improved for current language subselection (see code)
+* improved date formatting options if no *Server Entities Charset* for rare languages like khmer.
+* improved search form - findposts ajax added in linked metabox for post and page
+* fixes error in navmenu and defaults options of xili_language_list.
+* source reviewed, folder reorganized, ready for option with lang inside permalink. Screenshots renewed from WP 3.2 RC
+* deep tests with official release of WP 3.2
+= 2.1.0, 2.1.1 (2011-06-28) =
+* fixes uninstall white screen, fixes focus error
+* new navigation when singular linked post in xili_language_list, multiple nav menus location, new filter for xili_nav_lang_list see code..
+* when a singular (single or page) is displayed, linked posts of other languages are set in xili-language-list links . Previously, it was possible to offer this behaviour by using hook (filter) provided by the plugin. Now, for newbies, it will be easier to link posts according languages with widget.
+* for previous users of navigation menus : v2.1.0 is compatible with settings of previous release BUT introduces now a way to choose multiple menu locations - so revisit the settings page to confirm your previous choice or sets to new navigation way including singular links.
+= 2.0.0 (2011-04-10) =
+* erase old coding remaining for 2.9.x - Improve (progressively) readme...
+= 1.9.0, 1.9.1 (2011-03-16) =
+* fixes in xili widget recent posts - only post-type display by default - input added to add list of type (post,video,…)
+* fixes query_var issues when front-page as page or list of posts (thanks to A B-M)
+* Released as current for 3.1
+
+= 1.8.0, 1.8.9.3 (2011-01-24) =
+* bulk edit in posts list
+* add option to adapt nav home menu item
+* add `n` in date formatting translation.
+* new column in dashboard to see visibility of a language in Languages list - new checkbox in edit and one in widget to subselect only visible langs.
+* twentyten-xili child theme : now use version 1.0
+* Webmaster : xili_language_list hook has now 5 params - see source.
+* Webmaster : to get linked post ID, don't use `get_post_meta` but `xl_get_linked_post_in` function (see lin #4115) (future changes in linking mechanisms)
+* filter by languages in Posts edit list.
+* add filter 'xili_nav_lang_list' to control nav menu automatic insertion by php webmasters.
+* add filter 'xili_nav_page_list' to control automatic sub-selection of pages.
+* add id and class for separator in nav menu automatic insertion.
+* set language available in quick-edit mode of posts list.
+* complete gettext filters - include optional activation of the 3 widgets. - add use `WPLANG` with 2 chars as *ja* for japanese
+* add gettext filter to change domain for visitor side of widget and other plugins.
+* optional total uninstall with all datas and options set by xili-language.
+* readme rewritten - email metabox at bottom.
+* improve automatic languages sub-folder detection and caution message if `load_textdomain()` is missing and not active in functions.php
+* repairs oversight about bookmarks taxonomies (blogroll) : now it is possible in widget to sub-select links according language and in template tag `wp_list_bookmarks()`
+* query for posts with undefined language `lang=*` ( **since 2.3 replaced** by `lang=.` ), improved widget languages list (condition)
+* widgets rewritten as widget class extend.
+* search form improved
+* fixes
+* as expected by some webmasters, 'in' before language is not displayed before name in language list.
+* better automatic insertion of nav menu for theme with several location.
+* now compatible with child theme - see [Forum](http://dev.xiligroup.com/?forum=xili-language-plugin)
+* improve date to strftime format translation.
+* now, if checked in settings, a custom post type can be multilingual as post or page type.
+
+= 1.7.0 - 1.7.1 (2010-07-21) =
+* some functions are improved through new hooks (front-page selection).
+* fixes unexpected rewritting (when permalinks is set) and fixes query of category without languages.
+* optional automatic insertion of selection by language of pages in top nav menu (WP 3.0 and twentyten) before list of languages. Possible to adapt parameters as in template-tag ` wp_pages_list()` .
+* **For developers:** `xiliml_cur_lang_head` filter is now obsolete and replace by `xiliml_curlang_action_wp` - see code source - the mechanism for frontpage (home recent posts list or page) is changed and don't now use redundant queries.
+* **For developers:** if you use `xili_language_list` hook action to create your own list - verify it if you use page as frontpage because 'hlang' querytag is now obsolete.
+* **Latest version compatible with WP 2.9.x**
+
+= 1.6.0 - 1.6.1 (2010-06-28) =
+* Add new features to manage sticky posts ( [see this post in demo website](http://multilingual.wpmu.xilione.com/) )
+* Fixes refresh of THEME_TEXTDOMAIN for old WP 2.9.x
+* Improvements mainly for WP 3.0
+* more functions to transform without coding site based on famous new twentyten theme. (article later)
+* possible to complete top nav menu with languages list for website home selection in two ways.
+* new functions for developers/webmasters: `xili_get_listlanguages()`, see source.
+* example of language's definition (popup) to add new language.
+* Language list widget: list of available options added (hookable also).
+* some parts of source rewritten.
+
+= 1.5.2, 3, 4, 5 (2010-05-27) =
+* WP 3.0 (mono or multisite): incorporates automatic detection of theme domain and his new default theme 'twentyten'
+* A demo in multisite mode with WP 3.0 and 'twentyten' is [here](http://multilingual.wpmu.xilione.com).
+* remains compatible for previous versions WP 2.9.x
+* some fixes - see changes log.
+
+= 1.3.x to 1.4.2a (2010-04-03) =
+* Rename two filters for compatibility with filters renamed by WP3.0. Incorporate posts edit UI modifications of WP3.0.
+* no unwanted message in homepage when theme-domain is not defined - plugin must be activated AFTER theme domain settings.
+* improved template_tags : xiliml_the_category, xiliml_the_other_posts (see source doc)
+* Browser's window title now translated for categories (`wp_title()`). Option in post edit UI to auto-search linked posts in other languages - [see this post](http://dev.xiligroup.com/?p=1498).
+* New option to adapt the home query according rules defined by chief editor. If home page loop is filled by most recent posts (via index or home.php), formerly, by default xili-language is able to choose the theme's language but not to sub-select the loop (without php coding). Now when checking in Settings *'Modify home query'* - no need to be a php developer.
+* New widget for **recent posts** (able to choose language). This new widget solves conflicts or issues occuring when WP default widget is present (contains an *obscur* `wp_reset_query`). Also a choice of language of this list of recent posts is possible - not necessary the same of the current page. And you can install multiple widgets. **Replace WP Recent Posts widget by this one named** - *List of recent posts* -
+* New functions to change and restore loop's language query-tag (see functions [table](http://dev.xiligroup.com/?p=1432) ).
+* Better dashboard post UI to create linked post (and page): *from one post, it possible to create linked post in another language and the links are prefilled. Just need to save draft to save the links between root and translated posts filled by authors.* [See](http://dev.xiligroup.com/?p=1498)
+* fixes lost languages's link when trash or untrash (WP 2.9.1).
