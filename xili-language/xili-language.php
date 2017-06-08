@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.6
+Version: 2.22.7
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
 # updated 170523 - 2.22.6 - fixes alias creation or update in xili-language-term
 # updated 170504 - 2.22.5 - updates locales.php (Jetpack 4.9)
 # updated 170421 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language) - bulk actions
@@ -43,71 +44,8 @@ Domain Path: /languages/
 # updated 150306 - 2.16.3 - fixes warning of archives link w/o perma - widget archives filtered if curlang - add xili_Widget_Categories class (need registering by author)
 # updated 150228 - 2.16.2 - fixes warning if dropdown categories, some rewritten lines
 
-# updated 141221 - 2.16.1 - fixes find_files if no wp-content/languages/themes
-# updated 141218 - 2.16.0 - ready for twentyfifteen and 4.1 - now search also parent mo file in WP_LANG_DIR if not in theme folder
-# updated 141216 - 2.15.4 - ready for twentyfifteen and 4.1-RC1 - fixes links rights - new filter for description (2015 nav menu)
-# updated 141111 - 2.15.3 - ready for twentyfifteen and 4.1-beta1
-# updated 140915 - 2.15.2 - change WP_LANG constant to get_WPLANG() to be compatible with WPLANG option since 4.0
-# updated 140825 - 2.15.1 - params in add_theme_support ( 'custom_xili_flag', args ) - possible default flags in theme (see twentyfourteen-xili as example) - improved get_listlanguages() function
-# updated 140727 - 2.15.0 - new way/option to use flag of media asset -
-# updated 140616 - 2.14.1 - settings news pointer, css improved - add debug options - fixes findposts.js (WP 3.9 broken)
-# updated 140610 - 2.14.0 - permalinks class improved - link functions optimized - plugin's mo file switcher improved
-# updated 140602 - 2.13.2b - authorized_custom_post_type() fixed
-# updated 140602 - 2.13.2 - fixes settings for new CPT, better selector (msgid for XD), XD again in bar admin, widget language file merged in main file of plugin
-# updated 140528 - 2.13.1 - fixes theme customize broken, issue fixed with xx-YY.mo file if no child theme (set_mofile)
-# updated 140526 - 2.13.0 - xml import improved, GlotPress importation improved
-# updated 140516 - 2.12.1 - improved choice in parent/child mo priority - try to search local- in WP_LANG_DIR - improved all xml export
-# updated 140512 - 2.12.0 - includes propagate options previously available only in theme's class, 2 tabs of settings rewritten, multiple post_types query included (thanks to muh), new xili18n shortcode
-# updated 140421 - 2.11.3 - fixes - style improved in translations metabox
-# updated 140411 - 2.11.2 - accurate counter for CPT - more tests with 3.9 - improving nav menu classes assignation with _wp_menu_item_classes_by_context
-# updated 140317 - 2.11.1 - add filter to enable Featured_Content class of current theme and disable Featured_Content class of JetPack. Changes ajax/json for WP3.9. Fixes and improves menus links (format, date)
-# updated 140307 - 2.11.0 - add new function is_xili_curlang() returning true or false depending passed language slug, the_curlang (xili_curlang) improved, clean wp pointers, [xl-class-admin] improves infos in form for alias refreshing in permalinks, new locales (based on jetpack)
-# updated 140302 - 2.10.3 - fixes in add-on
-# updated 140226 - 2.10.1 - fixes permalinks class
-# updated 140201 - 2.10.0 - new versioning rules - improved GlotPress and Automattic download - screenshots in assets - updated help
-
-# updated 131208 - 2.9.30 - new class for language in permalink options (donators)
-# updated 131206 - 2.9.22 - improves widget latest posts (remove xlrp), widget latest comments (new selection),
-# updated 131124 - 2.9.21 - fixes curlang in specific condition of page in front-page, fixes matche preferred languages priority with FF if only 2 chars
-# updated 131110 - 2.9.20 - Insertion point for menus without location
-# updated 131103 - 2.9.11 - fixes theme-multilingual-class when no header images, fixes insertion points issues
-# updated 131101 - 2.9.10 - fixes CPT selection ajax find-posts, new theme-multilingual-class 1.3 - tested with 3.7.1 - inline edit and bulk edit improved, incorporate a new feature : List of a sub-selection of pages (according current language of webpage) can be inserted everywhere in nav menu.
-# updated 131011 - 2.9.3 - maintenance version as current in repository
-# updated 131010 - 2.9.2 - restrict home queries to authorized post_type ( nextgen gallery issue even in admin side )
-# updated 131002 - 2.9.1 - improved theme for options classes (multilingual-classes.php) - fixes rare notice - addon bbPress adapted for xtt groups
-# updated 130820 - 2.9.0 - Release tested with final WP 3.6, more accurate warning message if load_theme_textdomain is not available
-# updated 1306, 130716 - 2.8.10 - test for jetpack, WP3.6-rc1
-# updated 130527 - 2.8.9 - fixes, __construct in widget classes.
-# updated 130519 - 2.8.8k - temporary fixes for ka_GE (replace ge_GE for Georgian) - changes https to http for glotpress (WP server changed)
-# updated 130422 - 130512 - 2.8.8 - fixes notice with bbPress 2.3 - try to find .mo files at automattic svn and GlotPress - best title in href language list - new way to insert languages list in navigation menu - better filter in menu/widget title - clean $wp_roles on deactivating - fixes findposts js - the_other_posts improved to return list.
-# updated 130416 - 2.8.7 - fixes lang_perma if search, fixes IE matching(z8po), add option 'Posts selected in' for language_list title link
-# updated 130322 - 2.8.6 - verify QUETAG value - improve html attributes - improves searchform js
-# updated 130313 - 2.8.5 - add feature to improve pages list insertion
-# updated 130303 - 2.8.4.3 - infos in cats removed (added in XD), plugin domain switching improved, clean __construct source, fixes
-# updated 130216 - 2.8.4.2 - fixes Notice, media cloning again available in WP 3.5.x
-# updated 130203 - 2.8.4.1 - fixes page_for_posts issue when empty and static_front_page, works with permalink - adapt texts in settings
-# updated 130127 - 2.8.4 - fixes get_terms cache at init, fixes support settings (s) issue, add nounce in admin UI
-# updated 130106 - 2.8.3.1 - Maintenance release, fixes xili-tidy-tags class exists in bbp addon
-
-# updated 121202 - 130103 - 2.8.3 - insert in empty nav menu - improved admin UI - fixes WP 3.5 new process (lang sub-folder)
-# updated 120929 - 121118 - 2.8.2 - improvement query var - add date format without locale (no_locale)
-# updated 120921 - 2.8.1 - fixes sticky perma - improvements for bbPress - new filters in admin - fixes feed links meta
-# updated 120903 - 2.8.0 - fixes, new: admin side language selection - b : langstate
-# updated 120819 - 120723 - 2.7.1 - fixes lang_perma detect for permalinks add-ons - new start via action
-# updated 120721 - 2.7.0 - multilingual features in media library - centralize alert messages and ready for link to wiki
-# updated 120708 - 2.6.3 - fixes notice when page-on-front - new icons - test propagate cats
-# updated 120701 - 2.6.2 - add news pointer in class admin, tabs in help
-# updated 120615 - 2.6.1 - fixes notice xlrp
-# updated 120528 - 2.6.0 - class admin in separate file, able to detect and use local files (local-xx_XX.mo) containing translations
-# updated 120420 - 2.5.1 - add style for post edit (flag in imput)
-# updated 120415 - 2.5.0 - new dashboard metabox for translations list of linked posts and actions (as in XD2), language postmetas now hidden, hreflang link added in head, WP3.4 pre-tests: fixes metaboxes columns
-# updated 120329 - 2.4.4 - fixes posts list language column in 3.2.1
-# updated 120225 - 2.4.3 - fixes before releasing
-# updated 120212 - 2.4.2 - admin_bar replaced by toolbar and node (>= WP3.3) - cc: + Reply-To: - better merge loadthemedomain in multisite - ready for XD 2.0 - sub-sub-folder for language files
-# updated 120128 - 2.4.1 - new readme - new tabs in settings - improved lang slug creation - test menu location get_registered_nav_menus -
-# updated 111222 - 2.4.0 - if needed and present add rtl.css for rtl languages - new date based on wp_locale - time options
-# less than 2.4….
-# see readme text for these intermediate versions for WP 2.x. or visit other previous versions (2.5).
+# less than 2.16…
+# see readme text for these intermediate versions for WP 2.15. or visit other previous versions (2.15).
 # updated 090228 - Class and OOP - see 0.9.7 in comments of functions below - only for WP 2.7.x
 
 # This plugin is free software; you can redistribute it and/or
@@ -125,7 +63,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.6'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.22.7'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -507,7 +445,7 @@ class xili_language {
 		add_action( 'pre_get_posts', array(&$this,'modify_querytag') );
 		add_action( 'pre_get_posts', array(&$this,'multiple_lang_query') );
 		add_filter( 'query_vars', array( &$this,'multiple_lang_query_vars') );
-		add_action('template_redirect', array( &$this,'multiple_lang_query_redirect') );
+		add_action( 'template_redirect', array( &$this,'multiple_lang_query_redirect') );
 
 		add_action( 'wp', array(&$this, 'xili_test_lang_perma'), 1 ); // only front-end
 		add_action( 'wp', array(&$this, 'xiliml_language_wp') ); /// since 2.2.3 - wp_loaded - wp before
@@ -1768,11 +1706,11 @@ class xili_language {
 	}
 
 	/**
-	 * insert multiple language in search query form
+	 * insert multiple language from search query form
 	 *
 	 * @since 2.22
 	 */
-	function multiple_lang_query ( $q ) { return $q; // temporary disabled = redirection now
+	function multiple_lang_query ( $q ) { //return $q; // temporary disabled = redirection now
 		if ( $q->is_main_query()
 		  // … sur une page de recherche…
 		  // && is_search()
@@ -1810,10 +1748,10 @@ class xili_language {
 	 */
 	function multiple_lang_query_redirect ( $vars ){
 		if (  isset( $_GET['mlang'] ) ) {
-			$search_url =  home_url( '/' );
 
 			if ( $lang_slugs = get_query_var( 'mlang', false ) ) {
-                $search_url = add_query_arg( array('lang' => implode ( ',' , $lang_slugs)), $search_url );
+                $search_url = add_query_arg( array('lang' => implode ( ',' , $lang_slugs)), false );
+                $search_url = remove_query_arg ( 'mlang', $search_url  );
             }
             wp_redirect( $search_url );
             exit();
@@ -1888,7 +1826,7 @@ class xili_language {
 			if ( $do_it ) { // insertion of selection
 
 				if ( strpos($query_object->query_vars[QUETAG], ',') !== false ) {
-					$langs = preg_split('/[,\s]+/', $query_object->query_vars[QUETAG]); error_log ( "multiple = " . serialize( $langs ) );
+					$langs = preg_split('/[,\s]+/', $query_object->query_vars[QUETAG]); xili_xl_error_log ( '# '. __LINE__ . "multiple = " . serialize( $langs ) );
 					foreach ( (array) $langs as $lang ) {
 						$lang = sanitize_term_field('slug', $lang, 0, 'post_tag', 'db');
 						$reqtags[]= $lang;
@@ -4581,14 +4519,14 @@ class xili_language {
 		foreach ($listlanguages as $language) {
 			if ( is_search() ) {
 				if ( isset( $wp_query->query_vars[QUETAG] ) ) { // to rebuilt form after search query
-					$selected = ( ( $language->slug == $this->lang_qv_slug_trans ( $wp_query->query_vars[QUETAG] ) ) ) ? 'checked="checked"' : "" ; //2.2.2
+					$checked = checked ( $language->slug, $this->lang_qv_slug_trans ( $wp_query->query_vars[QUETAG] ) , false ); //2.2.2
 				} else {
-					$selected = "";
+					$checked = "";
 				}
 			} else {
-				$selected = ( ( $language->slug == $this->curlang ) ) ? 'checked="checked"' : "" ;
+				$checked = checked ( $language->slug, $this->curlang , false );
 			}
-			$a .= $before.'<input onClick="if(this.form.clear.checked) { this.form.clear.checked = false; }" type="radio" name="'.QUETAG.'" value="'.$language->slug.'" id="'.QUETAG.'-'.$language->slug.'" '.$selected.' />&nbsp;'._x( $language->description, 'searchform', $this->thetextdomain ).' '.$after;
+			$a .= $before.'<input onClick="if(this.form.clear.checked) { this.form.clear.checked = false; }" type="radio" name="'.QUETAG.'" value="'.$language->slug.'" id="'.QUETAG.'-' . $language->slug.'" '. $checked .' />' . esc_attr_x( $language->description, 'searchform', $this->thetextdomain ).'&nbsp;'.$after;
 		}
 		// new javascript to uncheck radio buttons	on form named searchform form.
 		$a .= $before.'<input type="radio" name="clear" onClick="
@@ -4878,7 +4816,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	}
 
 	/**
-	 * SHORTCODE: display multiple languages selector
+	 * SHORTCODE: display multiple languages selector form
 	 *
 	 * inser
 	 *
@@ -4887,8 +4825,9 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	 *
 	 */
  	function multiple_lang_selector( $atts, $content = null ) {
+ 		global $wp_query;
  		$atts = shortcode_atts(array(
-			'option' => '',
+			'option' => 'list', // 'form' == insert button
 			'before-list' => '<p>', // ul
 			'after-list' => '</p>', // /ul
 			'before-line' => '', // li
@@ -4901,14 +4840,27 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 		// form
 		// checkbox
 		// button
-		$form = '<form role="search" method="get" class="search-form" action="' . esc_url( home_url( '/' ) ) . '">';
+		$form = '';
+		if ( $atts['option'] == 'form' )
+			$form .= '<form role="search" method="get" class="search-form" action="' . esc_url( home_url( '/' ) ) . '">';
 		$form .= $atts['before-list'];
 		foreach ( $listlanguages as $slug => $language ) {
-			$form .= $atts['before-line'] . '<input name="mlang[]" type="checkbox" value="' . $slug . '" />' . $language->english_name . $atts['after-line'];
+			if ( isset ( $wp_query->query_vars[QUETAG] ) ) {
+				$lang_list = explode (',', $wp_query->query_vars[QUETAG] );
+				$true = in_array ( $this->lang_slug_qv_trans($slug) , $lang_list );
+				$checked = checked ( $true, true, false );
+			} else {
+				$checked = '';
+			}
+			$form .= $atts['before-line'] . '<input name="mlang[]" type="checkbox" value="' . $this->lang_slug_qv_trans( $slug ) . '" '. $checked .'/>' . $language->english_name . $atts['after-line'];
 		}
 		$form .= $atts['after-list']; //
-		$form .= '<input type="submit" class="' . $atts['button-class'] . '" value="'. esc_attr_x( $atts['button'], 'submit button' ) .'" />
-			</form>';
+
+		if ( $atts['option'] == 'form' ) {
+			$form .= '<input type="submit" class="' . $atts['button-class'] . '" value="'. esc_attr_x( $atts['button'], 'submit button' ) .'" />';
+			$form .= '</form>';
+		}
+
 		return $form;
  	}
 
