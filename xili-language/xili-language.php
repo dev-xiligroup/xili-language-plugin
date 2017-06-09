@@ -67,7 +67,7 @@ define('XILILANGUAGE_VER', '2.22.7'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
-define('XILILANGUAGE_WP_TESTED', '4.8'); /* 2.17.1 - used in version pointer infos */
+define('XILILANGUAGE_WP_TESTED', '4.8 Evans'); /* 2.17.1 - used in version pointer infos */
 define('XILILANGUAGE_PLL_TESTED', '1.7.9'); /* 2.20.3 - newest PLL tested */
 define('XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 
@@ -1748,13 +1748,14 @@ class xili_language {
 	 */
 	function multiple_lang_query_redirect ( $vars ){
 		if (  isset( $_GET['mlang'] ) ) {
-
-			if ( $lang_slugs = get_query_var( 'mlang', false ) ) {
+			$lang_slugs = get_query_var( 'mlang', false );
+			if ( is_array( $lang_slugs ) ) {
                 $search_url = add_query_arg( array('lang' => implode ( ',' , $lang_slugs)), false );
                 $search_url = remove_query_arg ( 'mlang', $search_url  );
+                wp_redirect( $search_url );
+            	exit();
             }
-            wp_redirect( $search_url );
-            exit();
+
 		}
 	}
 
