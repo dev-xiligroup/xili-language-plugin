@@ -3,8 +3,8 @@ Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.3.5
-Tested up to: 4.8-RC2
-Stable tag: 2.22.6
+Tested up to: 4.8
+Stable tag: 2.22.7
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,7 +27,7 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/extend/plugins/xili-language/changelog/) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.22.6 =
+= Version 2.22.7 =
 * Last Updated 2017-06-09
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/extend/plugins/xili-language/changelog/)
 
@@ -205,6 +205,14 @@ Archives tags is a very complex template tag in his background and not very easy
 
 == Frequently Asked Questions ==
 
+= What is "multiple languages" option introduced in latest 2.22 version ?
+
+In previous version since first release in 2009, only one language can be assigned to a post (a custom post). Now, as permitted by taxonomy 'language', it is possible to assign a secondary language. Useful in case of quotation in another language inserted in content of post. When searching, the language form uses checkbox and not radio input. Today, only xili-language offers this feature available for document management by example.
+
+= Developer : what is new class-xili-language-term ? =
+
+Since WP 4.4, the WP_Term object was introduced. In similar way, **xili_language_term** object contains properties and methods to manage current languages. Some language properties or features (formerly in options) are now in term_meta. Default values come from the GP_locale object (full list from JetPack) and some from previous version of xili-language (flag, visibility,...)
+
 = What is menus insertion point in navigation menus ? =
 
 It is the most recent way to add multilingual menus at a location in a theme. This method uses insertion point that will live choose the menu structure according current targeted language.
@@ -311,7 +319,7 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 
 Also read latest news (and infos) on this [multilingual website](http://2014.extend.xiligroup.org/en/category/news/).
 
-= version 2.22.3 to 2.22.6 =
+= version 2.22.3 to 2.22.7 =
 * updates locales.php (Jetpack 5.0) - new language added - preview of language properties
 * fixes alias creation or update in xili-language-term
 * updates locales.php (Jetpack 4.9)

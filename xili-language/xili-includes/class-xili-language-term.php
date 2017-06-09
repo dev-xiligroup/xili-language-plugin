@@ -151,7 +151,6 @@ class xili_language_term {
 								'alias' => ''
 								);
 
-
 	/**
 	 * Get instance.
 	 *
@@ -280,6 +279,7 @@ class xili_language_term {
 	}
 
 	/**
+	 * to control value in term meta - see __construct
 	 * 'text_direction' => 'ltr',
 		'native_name' => '',
 		'visibility' => 1,

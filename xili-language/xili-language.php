@@ -1755,7 +1755,6 @@ class xili_language {
                 wp_redirect( $search_url );
             	exit();
             }
-
 		}
 	}
 
@@ -4819,7 +4818,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	/**
 	 * SHORTCODE: display multiple languages selector form
 	 *
-	 * inser
+	 * insertable in search form via theme functions.php
 	 *
 	 *
 	 * @since 2.22

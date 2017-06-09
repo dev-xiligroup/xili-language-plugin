@@ -4498,10 +4498,6 @@ class xili_language_admin extends xili_language {
  		wp_send_json_success( $html );
  	}
 
- 	function wp_ajax_display_gp_locale_hook ( $hook ) {
- 		error_log ('****' . $hook );
- 	}
-
  	function display_gp_locale() {
  		$suffix = defined( 'WP_DEBUG') && WP_DEBUG ? '.dev' : '.min'; // 2.8.8
 		wp_enqueue_script( 'display_gp_locale', plugin_dir_url ( $this->file_file ) . 'js/xili-display_gp_locale'.$suffix.'.js','' , XILILANGUAGE_VER );
