@@ -11,6 +11,7 @@
  * xl 2.12 - propagations moved to xl-class-admin - tmc v.1.4
  * xl 2.15 - updated message - tmc v.1.5 - flag options unvisible if theme_supports...
  * xl 2.20 - error when get_current_screen not applicable / now required when instancing
+ * xl 2.22 - favicon in /assets
  */
 
 if ( ! class_exists ( 'xili_language_theme_options' ) ) {
@@ -175,8 +176,15 @@ if ( ! class_exists ( 'xili_language_theme_options' ) ) {
 		function special_head ( ) {
 
 			printf ('<!-- Website powered by child-theme %1$s%2$s v. %3$s of dev.xiligroup.com -->'."\n", $this->theme_name, $this->child_suffix, $this->child_version ) ;
-			echo '<link rel="shortcut icon" href="' . get_stylesheet_directory_uri() . '/images/favicon.ico" type="image/x-icon"/>'."\n";
-			echo '<link rel="apple-touch-icon" href="' . get_stylesheet_directory_uri() . '/images/apple-touch-icon.png"/>'."\n";
+			if ( file_exists( get_stylesheet_directory() . '/images/favicon.ico' ) )
+				echo '<link rel="shortcut icon" href="' . get_stylesheet_directory_uri() . '/images/favicon.ico" type="image/x-icon"/>'."\n";
+			if ( file_exists( get_stylesheet_directory() . '/assets/images/favicon.ico' ) )
+				echo '<link rel="shortcut icon" href="' . get_stylesheet_directory_uri() . '/assets/images/favicon.ico" type="image/x-icon"/>'."\n"; //2017-xili
+
+			if ( file_exists( get_stylesheet_directory() . '/images/apple-touch-icon.png' ) )
+				echo '<link rel="apple-touch-icon" href="' . get_stylesheet_directory_uri() . '/images/apple-touch-icon.png"/>'."\n";
+			if ( file_exists( get_stylesheet_directory() . '/assets/images/apple-touch-icon.png' ) )
+				echo '<link rel="apple-touch-icon" href="' . get_stylesheet_directory_uri() . '/assets/images/apple-touch-icon.png"/>'."\n"; //2017-xili
 
 		}
 
