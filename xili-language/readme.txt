@@ -2,7 +2,7 @@
 Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
-Requires at least: 4.3.5
+Requires at least: 4.4.1
 Tested up to: 4.8
 Stable tag: 2.22.7
 License: GPLv2

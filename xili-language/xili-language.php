@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.7
+Version: 2.22.8
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
 # updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
 # updated 170523 - 2.22.6 - fixes alias creation or update in xili-language-term
 # updated 170504 - 2.22.5 - updates locales.php (Jetpack 4.9)
@@ -63,7 +64,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.7'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.22.8'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -4217,8 +4218,8 @@ class xili_language {
 									$q = '&tidy_post_tag='. $queried_object->taxonomy ;
 								}
 
-								if ( $link = xili_tidy_tag_in_other_lang("format=term_link&lang=".$language->name.$q )) {
-									$title = xili_tidy_tag_in_other_lang("format=term_name&lang=".$language->name.$q );
+								if ( $link = xili_tidy_tag_in_other_lang("format=term_link&lang=" . $language->iso_name.$q )) {
+									$title = xili_tidy_tag_in_other_lang("format=term_name&lang=" . $language->iso_name.$q );
 								} else {
 									$link = ( $this->lang_perma ) ? str_replace ( '%lang%', $language_qv, $currenturl ) :
 										add_query_arg( array(
@@ -4783,7 +4784,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 			'title' => '',
 			'context' => 'linktitle' // for adapt translation
 			), $atts));
-
+		$otherpost = 0;
 		$language = xiliml_get_language( $lang ); /* test if lang is available */
 
 		if ( $language !== false) {
@@ -6618,7 +6619,8 @@ if ( class_exists ( 'jetpack' ) ) { // inited by init filter but without modules
 	// 2.11.1
 	add_action( 'plugins_loaded', 'xili_jetpack_disable_featured', 17 ); // after XL and XTT
 	// must be commented if jetpack changes when load_plugin_textdomain (as # http://plugins.trac.wordpress.org/ticket/1764)
-	add_action( 'plugins_loaded', 'xili_jetpack_lang_init', 99 ); // 99 = to be registered before jetpack instantiate - plugins_loaded = 100
+	// disabled with jetpack 5.0
+	// add_action( 'plugins_loaded', 'xili_jetpack_lang_init', 99 ); // 99 = to be registered before jetpack instantiate - plugins_loaded = 100
 }
 
 /**

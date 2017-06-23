@@ -17,6 +17,7 @@
  * @updated 2.16.6 - 2015-04-12 - adapted for JSON REST API (in dev)
  * @updated 2.20.3 - 2015-09-24 - tag links from multilingual group like trademark
  *
+ * @updated 2.22.8 - 2017-06-23 - disable %lang% insertion when wp-json/
  */
 
 /**
@@ -259,9 +260,10 @@ class XL_Permalinks_rules {
 	 * @updated 2.16.6 - add filter for json link
 	 */
 	function insert_lang_tag_root ( $url, $path, $orig_scheme, $blog_id ) {
-		// isset( $wp_query->query_vars['json_route'])
+
 		if ( true === apply_filters('xili_json_dont_insert_lang_tag_root', false, $url, $path, $orig_scheme, $blog_id ) ) return $url; // for JSON REST API 2.16.5
 		if ( false !== strpos( $url, $this->rew_reqtag ) ) return $url; // to avoid twice insertion
+		if ( false !== strpos( $url, 'wp-json' ) ) return $url; // to avoid jetpack 5.0 insertion during settings - need TODO
 
 		global $xili_language;
 
