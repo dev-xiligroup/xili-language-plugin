@@ -199,13 +199,24 @@ class xili_language_term {
 	 */
 	public function __construct( $term ) {
 		global $xili_language;
-		foreach ( get_object_vars( $term ) as $key => $value ) {
+
+		$term_vars = get_object_vars( $term );
+		$term_vars['termmetas'] = $this->termmetas; // 2.22.8
+		foreach ( $term_vars as $key => $value ) {
 			$this->$key = $value;
 			// define sanitize callback functions for meta list
 			//
 			if ( $key == 'termmetas' ) {
 				foreach ( $this->$key as $meta_key => $default ) {
-					register_meta ( 'term', $meta_key, array( &$this, 'meta_callback_'.$meta_key ) );
+					$args = array(
+						'type'              => 'string', //TODO
+						'description'       => ' = ' . $meta_key, //TODO
+						'single'            => false,
+						'sanitize_callback' => array( &$this, 'meta_callback_'.$meta_key),
+						'auth_callback'     => null,
+						'show_in_rest'      => true,
+					);
+					register_meta ( 'term', $meta_key, $args );
 				}
 			}
 		}
@@ -309,7 +320,7 @@ class xili_language_term {
 		return ( in_array( $front_back_side, array( 'front', 'back', 'both') ) ) ? $front_back_side : 'both' ;
 	}
 
-	public function meta_callback_flag( $flag = '' ){
+	public function meta_callback_flag( $flag = '' ){ //TODO check URI
 		return $flag ;
 	}
 

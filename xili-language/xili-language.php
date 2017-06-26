@@ -17,9 +17,9 @@ Domain Path: /languages/
 # updated 170504 - 2.22.5 - updates locales.php (Jetpack 4.9)
 # updated 170421 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language) - bulk actions
 # updated 170310 - 2.22.3 - fixes for 4.6 & 4.7 / notices fixes when changing theme
+
 # updated 161213 - 2.22.1 - fixes for 4.6 & 4.7
 # updated 160810 - 2.22.0 - language taxonomy settings are saved in term metas ( need WP 4.4 )
-
 # updated 160805 - 2.21.3 - locale file updated (JetPack 4.1.1) - links selection improved
 # updated 160728 - 2.21.2 - verified with 4.5.3 and tested with 4.6-rc1 - introduces new taxonomy language class (WP 4.4+)
 
@@ -755,35 +755,24 @@ class xili_language {
 
 		if ( $this->xili_settings['wp_locale'] == 'wp_locale' )
 			xiliml_declare_xl_wp_locale ();
-		//$this->xili_test_lang_perma (); // not detected in WP hook - 2.16.6
-		if ( $this->lang_perma ) {
-			// obsolete
-			register_taxonomy( TAXONAME, $post_type_array, array(
-				'hierarchical' => false,
-				'label' => false,
-				'rewrite' => false ,
-				'update_count_callback' => array( &$this, '_update_post_lang_count' ),
-				'show_ui' => false,
-				'_builtin' => false,
-				'query_var' => QUETAG,
-				'show_in_nav_menus' => false
-				) );
 
-			$this->lpr = "-"; // 2.3.2
+		//add_filter( 'query_vars', array( &$this, 'keywords_addQueryVar') ); // now in taxonomy decl. // 2.1.1
 
-		} else {
-			add_filter( 'query_vars', array( &$this, 'keywords_addQueryVar') ); // now in taxonomy decl. // 2.1.1
-			register_taxonomy( TAXONAME, $post_type_array, array(
-				'hierarchical' => false,
-				'label' => false,
-				'rewrite' => false ,
-				'update_count_callback' => array( &$this, '_update_post_lang_count' ),
-				'show_ui' => false,
-				'_builtin' => false,
-				'show_in_nav_menus' => false,
-				'show_in_rest' => true // 2.19.2 - tested with REST API beta3
-				) );
-		}
+		register_taxonomy( TAXONAME, $post_type_array, array(
+			'labels' => array(
+				'name' => __( 'Languages', 'xili-language'),
+				'singular_name' => __( 'Language', 'xili-language' )
+			),
+			'hierarchical' => false,
+			'query_var' => QUETAG, // 2.22
+			'label' => false,
+			'rewrite' => false ,
+			'update_count_callback' => array( &$this, '_update_post_lang_count' ),
+			'show_ui' => false,
+			'_builtin' => false,
+			'show_in_nav_menus' => false,
+			'show_in_rest' => true // 2.19.2 - tested with REST API beta3
+			) );
 
 		register_taxonomy( TAXOLANGSGROUP, 'term', array(
 			'hierarchical' => false,
@@ -804,6 +793,8 @@ class xili_language {
 
 			}
 			$this->xili_settings['meta_update'] = true;
+		} else {
+			$list_language_objects = $this->get_list_language_objects( $force = true ); //TODO
 		}
 
 	}
@@ -1848,7 +1839,7 @@ class xili_language {
 					if ( isset ( $this->langs_ids_array[ $this->lang_qv_slug_trans($reqtag) ] ) ) { // 2.19.3
 						$need_join = true;
 						$wherereqtag = $this->langs_ids_array[ $this->lang_qv_slug_trans($reqtag) ];
-						if ( isset( $wp_query->query_vars['json_route']) ) $wp_query->query_vars[QUETAG] = $reqtag; // json 2.16.6 -
+						if ( isset( $wp_query->query_vars['rest_route']) ) $wp_query->query_vars[QUETAG] = $reqtag; // json 2.22.8 - class WP_REST_Request 4.4 -
 						$where .= " AND xtt.taxonomy = '".TAXONAME."' ";
 						$where .= " AND xtt.term_id = $wherereqtag ";
 					} else {
@@ -1909,7 +1900,6 @@ class xili_language {
 				// nothing - caller_get_posts deprecated => ignore_sticky_posts
 			} else {
 				if ( ( $query_object->is_main_query() && $query_object->is_home && !$this->show_page_on_front && $this->xili_settings['homelang'] == 'modify') || ($query_object->is_home && $query_object->is_posts_page && $this->xili_settings['pforp_select'] != 'no_select' ) ) {
-					// 2.16.5 - WP REST API - JSON is_home not like feed...
 					// force change if loop - home or page_for_posts
 					if ( $query_object->is_posts_page ) { // 2.8.4
 
@@ -1944,8 +1934,6 @@ class xili_language {
 						}
 					} else {
 						$curlang = $this->choice_of_browsing_language();
-						// 2.16.5
-						//$curlang = ( isset ( $query_object->query_vars['json_route'] ) ) ? '' : ( $query_object->is_main_query() ) ? $this->choice_of_browsing_language() : '' ;
 					}
 
 					// 2.12 - // thanks to muh if multiple post_types
