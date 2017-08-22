@@ -146,9 +146,17 @@ class xili_language_term {
 								'native_name' => '',
 								'visibility' => 1,
 								'charset' => '' ,
-								'front_back_side' => 'both',
-								'flag' => '',
-								'alias' => ''
+								'front_back_side' => 'both', // where is the language used
+								'flag' => '', // URI
+								'admin_flag' => '', // URI
+								'alias' => '',
+								/**
+								 * some infos from wp translation install ( 108 )
+								 */
+								'wp_glot_version' => '', // WP version - translated
+								'wp_glot_updated' => '', // latest date
+								'wp_glot_package' => '', // URI zip (core)
+								'wp_glot_formal' => '' // '' or 'formal' or 'informal'
 								);
 
 	/**
@@ -167,7 +175,7 @@ class xili_language_term {
 			return new WP_Error( 'invalid_term', __( 'Empty Term' ) );
 		}
 
-		$_term =  get_term( $term_id, TAXONAME );
+		$_term =  get_term( $term_id, TAXONAME ); //error_log('message '. $term_id);
 
 		if ( is_wp_error( $_term ) ) {
 			return $_term;
@@ -186,6 +194,7 @@ class xili_language_term {
 			if ( metadata_exists( 'term', $lang_term_obj->term_id, $term_meta_key ) )
 				$lang_term_obj->termmetas[$term_meta_key] = get_term_meta( $lang_term_obj->term_id, $term_meta_key, true ) ;
 		}
+		//error_log ( '----------------- ' . serialize($lang_term_obj));
 		return $lang_term_obj;
 	}
 
@@ -206,7 +215,7 @@ class xili_language_term {
 			$this->$key = $value;
 			// define sanitize callback functions for meta list
 			//
-			if ( $key == 'termmetas' ) {
+			if ( $key == 'termmetas') {
 				foreach ( $this->$key as $meta_key => $default ) {
 					$args = array(
 						'type'              => 'string', //TODO
@@ -297,7 +306,12 @@ class xili_language_term {
 		'charset' => '' ,
 		'front_back_side' => 'both',
 		'flag' => '',
+		'admin_flag' => '',
 		'alias' => ''
+		'wp_glot_version' => '', // WP version - translated
+		'wp_glot_updated' => '', // latest date
+		'wp_glot_package' => '', // URI zip (core)
+		'wp_glot_formal' => '' // '' or 'formal' or 'informal'
 		);
 	 */
 	public function meta_callback_text_direction( $text_direction = 'ltr' ){
@@ -324,9 +338,32 @@ class xili_language_term {
 		return $flag ;
 	}
 
+	public function meta_callback_admin_flag( $flag = '' ){ //TODO check URI
+		return $flag ;
+	}
+
 	public function meta_callback_alias( $alias = '' ){
 		return $alias ;
 	}
+
+	public function meta_callback_wp_glot_version( $wp_glot_version = '' ){
+		return $wp_glot_version ;
+	}
+
+	public function meta_callback_wp_glot_updated( $wp_glot_updated = '' ){
+		return $wp_glot_updated ;
+	}
+
+	public function meta_callback_wp_glot_package( $wp_glot_package = '' ){
+		// TODO test available
+		return $wp_glot_package ;
+	}
+
+	public function meta_callback_wp_glot_formal( $wp_glot_formal = '' ){
+		return ( in_array( $wp_glot_formal, array('', 'formal', 'informal') ) ) ? $wp_glot_formal : null ;
+	}
+
+
 
 
 	/**
@@ -404,7 +441,7 @@ class xili_language_term {
 	}
 
 	/**
-	 * Populate term metas with default values.
+	 * Populate term metas with default values. (w/o wp_glot metas)
      *
 	 *
 	 * @since 2.22
@@ -418,8 +455,8 @@ class xili_language_term {
 
 		if ( $a_language && !is_wp_error( $a_language ) ) {
 
-				$one_language = $a_language->language_data; // metas in object
-
+				// metas in object
+				$one_language = $a_language->language_data;
 				// values from GP_locale (by ISO)
 
 				$locale = GP_Locales::by_field( 'wp_locale', $one_language->iso_name );
@@ -466,6 +503,71 @@ class xili_language_term {
 		}
 	}
 
+}
+
+/**
+ * Updates WP glot metas of collection ( during admin )
+ * @since  2.22.8 to integrate installing wp glot datas (from translation install)
+ *
+ * @param   $languages term_id array
+ * @param   $available_translations values get from WP
+ * @param   $update if true update directly term meta
+ *
+ * @return  array term_id => wp_glot array
+ */
+function xili_update_wp_glot_metas( $languages, $available_translations = array(), $update = false ) {
+	// get install list
+	// check if exists
+	// updates
+	if ( $available_translations == array() ) {
+		require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+		$available_translations = wp_get_available_translations();
+	}
+	$updated_objects = array();
+	foreach ( $languages as $term_id ) {
+		$a_language = xili_language_term::get_instance( $term_id ) ;
+
+		if ( $a_language && !is_wp_error( $a_language ) ) {
+
+			$one_language = $a_language->language_data; // metas in object
+			$wp_locale = $one_language->iso_name;
+			$wp_locale_full = '';
+			if ( isset ( $available_translations[$wp_locale] ) ) {
+				$wp_locale_full = $wp_locale ;
+				$wp_glot_formal = '';
+			} else if ( isset ( $available_translations[$wp_locale.'-formal'] ) ){ // WP stores zip with suffix
+				$wp_locale_full = $wp_locale.'-formal';
+				$wp_glot_formal = 'formal';
+			} else if ( isset ( $available_translations[$wp_locale.'-informal'] ) ){
+				$wp_locale_full = $wp_locale.'-informal';
+				$wp_glot_formal = 'informal';
+			}
+			if ( $wp_locale_full ) {
+				$wp_glot_language = $available_translations[$wp_locale_full];
+
+				$one_language->wp_glot_version = $wp_glot_language['version'];
+				if ( $update ) update_term_meta( $term_id, 'wp_glot_version', $wp_glot_language['version'] );
+
+				$one_language->wp_glot_updated = $wp_glot_language['updated'];
+				if ( $update ) update_term_meta( $term_id, 'wp_glot_updated', $wp_glot_language['updated'] );
+
+				$one_language->wp_glot_package = $wp_glot_language['package'];
+				if ( $update ) update_term_meta( $term_id, 'wp_glot_package', $wp_glot_language['package'] );
+
+				$one_language->wp_glot_formal = $wp_glot_formal;
+				if ( $update ) update_term_meta( $term_id, 'wp_glot_formal', $wp_glot_formal );
+
+				$updated_objects[$term_id] = array(
+					'wp_glot_version' => $wp_glot_language['version'],
+					'wp_glot_updated' => $wp_glot_language['updated'],
+					'wp_glot_package' => $wp_glot_language['package'],
+					'wp_glot_formal' => $wp_glot_formal
+					);
+			}
+			//error_log ( '--- ' . serialize ( $one_language ) );
+		}
+	}
+	return $updated_objects;
 }
 
 ?>

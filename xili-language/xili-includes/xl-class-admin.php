@@ -96,6 +96,7 @@ class xili_language_admin extends xili_language {
 	var $local_textdomain_loaded = array(); // to avoid multiple loading file...
 
 	var $changelog = '*'; // used in welcome and pointer
+	var $available_translations = array(); // from translation_install
 
 	/**
 	 * PHP 5 Constructor
@@ -996,7 +997,7 @@ class xili_language_admin extends xili_language {
 			<div class="about-footer"><a href="<?php echo $this->repositorylink; ?>" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
 				<img class="about-icon" src="<?php echo plugins_url( 'images/xililang-logo-32.png', $this->file_file ) ; ?>" alt="xili-language logo"/>
 				</a>&nbsp;&nbsp;&nbsp;©&nbsp;
-				<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2016
+				<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2017
 			</div>
 		</div>
 		<?php
@@ -1068,6 +1069,10 @@ class xili_language_admin extends xili_language {
 		// create library of alert messages
 
 		$this->create_library_of_alert_messages ();
+
+		// get wp library of translation install
+		require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+		$this->available_translations = wp_get_available_translations(); // transcient if
 	}
 
 	// to remove those visible in tabs - 2.8.2
@@ -1481,6 +1486,15 @@ class xili_language_admin extends xili_language {
 			//  analyze if exists
 			$url = do_shortcode( "[xili-flag lang={$one_language->slug}]" ) ;
 			$one_language->flag = $url; // '' if not exists
+
+
+			// wp translation datas
+
+			$array_one = xili_update_wp_glot_metas( array( $term_id ), $this->available_translations ); // in class-xili-language-term.php
+			$one_language_wp_metas = $array_one[$term_id];
+			foreach ( $one_language_wp_metas as $wp_term_meta_key => $value) {
+				$one_language->{$wp_term_meta_key} = $value;
+			}
 
 			$meta_keys = array_keys( $language_term->termmetas );
 
@@ -2533,7 +2547,6 @@ class xili_language_admin extends xili_language {
 			<h3 class="nav-tab-wrapper">
 				<?php $this->set_tabs_line() ?>
 			</h3>
-
 			<?php if ( $action == 'downloadmo' ) {
 				check_admin_referer( 'xili-language-files' );
 				$listlanguages = $this->get_listlanguages();
@@ -2835,7 +2848,7 @@ class xili_language_admin extends xili_language {
 			return false;
 		}
 	}
-
+//TODO - uses wp_download_language_pack
 	function check_versions_in_glotpress ( $locale, $version = 'dev' ) {
 
 		$version_folder = $this->glotPress_version_folder ( $version ) ;
@@ -3608,7 +3621,7 @@ class xili_language_admin extends xili_language {
 					<h4><a href="<?php echo $this->repositorylink; ?>" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
 							<img style="vertical-align:bottom; margin-right:10px" src="<?php echo plugins_url( 'images/xililang-logo-32.png', $this->file_file ) ; ?>" alt="xili-language logo"/>
 						</a>&nbsp;&nbsp;&nbsp;©&nbsp;
-						<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php esc_attr_e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2015 - v. <?php echo XILILANGUAGE_VER; ?>
+						<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php esc_attr_e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2017 - v. <?php echo XILILANGUAGE_VER; ?>
 					</h4>
 
 				</div>
@@ -4476,7 +4489,6 @@ class xili_language_admin extends xili_language {
 	 */
  	function wp_ajax_display_gp_locale() {
  		check_ajax_referer( 'display-gp-locale-nonce' );
-
  		$wp_locale_slug = $_POST['wp_locale_slug'] ;
 		$locale_infos = GP_Locales::by_field( 'wp_locale', $wp_locale_slug );
 
@@ -4494,6 +4506,28 @@ class xili_language_admin extends xili_language {
  		$html .= '<tr><th>' . __('Iso 639-1','xili-language') . '</th><td><span id="iso_639_1">' . $locale_infos->lang_code_iso_639_1 . '</span></td></tr>';
  		$html .= '<tr><th>' . __('Iso 639-2','xili-language') . '</th><td><span id="iso_639_2">' . $locale_infos->lang_code_iso_639_2 . '</span></td></tr>';
  		$html .= '<tr><th>' . __('Country code','xili-language') . '</th><td>' . $locale_infos->country_code . '</td></tr>';
+		// because ajax need reload - var is not updated
+		require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+		$available_translations = wp_get_available_translations();
+
+		$wp_locale = $locale_infos->wp_locale;
+		$wp_locale_full = '';
+		if ( isset ( $available_translations[$wp_locale] ) ) {
+			$wp_locale_full = $wp_locale ;
+			$wp_glot_formal = '';
+		} else if ( isset ( $available_translations[$wp_locale.'-formal'] ) ){ // WP stores zip with suffix
+			$wp_locale_full = $wp_locale.'-formal';
+			$wp_glot_formal = 'formal';
+		} else if ( isset ( $available_translations[$wp_locale.'-informal'] ) ){
+			$wp_locale_full = $wp_locale.'-informal';
+			$wp_glot_formal = 'informal';
+		}
+		if ( $wp_locale_full ) {
+			$wp_glot_language = $available_translations[$wp_locale_full];
+			$html .= '<tr><th><small>' . __('From WP translations base','xili-language') . '</small></th><td></td></tr>';
+			$html .= '<tr><th>' . __('Version','xili-language') . '</th><td>' . $wp_glot_language['version'] . '</td></tr>';
+ 			$html .= '<tr><th>' . __('Updated','xili-language') . '</th><td>' . $wp_glot_language['updated'] . '</td></tr>';
+		}
  		$html .= '</table>';
  		wp_send_json_success( $html );
  	}

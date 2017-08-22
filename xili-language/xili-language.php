@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.8
+Version: 2.22.10
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 170822 - 2.22.10 - fixes permalinks query_tags, add flags in assets (2017), pre-test wp4.9-alpha
 # updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
 # updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
 # updated 170523 - 2.22.6 - fixes alias creation or update in xili-language-term
@@ -64,7 +65,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.8'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.22.10'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -756,7 +757,7 @@ class xili_language {
 		if ( $this->xili_settings['wp_locale'] == 'wp_locale' )
 			xiliml_declare_xl_wp_locale ();
 
-		//add_filter( 'query_vars', array( &$this, 'keywords_addQueryVar') ); // now in taxonomy decl. // 2.1.1
+		add_filter( 'query_vars', array( &$this, 'keywords_addQueryVar') ); // now in taxonomy decl. // 2.1.1
 
 		register_taxonomy( TAXONAME, $post_type_array, array(
 			'labels' => array(
@@ -764,7 +765,7 @@ class xili_language {
 				'singular_name' => __( 'Language', 'xili-language' )
 			),
 			'hierarchical' => false,
-			'query_var' => QUETAG, // 2.22
+			//'query_var' => QUETAG, // 2.22.9 - must be set via filter 'query_vars' with permalinks mode
 			'label' => false,
 			'rewrite' => false ,
 			'update_count_callback' => array( &$this, '_update_post_lang_count' ),
@@ -794,9 +795,9 @@ class xili_language {
 			}
 			$this->xili_settings['meta_update'] = true;
 		} else {
+
 			$list_language_objects = $this->get_list_language_objects( $force = true ); //TODO
 		}
-
 	}
 
 	/**
@@ -4885,7 +4886,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				default:
 					return wp_get_attachment_url( $post_id );
 			}
-		} else {
+		} else { 
 			// search if default value available in theme
 			global $_wp_theme_features;
 			if ( isset ($_wp_theme_features['custom_xili_flag'][0][$lang] ) ) {
@@ -4902,10 +4903,18 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				}
 			} else {  // not predeclared by theme author
 				// search if available in themes/current_theme/images/flags/ - 2.16.4
+				// and /current_theme/assets/images/flags/ (2017)
 				$path_root = get_stylesheet_directory();
-				$path = '%2$s/images/flags/'.$lang.'.png';
-				if ( file_exists( sprintf( $path, '', $path_root ))) {
-					$url = get_stylesheet_directory_uri() . '/images/flags/' . $lang .'.png'; // only in current (child or not)
+				$path = '%2$s%3$s'.$lang.'.png';
+				$folder = '';
+				if ( file_exists( sprintf( $path, '', $path_root, '/images/flags/' ) ) ) {
+					$folder = '/images/flags/';
+				} else if (  file_exists( sprintf( $path, '', $path_root, '/assets/images/flags/' ) ) ) {
+					$folder = '/assets/images/flags/';
+				}
+
+				if ( $folder ) {
+					$url = get_stylesheet_directory_uri() . $folder . $lang .'.png'; // only in current (child or not)
 					$width = 16;
 					$height = 11; // as default flag shipped in plugin (this case is patch - webmaster must declare or upload)
 					switch ( $src ) {
