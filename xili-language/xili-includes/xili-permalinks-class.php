@@ -337,7 +337,7 @@ class XL_Permalinks_rules {
 	function insert_lang_tag_4post ( $permalink, $post, $leavename ) {
 		if ( false !== strpos( $permalink, '?p=' ) ) return $permalink;
 		if ( false !== strpos( $permalink, $this->rew_reqtag ) ) return $permalink; // to avoid twice insertion
-
+		if ( false !== strpos( $url, 'wp-json' ) ) return $url;
 		return $this->rew_reqtag . $permalink;
 	}
 
