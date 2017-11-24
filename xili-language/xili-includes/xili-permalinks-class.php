@@ -18,6 +18,7 @@
  * @updated 2.20.3 - 2015-09-24 - tag links from multilingual group like trademark
  *
  * @updated 2.22.8 - 2017-06-23 - disable %lang% insertion when wp-json/
+ * @updated 2.22.10 - 2017-09-21 - disable %lang% insertion when wp-json/ in post permalink
  */
 
 /**

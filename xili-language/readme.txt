@@ -2,9 +2,9 @@
 Contributors: michelwppi, MS dev.xiligroup.com
 Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
-Requires at least: 4.4.1
-Tested up to: 4.8
-Stable tag: 2.22.7
+Requires at least: 4.7
+Tested up to: 4.9
+Stable tag: 2.22.10
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/plugins/xili-language/#developers) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.22.7 =
-* Last Updated 2017-06-09
+= Version 2.22.10 =
+* Last Updated 2017-11-24
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/plugins/xili-language/#developers/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -320,9 +320,11 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 Also read latest news (and infos) on this [multilingual website](http://2014.extend.xiligroup.org/en/category/news/).
 
 = future version =
-* (2017-07-18)  in [github repository](https://github.com/dev-xiligroup/) and visible [here](http://2017.extend.xiligroup.org).
+* (2017-11-24)  in [github repository](https://github.com/dev-xiligroup/) and visible [here](http://2017.extend.xiligroup.org).
 * first tests with twentyseventeen bundled theme [2017-xili](https://github.com/dev-xiligroup/twentyseventeen-xili)
 
+= version 2.22.10 =
+* deeper tests with 4.9
 = version 2.22.3 to 2.22.7 =
 * updates locales.php (Jetpack 5.0) - new language added - preview of language properties
 * fixes alias creation or update in xili-language-term

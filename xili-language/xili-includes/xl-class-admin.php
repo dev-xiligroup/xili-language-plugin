@@ -997,7 +997,7 @@ class xili_language_admin extends xili_language {
 			<div class="about-footer"><a href="<?php echo $this->repositorylink; ?>" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
 				<img class="about-icon" src="<?php echo plugins_url( 'images/xililang-logo-32.png', $this->file_file ) ; ?>" alt="xili-language logo"/>
 				</a>&nbsp;&nbsp;&nbsp;©&nbsp;
-				<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php _e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2017
+				<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php esc_attr_e('Author'); ?>" >xiligroup.com</a>™ - msc 2007-2017
 			</div>
 		</div>
 		<?php
