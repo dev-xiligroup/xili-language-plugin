@@ -3318,7 +3318,7 @@ class xili_language_admin extends xili_language {
 					if ( $modules_array && in_array('widget-visibility', $modules_array ) ) echo '<br />' . __("The module - Widget visibility - of Jetpack is active. Language rules can overwrite Jetpack visibility rules!", "xili-language");
 				}
 				echo  '</p>';
-				break;
+				break; // admin.php?page=jetpack_modules
 
 			case 'option_front_section_1':
 				echo '<p class="section">' . __('Here select language of the home webpage', 'xili-language') .'</p>';
@@ -4168,7 +4168,7 @@ class xili_language_admin extends xili_language {
 	}
 	/**
 	 *
-	 * @since 2.11.1
+	 * @since 2.11.1 // admin.php?page=jetpack_modules
 	 *
 	 */
 	function on_box_plugins_expert( $data ) {
@@ -4177,7 +4177,7 @@ class xili_language_admin extends xili_language {
 		$checked = checked ($this->xili_settings['enable_fc_theme_class'], 'enable', false ) ;
 		?>
 		<p><?php _e('Define some behaviours with plugins like JetPack.','xili-language'); ?></p>
-		<fieldset id="jetpack-box" class="box"><legend><?php echo __("JetPack settings",'xili-language'); ?></legend>
+		<fieldset id="jetpack-box" class="box"><legend><?php printf( '<a href="admin.php?page=jetpack_modules">%s</a>', __("JetPack settings",'xili-language') ); ?></legend>
 			<?php if ( class_exists ('jetpack')) { ?>
 			<label for="enable_fc_theme_class" class="selectit">
 				<input <?php echo $checked; ?> name="enable_fc_theme_class" id="enable_fc_theme_class" type="checkbox" value="enable">

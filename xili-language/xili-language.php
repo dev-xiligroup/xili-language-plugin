@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.10
+Version: 2.22.11
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 171208 - 2.22.11 - test wp4.9.1 - fixes live locale changing
 # updated 170822 - 2.22.10 - fixes permalinks query_tags, add flags in assets (2017), pre-test wp4.9-alpha
 # updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
 # updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
@@ -65,7 +66,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.10'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.22.11'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
 define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
@@ -224,6 +225,8 @@ class xili_language {
 	var $multiple_lang = false;
 
 	public function __construct( $locale_method = false, $show = false, $class_admin = false ) {
+
+		unset( $GLOBALS['l10n']['xili-language'] ); // to bypass _load_textdomain_just_in_time and refresh live locale changing 20171208
 
 		if ( self::$instance && !is_admin() ) {
 			if ( defined ('WP_DEBUG') && WP_DEBUG )
@@ -513,8 +516,6 @@ class xili_language {
 			if ('' != $this->xili_settings['in_nav_menu']) {
 				add_filter( 'wp_nav_menu_items', 'xili_nav_lang_list', 10, 2 );
 			}
-
-			// add_filter( 'wp_nav_menu_items', array(&$this,'insert_language_list_in_nav_menu' ), 10, 2 ); preg method - changed
 
 			add_filter( 'wp_nav_menu_objects', array(&$this,'insert_language_objects_in_nav_menu' ), 10, 2 ); //wp-includes/nav-menu-template.php
 
@@ -3555,7 +3556,7 @@ class xili_language {
 	/**
 	 * to add links in current menu - manual insertion in dashboard (obsolete soon)
 	 *
-	 *
+	 * used in languages_expert tab
 	 *
 	 */
 	function add_list_of_language_links_in_wp_menu ( $location ) {
@@ -4298,41 +4299,6 @@ class xili_language {
 			if ( is_tax ( $queried_object->taxonomy ) ) return true;
 		}
 		return false;
-	}
-
-
-	/**
-	 * insert language list in nav menu at insertion point
-	 *
-	 * @since 2.8.8
-	 *
-	 * @replaced by above function 2.8.8-b3
-	 *
-	 */
-	function insert_language_list_in_nav_menu ( $items, $args ) {
-
-		if ( 0 != strpos( $items, '>' . $this->insertion_point_box_title . '<' )) {
-
-			$res = preg_match('/<li(.*)class="(.*)">(.*)href="'. $this->insertion_point_dummy_link .'(.*)<\/li>/i', $items, $matches );
-
-			if ( $res == 1 ) {
-
-				$keys = array () ;
-
-				foreach ( $this->langs_list_options as $one ) {
-					$keys[] = $one[0];
-				}
-
-				$type = array_values ( array_intersect ( $keys , explode ( ' ', $matches[2] ) ) );
-
-				$list_to_insert = xili_language_list( '<li>', '</li>', $type[0] , false, true ) ;
-
-				$items = preg_replace ( '/<li(.*)href="'. $this->insertion_point_dummy_link . '(.*)<\/li>/i', $list_to_insert, $items);
-
-			}
-
-		}
-		return $items;
 	}
 
 
