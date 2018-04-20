@@ -9,7 +9,13 @@ The other files are available for comments or fixes. Only the version in [WordPr
 
 ## Master Branch
 
-Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to WP 4.8.
+Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to now (April 2018) WP 4.9.5.
+
+## Gutenberg - need latest version
+
+Since Gutenberg 2.7 (April 18th 2018), the (private) taxonomy language metabox on right side of post edit remains hidden as expected. The big metabox (translations) from xili-language is now well displayed.
+
+## Taxonomy language
 
 Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new "language" object (*) is created to contain all language features.
 
