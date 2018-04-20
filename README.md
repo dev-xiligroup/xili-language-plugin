@@ -31,4 +31,5 @@ Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new "la
 Thanks for your contribution.
 
 M.
-(I will be present in WordCamp Europe in Paris in June 2017)
+
+Note : I hope to be present at next [WPinLille](https://www.meetup.com/WPinLille/events/249152515/)
