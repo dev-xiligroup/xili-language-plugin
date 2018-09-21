@@ -142,22 +142,23 @@ class xili_language_term {
 	 * @access public
 	 * @var strings array
 	 */
-	public $termmetas = array ( 'text_direction' => 'ltr',
-								'native_name' => '',
-								'visibility' => 1,
-								'charset' => '' ,
-								'front_back_side' => 'both', // where is the language used
-								'flag' => '', // URI
-								'admin_flag' => '', // URI
-								'alias' => '',
-								/**
-								 * some infos from wp translation install ( 108 )
-								 */
-								'wp_glot_version' => '', // WP version - translated
-								'wp_glot_updated' => '', // latest date
-								'wp_glot_package' => '', // URI zip (core)
-								'wp_glot_formal' => '' // '' or 'formal' or 'informal'
-								);
+	public $termmetas = array(
+		'text_direction' => 'ltr',
+		'native_name' => '',
+		'visibility' => 1,
+		'charset' => '',
+		'front_back_side' => 'both', // where is the language used
+		'flag' => '', // URI
+		'admin_flag' => '', // URI
+		'alias' => '',
+		/**
+		 * some infos from wp translation install ( 108 )
+		 */
+		'wp_glot_version' => '', // WP version - translated
+		'wp_glot_updated' => '', // latest date
+		'wp_glot_package' => '', // URI zip (core)
+		'wp_glot_formal' => '', // '' or 'formal' or 'informal'
+	);
 
 	/**
 	 * Get instance.
@@ -167,7 +168,7 @@ class xili_language_term {
 	 *
 	 * @param $language id
 	 * @return mixed Type corresponding to `$output` on success or null on failure. When `$output` is `OBJECT`,
- 	 *               a WP_Term instance is returned. If taxonomy does not exist then WP_Error will be returned.
+	 * a WP_Term instance is returned. If taxonomy does not exist then WP_Error will be returned.
 	 */
 	public static function get_instance( $term_id ) {
 		global $wpdb;
@@ -175,7 +176,7 @@ class xili_language_term {
 			return new WP_Error( 'invalid_term', __( 'Empty Term' ) );
 		}
 
-		$_term =  get_term( $term_id, TAXONAME ); //error_log('message '. $term_id);
+		$_term = get_term( $term_id, TAXONAME ); //error_log('message '. $term_id);
 
 		if ( is_wp_error( $_term ) ) {
 			return $_term;
@@ -189,10 +190,11 @@ class xili_language_term {
 		// fill meta keys with term meta values
 		$meta_keys = array_keys( $lang_term_obj->termmetas );
 
-		foreach ( $meta_keys as $term_meta_key) {
+		foreach ( $meta_keys as $term_meta_key ) {
 			// to conserve default value if termmeta not set
-			if ( metadata_exists( 'term', $lang_term_obj->term_id, $term_meta_key ) )
-				$lang_term_obj->termmetas[$term_meta_key] = get_term_meta( $lang_term_obj->term_id, $term_meta_key, true ) ;
+			if ( metadata_exists( 'term', $lang_term_obj->term_id, $term_meta_key ) ) {
+				$lang_term_obj->termmetas[ $term_meta_key ] = get_term_meta( $lang_term_obj->term_id, $term_meta_key, true );
+			}
 		}
 		//error_log ( '----------------- ' . serialize($lang_term_obj));
 		return $lang_term_obj;
@@ -215,24 +217,23 @@ class xili_language_term {
 			$this->$key = $value;
 			// define sanitize callback functions for meta list
 			//
-			if ( $key == 'termmetas') {
+			if ( 'termmetas' == $key ) {
 				foreach ( $this->$key as $meta_key => $default ) {
 					$args = array(
-						'type'              => 'string', //TODO
-						'description'       => ' = ' . $meta_key, //TODO
+						'type'              => 'string',
+						'description'       => ' = ' . $meta_key,
 						'single'            => false,
-						'sanitize_callback' => array( &$this, 'meta_callback_'.$meta_key),
+						'sanitize_callback' => array( &$this, 'meta_callback_' . $meta_key ),
 						'auth_callback'     => null,
 						'show_in_rest'      => true,
 					);
-					register_meta ( 'term', $meta_key, $args );
+					register_meta( 'term', $meta_key, $args );
 				}
 			}
 		}
 		$this->taxonomy = TAXONAME;
 		$this->group_taxonomy = TAXOLANGSGROUP;
 		$this->group_term_taxonomy_id = $xili_language->xili_settings['langs_group_tt_id']; // because grouped via taxonomy languages_group
-
 
 	}
 
@@ -251,7 +252,7 @@ class xili_language_term {
 	/**
 	 * Getter.
 	 * example 1: error_log ( serialize ( $lang_test = xili_language_term::get_instance( $language->term_id )));
-     * example 1: error_log ( serialize ( $lang_test->language_data )); // magic method
+     * example 1: error_log ( serialize ( $lang_test->language_data )); //magic method
 	 *
 	 * @since 4.4.0
 	 * @access public
@@ -261,7 +262,7 @@ class xili_language_term {
 	public function __get( $key ) {
 
 		switch ( $key ) {
-			case 'data' :
+			case 'data':
 				$data = new stdClass();
 				$columns = array( 'term_id', 'name', 'slug', 'term_group', 'term_taxonomy_id', 'taxonomy', 'description', 'parent', 'count' );
 				foreach ( $columns as $column ) {
@@ -271,27 +272,29 @@ class xili_language_term {
 				return sanitize_term( $data, $data->taxonomy, 'raw' );
 				break;
 
-			case 'language_data' :
+			case 'language_data':
 				$data = new stdClass();
-				$columns = array( 'term_id'=>'term_id',
-							'name'=>'iso_name',
-							'slug'=>'slug',
-							'term_group'=>'term_group',
-							'term_taxonomy_id'=>'term_taxonomy_id',
-							'taxonomy'=>'taxonomy',
-							'group_taxonomy'=>'group_taxonomy',
-							'group_term_taxonomy_id'=>'group_term_taxonomy_id',
-							'term_order'=>'term_order',
-							'description'=>'english_name',
-							'parent'=>'parent',
-							'count'=>'count' );
+				$columns = array(
+					'term_id' => 'term_id',
+					'name' => 'iso_name',
+					'slug' => 'slug',
+					'term_group' => 'term_group',
+					'term_taxonomy_id' => 'term_taxonomy_id',
+					'taxonomy' => 'taxonomy',
+					'group_taxonomy' => 'group_taxonomy',
+					'group_term_taxonomy_id' => 'group_term_taxonomy_id',
+					'term_order' => 'term_order',
+					'description' => 'english_name',
+					'parent' => 'parent',
+					'count' => 'count',
+				);
 				foreach ( $columns as $column_key => $lang_column ) {
 					$data->{$lang_column} = isset( $this->{$column_key} ) ? $this->{$column_key} : null;
 				}
 				// fill meta keys with term meta values
 				$meta_keys = array_keys( $this->termmetas );
-				foreach ( $meta_keys as $term_meta_key) {
-					$data->{$term_meta_key} = isset( $this->termmetas[$term_meta_key] ) ? $this->termmetas[$term_meta_key] : null ;
+				foreach ( $meta_keys as $term_meta_key ) {
+					$data->{$term_meta_key} = isset( $this->termmetas[ $term_meta_key ] ) ? $this->termmetas[ $term_meta_key ] : null;
 				}
 				return $data;
 				break;
@@ -314,53 +317,53 @@ class xili_language_term {
 		'wp_glot_formal' => '' // '' or 'formal' or 'informal'
 		);
 	 */
-	public function meta_callback_text_direction( $text_direction = 'ltr' ){
-		return ( in_array( $text_direction, array('ltr', 'rtl') ) ) ? $text_direction : 'ltr' ;
+	public function meta_callback_text_direction( $text_direction = 'ltr' ) {
+		return ( in_array( $text_direction, array( 'ltr', 'rtl' ) ) ) ? $text_direction : 'ltr';
 	}
 
-	public function meta_callback_native_name( $native_name = '' ){
-		return sanitize_text_field ( $native_name ) ;
+	public function meta_callback_native_name( $native_name = '' ) {
+		return sanitize_text_field( $native_name );
 	}
 
-	public function meta_callback_visibility( $visibility = 1 ){
-		return $visibility ;
+	public function meta_callback_visibility( $visibility = 1 ) {
+		return $visibility;
 	}
 
-	public function meta_callback_charset( $charset = '' ){
-		return $charset ;
+	public function meta_callback_charset( $charset = '' ) {
+		return $charset;
 	}
 
-	public function meta_callback_front_back_side( $front_back_side = 'both' ){
-		return ( in_array( $front_back_side, array( 'front', 'back', 'both') ) ) ? $front_back_side : 'both' ;
+	public function meta_callback_front_back_side( $front_back_side = 'both' ) {
+		return ( in_array( $front_back_side, array( 'front', 'back', 'both' ) ) ) ? $front_back_side : 'both';
 	}
 
-	public function meta_callback_flag( $flag = '' ){ //TODO check URI
-		return $flag ;
+	public function meta_callback_flag( $flag = '' ) {
+		return $flag;
 	}
 
-	public function meta_callback_admin_flag( $flag = '' ){ //TODO check URI
-		return $flag ;
+	public function meta_callback_admin_flag( $flag = '' ) {
+		return $flag;
 	}
 
-	public function meta_callback_alias( $alias = '' ){
-		return $alias ;
+	public function meta_callback_alias( $alias = '' ) {
+		return $alias;
 	}
 
-	public function meta_callback_wp_glot_version( $wp_glot_version = '' ){
-		return $wp_glot_version ;
+	public function meta_callback_wp_glot_version( $wp_glot_version = '' ) {
+		return $wp_glot_version;
 	}
 
-	public function meta_callback_wp_glot_updated( $wp_glot_updated = '' ){
-		return $wp_glot_updated ;
+	public function meta_callback_wp_glot_updated( $wp_glot_updated = '' ) {
+		return $wp_glot_updated;
 	}
 
-	public function meta_callback_wp_glot_package( $wp_glot_package = '' ){
-		// TODO test available
-		return $wp_glot_package ;
+	public function meta_callback_wp_glot_package( $wp_glot_package = '' ) {
+		// TO-DO test available
+		return $wp_glot_package;
 	}
 
-	public function meta_callback_wp_glot_formal( $wp_glot_formal = '' ){
-		return ( in_array( $wp_glot_formal, array('', 'formal', 'informal') ) ) ? $wp_glot_formal : null ;
+	public function meta_callback_wp_glot_formal( $wp_glot_formal = '' ) {
+		return ( in_array( $wp_glot_formal, array( '', 'formal', 'informal' ) ) ) ? $wp_glot_formal : null;
 	}
 
 
@@ -369,7 +372,7 @@ class xili_language_term {
 	/**
 	 * Populate term metas with values saved in former versions in xili-language_settings.
 	 * example 1: error_log ( serialize ( $lang_test = xili_language_term::upgrade_instance( $language->term_id )));
-     *
+	 *
 	 *
 	 * @since 2.21.2
 	 * @access public
@@ -378,42 +381,41 @@ class xili_language_term {
 	 */
 	public static function upgrade_instance( $term_id ) {
 
-		$a_language = xili_language_term::get_instance( $term_id ) ;
+		$a_language = self::get_instance( $term_id );
 
-		if ( $a_language && !is_wp_error( $a_language ) ) {
+		if ( $a_language && ! is_wp_error( $a_language ) ) {
 			$xili_settings = get_option( 'xili_language_settings', false );
-			if ( $xili_settings && !isset( $xili_settings['meta_update'] ) ) {
+			if ( $xili_settings && ! isset( $xili_settings['meta_update'] ) ) {
 
 				$one_language = $a_language->language_data; // metas in object
 
 				// array('charset'=>"",'hidden'=>"");
-				$one_language->visibility = 1 - (int) $xili_settings['lang_features'][$one_language->slug]['hidden'];
-				$one_language->charset = $xili_settings['lang_features'][$one_language->slug]['charset'];
-				$one_language->alias = ( isset ( $xili_settings['lang_features'][$one_language->slug]['alias'] ) ) ? $xili_settings['lang_features'][$one_language->slug]['alias'] : $one_language->slug ;
+				$one_language->visibility = 1 - (int) $xili_settings['lang_features'][ $one_language->slug ]['hidden'];
+				$one_language->charset = $xili_settings['lang_features'][ $one_language->slug ]['charset'];
+				$one_language->alias = ( isset( $xili_settings['lang_features'][ $one_language->slug ]['alias'] ) ) ? $xili_settings['lang_features'][ $one_language->slug ]['alias'] : $one_language->slug;
 
 				// values from GP_locale (by ISO)
 
 				$locale = GP_Locales::by_field( 'wp_locale', $one_language->iso_name );
 
 				$one_language->text_direction = ( $locale ) ? $locale->text_direction : 'ltr'; // rtl changed
-				$one_language->native_name = ( $locale ) ? $locale->native_name : '' ;
+				$one_language->native_name = ( $locale ) ? $locale->native_name : '';
 
 				// add alias by default
-				$slugs = explode('_', $one_language->slug) ;
-				$one_language->alias = ( $locale ) ? ( ( $locale->lang_code_iso_639_1 ) ? $locale->lang_code_iso_639_1 : $locale->lang_code_iso_639_2 )  : $slugs[0] ;
+				$slugs = explode( '_', $one_language->slug );
+				$one_language->alias = ( $locale ) ? ( ( $locale->lang_code_iso_639_1 ) ? $locale->lang_code_iso_639_1 : $locale->lang_code_iso_639_2 ) : $slugs[0];
 
 				// UX info
 
 				// 'front_back_side' => 'both',
 				if ( $one_language->visibility ) {
-					if ( in_array ($one_language->iso_name, get_available_languages() ) ) {
+					if ( in_array( $one_language->iso_name, get_available_languages() ) ) {
 						$one_language->front_back_side = 'both';
 					} else {
 						$one_language->front_back_side = 'front';
 					}
-
 				} else {
-					if ( in_array ($one_language->iso_name, get_available_languages() ) ) {
+					if ( in_array( $one_language->iso_name, get_available_languages() ) ) {
 						$one_language->front_back_side = 'back';
 					} else {
 						$one_language->front_back_side = 'na'; // not available - must be improved
@@ -422,19 +424,18 @@ class xili_language_term {
 
 				// 'flag' => ''
 				//  analyze if exists
-				$url = do_shortcode( "[xili-flag lang={$one_language->slug}]" ) ;
+				$url = do_shortcode( "[xili-flag lang={$one_language->slug}]" );
 				$one_language->flag = $url; // '' if not exists
 
 				// update termmetas
 				// fill meta keys with term meta values
 				$meta_keys = array_keys( $a_language->termmetas );
 
-				foreach ( $meta_keys as $term_meta_key) {
+				foreach ( $meta_keys as $term_meta_key ) {
 					update_term_meta( $term_id, $term_meta_key, $one_language->{$term_meta_key} );
 				}
 				return $one_language;
 			}
-
 		} else {
 			return false;
 		}
@@ -442,7 +443,6 @@ class xili_language_term {
 
 	/**
 	 * Populate term metas with default values. (w/o wp_glot metas)
-     *
 	 *
 	 * @since 2.22
 	 * @access public
@@ -451,52 +451,51 @@ class xili_language_term {
 	 */
 	public static function complete_instance( $term_id ) {
 
-		$a_language = xili_language_term::get_instance( $term_id ) ;
+		$a_language = self::get_instance( $term_id );
 
-		if ( $a_language && !is_wp_error( $a_language ) ) {
+		if ( $a_language && ! is_wp_error( $a_language ) ) {
 
-				// metas in object
-				$one_language = $a_language->language_data;
-				// values from GP_locale (by ISO)
+			// metas in object
+			$one_language = $a_language->language_data;
+			// values from GP_locale (by ISO)
 
-				$locale = GP_Locales::by_field( 'wp_locale', $one_language->iso_name );
+			$locale = GP_Locales::by_field( 'wp_locale', $one_language->iso_name );
 
-				$one_language->text_direction = ( $locale ) ? $locale->text_direction : 'ltr'; // rtl changed
-				$one_language->native_name = ( $locale ) ? $locale->native_name : '' ;
-				// add alias by default
-				$slugs = explode('_', $one_language->slug) ;
-				$one_language->alias = ( $locale ) ? ( ( $locale->lang_code_iso_639_1 ) ? $locale->lang_code_iso_639_1 : $locale->lang_code_iso_639_2 )  : $slugs[0] ;
-				// UX info
+			$one_language->text_direction = ( $locale ) ? $locale->text_direction : 'ltr'; // rtl changed
+			$one_language->native_name = ( $locale ) ? $locale->native_name : '';
+			// add alias by default
+			$slugs = explode( '_', $one_language->slug );
+			$one_language->alias = ( $locale ) ? ( ( $locale->lang_code_iso_639_1 ) ? $locale->lang_code_iso_639_1 : $locale->lang_code_iso_639_2 ) : $slugs[0];
+			// UX info
 
-				// 'front_back_side' => 'both',
-				if ( $one_language->visibility ) {
-					if ( in_array ($one_language->iso_name, get_available_languages() ) ) {
-						$one_language->front_back_side = 'both';
-					} else {
-						$one_language->front_back_side = 'front';
-					}
-
+			// 'front_back_side' => 'both',
+			if ( $one_language->visibility ) {
+				if ( in_array( $one_language->iso_name, get_available_languages() ) ) {
+					$one_language->front_back_side = 'both';
 				} else {
-					if ( in_array ($one_language->iso_name, get_available_languages() ) ) {
-						$one_language->front_back_side = 'back';
-					} else {
-						$one_language->front_back_side = 'na'; // not available - must be improved
-					}
+					$one_language->front_back_side = 'front';
 				}
-
-				// 'flag' => ''
-				//  analyze if exists
-				$url = do_shortcode( "[xili-flag lang={$one_language->slug}]" ) ;
-				$one_language->flag = $url; // '' if not exists
-
-				// update termmetas
-				// fill meta keys with term meta values
-				$meta_keys = array_keys( $a_language->termmetas );
-
-				foreach ( $meta_keys as $term_meta_key) {
-					update_term_meta( $term_id, $term_meta_key, $one_language->{$term_meta_key} );
+			} else {
+				if ( in_array( $one_language->iso_name, get_available_languages() ) ) {
+					$one_language->front_back_side = 'back';
+				} else {
+					$one_language->front_back_side = 'na'; // not available - must be improved
 				}
-				return $one_language;
+			}
+
+			// 'flag' => ''
+			//  analyze if exists
+			$url = do_shortcode( '[xili-flag lang={$one_language->slug}]' );
+			$one_language->flag = $url; // '' if not exists
+
+			// update termmetas
+			// fill meta keys with term meta values
+			$meta_keys = array_keys( $a_language->termmetas );
+
+			foreach ( $meta_keys as $term_meta_key ) {
+				update_term_meta( $term_id, $term_meta_key, $one_language->{$term_meta_key} );
+			}
+			return $one_language;
 
 		} else {
 			return false;
@@ -519,55 +518,59 @@ function xili_update_wp_glot_metas( $languages, $available_translations = array(
 	// get install list
 	// check if exists
 	// updates
-	if ( $available_translations == array() ) {
+	if ( array() == $available_translations ) {
 		require_once ABSPATH . 'wp-admin/includes/translation-install.php';
 		$available_translations = wp_get_available_translations();
 	}
 	$updated_objects = array();
 	foreach ( $languages as $term_id ) {
-		$a_language = xili_language_term::get_instance( $term_id ) ;
+		$a_language = xili_language_term::get_instance( $term_id );
 
-		if ( $a_language && !is_wp_error( $a_language ) ) {
+		if ( $a_language && ! is_wp_error( $a_language ) ) {
 
 			$one_language = $a_language->language_data; // metas in object
 			$wp_locale = $one_language->iso_name;
 			$wp_locale_full = '';
-			if ( isset ( $available_translations[$wp_locale] ) ) {
-				$wp_locale_full = $wp_locale ;
+			if ( isset( $available_translations[ $wp_locale ] ) ) {
+				$wp_locale_full = $wp_locale;
 				$wp_glot_formal = '';
-			} else if ( isset ( $available_translations[$wp_locale.'-formal'] ) ){ // WP stores zip with suffix
-				$wp_locale_full = $wp_locale.'-formal';
+			} else if ( isset( $available_translations[ $wp_locale . '-formal' ] ) ) { // WP stores zip with suffix
+				$wp_locale_full = $wp_locale . '-formal';
 				$wp_glot_formal = 'formal';
-			} else if ( isset ( $available_translations[$wp_locale.'-informal'] ) ){
-				$wp_locale_full = $wp_locale.'-informal';
+			} else if ( isset( $available_translations[ $wp_locale . '-informal' ] ) ) {
+				$wp_locale_full = $wp_locale . '-informal';
 				$wp_glot_formal = 'informal';
 			}
 			if ( $wp_locale_full ) {
-				$wp_glot_language = $available_translations[$wp_locale_full];
+				$wp_glot_language = $available_translations[ $wp_locale_full ];
 
 				$one_language->wp_glot_version = $wp_glot_language['version'];
-				if ( $update ) update_term_meta( $term_id, 'wp_glot_version', $wp_glot_language['version'] );
-
+				if ( $update ) {
+					update_term_meta( $term_id, 'wp_glot_version', $wp_glot_language['version'] );
+				}
 				$one_language->wp_glot_updated = $wp_glot_language['updated'];
-				if ( $update ) update_term_meta( $term_id, 'wp_glot_updated', $wp_glot_language['updated'] );
+				if ( $update ) {
+					update_term_meta( $term_id, 'wp_glot_updated', $wp_glot_language['updated'] );
+				}
 
 				$one_language->wp_glot_package = $wp_glot_language['package'];
-				if ( $update ) update_term_meta( $term_id, 'wp_glot_package', $wp_glot_language['package'] );
+				if ( $update ) {
+					update_term_meta( $term_id, 'wp_glot_package', $wp_glot_language['package'] );
+				}
 
 				$one_language->wp_glot_formal = $wp_glot_formal;
-				if ( $update ) update_term_meta( $term_id, 'wp_glot_formal', $wp_glot_formal );
-
-				$updated_objects[$term_id] = array(
+				if ( $update ) {
+					update_term_meta( $term_id, 'wp_glot_formal', $wp_glot_formal );
+				}
+				$updated_objects[ $term_id ] = array(
 					'wp_glot_version' => $wp_glot_language['version'],
 					'wp_glot_updated' => $wp_glot_language['updated'],
 					'wp_glot_package' => $wp_glot_language['package'],
-					'wp_glot_formal' => $wp_glot_formal
-					);
+					'wp_glot_formal' => $wp_glot_formal,
+				);
 			}
 			//error_log ( '--- ' . serialize ( $one_language ) );
 		}
 	}
 	return $updated_objects;
 }
-
-?>
