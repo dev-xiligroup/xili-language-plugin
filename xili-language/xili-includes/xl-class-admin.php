@@ -1721,7 +1721,7 @@ class xili_language_admin extends xili_language {
 		?>
 
 		<div id="xili-language-settings" class="wrap columns-2 minwidth" >
-			<?php screen_icon('options-general'); ?>
+			
 			<h2><?php _e('Languages','xili-language') ?></h2>
 			<h3 class="nav-tab-wrapper">
 			<?php $this->set_tabs_line() ?>
@@ -1898,7 +1898,7 @@ class xili_language_admin extends xili_language {
 
 		?>
 		<div id="xili-language-frontend" class="wrap columns-2 minwidth">
-			<?php screen_icon('options-general'); ?>
+
 			<h2><?php _e('Front-end settings','xili-language') ?></h2>
 			<h3 class="nav-tab-wrapper">
 			<?php $this->set_tabs_line() ?>
@@ -2163,7 +2163,7 @@ class xili_language_admin extends xili_language {
 			);
 		?>
 		<div id="xili-language-support" class="wrap columns-2 minwidth">
-			<?php screen_icon('options-general'); ?>
+
 			<h2><?php _e('Languages','xili-language') ?></h2>
 			<h3 class="nav-tab-wrapper">
 			<?php $this->set_tabs_line() ?>
@@ -2542,7 +2542,7 @@ class xili_language_admin extends xili_language {
 
 		?>
 		<div id="xili-language-files" class="wrap columns-2 minwidth">
-			<?php screen_icon('options-general'); ?>
+
 			<h2><?php _e('Languages','xili-language') ?></h2>
 			<h3 class="nav-tab-wrapper">
 				<?php $this->set_tabs_line() ?>
@@ -3139,7 +3139,7 @@ class xili_language_admin extends xili_language {
 
 		?>
 		<div id="xili-language-author-rules" class="wrap columns-2 minwidth">
-			<?php screen_icon('options-general'); ?>
+
 			<h2><?php _e('Authoring rules','xili-language') ?></h2>
 			<h3 class="nav-tab-wrapper">
 			<?php $this->set_tabs_line() ?>
@@ -3540,7 +3540,7 @@ class xili_language_admin extends xili_language {
 
 		?>
 		<div id="xili-language-support" class="wrap columns-2 minwidth">
-			<?php screen_icon('options-general'); ?>
+
 			<h2><?php _e('Languages','xili-language') ?></h2>
 			<h3 class="nav-tab-wrapper">
 			<?php $this->set_tabs_line() ?>
