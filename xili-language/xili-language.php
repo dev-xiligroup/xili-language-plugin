@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.22.11
+Version: 2.22.12
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 190418 - 2.22.12 - tests wp5.11 - add 2019 bundled theme
 # updated 171208 - 2.22.11 - test wp4.9.1 - fixes live locale changing
 # updated 170822 - 2.22.10 - fixes permalinks query_tags, add flags in assets (2017), pre-test wp4.9-alpha
 # updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
@@ -66,9 +67,9 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define('XILILANGUAGE_VER', '2.22.11'); /* used in admin UI*/
+define('XILILANGUAGE_VER', '2.22.12'); /* used in admin UI*/
 define('XILILANGUAGE_WP_VER', '4.6'); /* minimal version - used in error - see at end */
-define('XILILANGUAGE_PHP_VER', '5.0.0'); /* used in error - see at end */
+define('XILILANGUAGE_PHP_VER', '7.0.0'); /* used in error - see at end */
 define('XILILANGUAGE_PREV_VER', '2.15.4');
 define('XILILANGUAGE_WP_TESTED', '4.8 Evans'); /* 2.17.1 - used in version pointer infos */
 define('XILILANGUAGE_PLL_TESTED', '1.7.9'); /* 2.20.3 - newest PLL tested */
@@ -5056,6 +5057,12 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 				$default['css_li_a'] = 'text-indent:-9999px; width:10px; background:transparent no-repeat center 20px; margin:0;';
 				$default['css_li_a_hover'] = 'background: no-repeat center 21px !important;';
 				break;
+			case 'twentynineteen' : // 2.22.12
+				$default['css_ul_nav_menu'] = 'ul.main-menu' ;
+				$default['css_li_hover'] = 'background-color:#f5f5f5;' ;
+				$default['css_li_a'] = 'display:inline-block; text-indent:-9998px; width:30px; background:transparent no-repeat center 13px; margin:0;';
+				$default['css_li_a_hover'] = 'background: no-repeat center 21px !important;';
+				break;
 			case 'twentyfourteen' :
 
 			default:
@@ -5083,13 +5090,13 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 	// when theme activated (after setup)
 	// 2.15.1
 	function bundled_themes_support_flag () {
-		$current_parent_theme = get_option ('template') ;
-		$current_theme = get_option ('stylesheet') ;
-		if ( in_array( $current_parent_theme , array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen', 'twentyseventeen' ) ) ) {
+		$current_parent_theme = get_option ( 'template' ) ;
+		$current_theme = get_option ( 'stylesheet' ) ;
+		if ( in_array( $current_parent_theme , array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen', 'twentyseventeen', 'twentynineteen' ) ) ) {
 			add_theme_support ( 'custom_xili_flag' ); // same name as used in context of image
 		}
 
-		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili', 'twentyseventeen-xili' ) ) ) {
+		if ( in_array ( $current_theme, array('twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili', 'twentyseventeen-xili', 'twentynineteen-xili' ) ) ) {
 
 			remove_theme_support ( 'custom_xili_flag' ) ;
 			$args = array();
@@ -5097,7 +5104,7 @@ for (var i=0; i < this.form.' .QUETAG .'.length ; i++) { if(this.form.'.QUETAG.'
 
 			foreach ( $listlanguages as $one_language ) {
 				$path_root = get_stylesheet_directory();
-				$assets = ( in_array( $current_theme, array( 'twentyseventeen-xili' ) ) ) ? '/assets' : '';
+				$assets = ( in_array( $current_theme, array( 'twentyseventeen-xili', 'twentynineteen-xili' ) ) ) ? '/assets' : '';
 				$path = '%2$s' . $assets . '/images/flags/' . $one_language->slug.'.png';
 
 				if (file_exists( sprintf( $path, '', $path_root ))) {
