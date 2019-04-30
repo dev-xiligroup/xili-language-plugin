@@ -7,6 +7,12 @@ When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-lan
 
 The other files are available for comments or fixes. Only the version in [WordPress xili-language repository](https://wordpress.org/plugins/xili-language/) is for use.
 
+## Latest notes 
+### 20190430 - Customizer, in admin side, to work well, needs two settings : 
+1. the language in general settings must be “english” core wp language
+2. you can change admin side language in top right menu of dashboard screen.
+( if not pomo script gives fatal error and customizer shows blank screen )
+
 ## Master Branch
 
 Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to now (April 2018) WP 4.9.5.
