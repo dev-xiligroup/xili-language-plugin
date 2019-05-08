@@ -14,7 +14,7 @@
  *
  * @since 2.21.2
  */
-class xili_language_term {
+class Xili_Language_Term {
 
 	/**
 	 * Term ID.
@@ -183,7 +183,7 @@ class xili_language_term {
 		} elseif ( ! $_term ) {
 			return null;
 		}
-		$lang_term_obj = new xili_language_term( $_term ); // fill obj term values
+		$lang_term_obj = new Xili_Language_Term( $_term ); // fill obj term values
 
 		$lang_term_obj->term_order = $wpdb->get_var( "SELECT term_order FROM $wpdb->term_relationships WHERE object_id = $lang_term_obj->term_id AND term_taxonomy_id = $lang_term_obj->group_term_taxonomy_id " );
 
@@ -524,7 +524,7 @@ function xili_update_wp_glot_metas( $languages, $available_translations = array(
 	}
 	$updated_objects = array();
 	foreach ( $languages as $term_id ) {
-		$a_language = xili_language_term::get_instance( $term_id );
+		$a_language = Xili_Language_Term::get_instance( $term_id );
 
 		if ( $a_language && ! is_wp_error( $a_language ) ) {
 
