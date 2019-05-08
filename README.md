@@ -15,7 +15,7 @@ The other files are available for comments or fixes. Only the version in [WordPr
 
 ## before-rw branch
 
-This…
+This branch is stopped since 2019-04-30. Developpement continues in master branch.
 
 ## Master Branch
 
