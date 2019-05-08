@@ -6527,7 +6527,7 @@ class Xili_Language_Admin extends Xili_Language {
 	 *
 	 */
 	public function add_custom_box_in_media_edit() {
-		add_meta_box( 'xili_flag_as_attachment', __( 'Multilingual informations', 'xili-language' ) , array( &$this, 'media_multilingual_infos_box' ), 'attachment', 'side', 'low' );
+		add_meta_box( 'xili_flag_as_attachment', __( 'Multilingual informations', 'xili-language' ), array( &$this, 'media_multilingual_infos_box' ), 'attachment', 'side', 'low' );
 	}
 
 	public function media_multilingual_infos_box( $post ) {
@@ -6537,9 +6537,9 @@ class Xili_Language_Admin extends Xili_Language {
 
 		if ( ! empty( $context ) && in_array( $context, $this->custom_xili_flags ) ) {
 			if ( '' != $attachment_post_language ) {
-				echo '<p>' . __( 'This flag is assigned to a language', 'xili-language' ) . '</p>';
+				echo '<p>' . esc_html__( 'This flag is assigned to a language', 'xili-language' ) . '</p>';
 			} else {
-				echo '<p>' . __( 'Assign this flag to a language', 'xili-language' ) . '</p>';
+				echo '<p>' . esc_html__( 'Assign this flag to a language', 'xili-language' ) . '</p>';
 			}
 
 			$html_input = '<select name="attachments[' . $post->ID . '][attachment_post_language]" ><option value="undefined">' . __( 'Choose…', 'xili-language' ) . '</option>';
@@ -6600,7 +6600,7 @@ class Xili_Language_Admin extends Xili_Language {
 		if ( ! current_theme_supports( 'custom_xili_flag' ) ) {
 			return;
 		}
-
+		/* translators: */
 		$this->flag_theme_page = add_theme_page( sprintf( __( '%1$s Theme Options', 'xili-language' ), get_option( 'current_theme' ) ), __( 'xili flag Options', 'xili-language' ), 'manage_options', $this->flag_settings_name, array( $this, 'flag_options_theme_page' ) );
 		add_action( 'load-' . $this->flag_theme_page, array( $this, 'flag_theme_options_help_page' ) );
 
@@ -6620,7 +6620,7 @@ class Xili_Language_Admin extends Xili_Language {
 		);
 		add_settings_field( $field_args['id'], $field_args['title'], array( $this, 'display_one_setting' ), $this->flag_settings_name . '_group', 'xili_flag_section_1', $field_args );
 
-		add_settings_section( 'xili_flag_section_2', __( 'Flag style options', 'xili-language' ), array( $this, 'display_one_section'), $this->flag_settings_name . '_group' );
+		add_settings_section( 'xili_flag_section_2', __( 'Flag style options', 'xili-language' ), array( $this, 'display_one_section' ), $this->flag_settings_name . '_group' );
 
 		$field_args = array(
 			'option_name' => $this->flag_settings_name,
@@ -6628,6 +6628,7 @@ class Xili_Language_Admin extends Xili_Language {
 			'type' => 'xili',
 			'id' => 'flags_list',
 			'name' => 'flags_list',
+			/* translators: */
 			'desc' => sprintf( __( 'The list of images uploaded and assigned as flag in Media table. (%s)', 'xili-language' ), '<small>'. __('*: from theme subfolder', 'xili-language' ) . '</small>' ),
 			'std' => 'with-flag',
 			'label_for' => 'flags_list',
@@ -6637,7 +6638,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 		$defaults = $this->get_default_xili_flag_options();
 		foreach ( $defaults as $key => $default_value ) {
-			if ( false !== strpos( $key , 'css_' ) ) {
+			if ( false !== strpos( $key, 'css_' ) ) {
 				$field_args = array(
 					'option_name' => $this->flag_settings_name,
 					'title' => $title_description[ $key ]['title'],
@@ -6671,10 +6672,15 @@ class Xili_Language_Admin extends Xili_Language {
 		$message = '';
 		?>
 		<div class="section panel">
-		<h1><?php printf( esc_html__( 'Flag Multilingual options for %1$s theme ', 'xili-language' ), get_option( 'current_theme' ) ); ?></h1>
+		<h1>
+		<?php
+		/* translators: */
+		printf( esc_html__( 'Flag Multilingual options for %1$s theme ', 'xili-language' ), get_option( 'current_theme' ) );
+		?>
+		</h1>
 		<?php
 		if ( isset( $_GET['settings-updated'] ) ) {
-			switch ( $_GET['settings-updated'] ):
+			switch ( $_GET['settings-updated'] ) :
 				case 'true':
 					$message = __( 'Flag Multilingual options updated.', 'xili-language' );
 					$class = 'updated';
@@ -6697,7 +6703,7 @@ class Xili_Language_Admin extends Xili_Language {
 				<input type="submit" class="button-primary" value="<?php esc_html_e( 'Save Changes' ); ?>" />
 			</p>
 		</form>
-		<p><small><?php echo get_option( 'current_theme' ); ?> by <a href="<?php echo $this->devxililink; ?>" target="_blank" >dev.xiligroup.com</a> (©2015) <?php echo '(xili-language v.' . XILILANGUAGE_VER . ')';?></small></p>
+		<p><small><?php echo get_option( 'current_theme' ); ?> by <a href="<?php echo $this->devxililink; ?>" target="_blank" >dev.xiligroup.com</a> (©2015) <?php echo '(xili-language v.' . XILILANGUAGE_VER . ')'; ?></small></p>
 
 		</div>
 		<?php
@@ -6712,7 +6718,7 @@ class Xili_Language_Admin extends Xili_Language {
 	 *
 	 * @since 2.15
 	 */
-	public function display_flags_list ( $args ) {
+	public function display_flags_list( $args ) {
 		global $_wp_theme_features;
 		extract( $args ) ;
 
@@ -6725,7 +6731,7 @@ class Xili_Language_Admin extends Xili_Language {
 				echo '<li>' . wp_get_attachment_image( $available[ $one_language->slug ], 'full' ) . ' (' .  $one_language->name . ', ' . $one_language->description . ')</li>';
 			} else {
 				if ( isset( $_wp_theme_features['custom_xili_flag'][0][ $one_language->slug ] ) ) {
-					$url = sprintf( $_wp_theme_features['custom_xili_flag'][0][ $one_language->slug ]['path'], get_template_directory_uri(), get_stylesheet_directory_uri());
+					$url = sprintf( $_wp_theme_features['custom_xili_flag'][0][ $one_language->slug ]['path'], get_template_directory_uri(), get_stylesheet_directory_uri() );
 					$width = $_wp_theme_features['custom_xili_flag'][0][ $one_language->slug ]['width'];
 					$height = $_wp_theme_features['custom_xili_flag'][0][ $one_language->slug ]['height'];
 					echo '<li><img src="' . $url . '"> (' .  $one_language->name . ', ' . $one_language->description . ') <small>(*)</small></li>';
@@ -6749,8 +6755,10 @@ class Xili_Language_Admin extends Xili_Language {
 		if ( $input ) {
 			foreach( $input as $id => $v ) {
 				$newinput[ $id ] = trim( $v );
-				if ( in_array( $id, array( 'css_li_hover', 'css_li_a', 'css_li_a_hover') ) && isset( $input[ $id ] ) ) {
-					if ( substr( $newinput[ $id ], -1 ) != ';' ) $newinput[ $id ] = $newinput[ $id ] . ';';
+				if ( in_array( $id, array( 'css_li_hover', 'css_li_a', 'css_li_a_hover' ) ) && isset( $input[ $id ] ) ) {
+					if ( substr( $newinput[ $id ], -1 ) != ';' ) {
+						$newinput[ $id ] = $newinput[ $id ] . ';';
+					}
 				}
 			}
 		}
@@ -6776,12 +6784,13 @@ class Xili_Language_Admin extends Xili_Language {
 		$help .= '<p>' . esc_html__( 'If, with a customized theme, you dont see nothing in frontend menu, you must examine the html of the generated header.', 'xili-language' );
 		$help .= '<br />' . esc_html__( 'If you see the css lines with good flags, you must work with the menu ul selector which can not be the same as the default shown in xili flags option...', 'xili-language' );
 		$help .= '<br />' . esc_html__( 'Some themes dont use current selector as in bundled themes like 2014...', 'xili-language' ) . '</p>';
+		/* translators: */
 		$help .= '<p>' . sprintf( __('More detailled infos in %s.', 'xili-language' ), sprintf( '<a href="%s">' . __( 'this site', 'xili-language' ) . '</a>', $this->fourteenlink ) ) . '</p>';
 
 		$screen->add_help_tab(
 			array(
-				'id'	=> $this->flag_theme_page,
-				'title'	=> __( 'Help' ),
+				'id'      => $this->flag_theme_page,
+				'title'   => __( 'Help' ),
 				'content' => $help,
 			)
 		);
@@ -6802,12 +6811,14 @@ class Xili_Language_Admin extends Xili_Language {
 		$clone = $post;
 		unset( $clone['ID'] );
 		if ( isset( $attachment['create_clone_attachment_with_language'] ) && 'undefined' != $attachment['create_clone_attachment_with_language'] ) {
-
+			/* translators: */
 			$clone['post_title'] = sprintf( __( 'Translate in %2$s: %1$s', 'xili-language'), $clone['post_title'], $attachment['create_clone_attachment_with_language'] );
 			if ( $clone['post_content'] ) {
+				/* translators: */
 				$clone['post_content'] = sprintf( __( 'Translate: %1$s', 'xili-language' ), $clone['post_content'] );
 			}
 			if ( $clone['post_excerpt'] ) {
+				/* translators: */
 				$clone['post_excerpt'] = sprintf( __( 'Translate: %1$s', 'xili-language' ), $clone['post_excerpt'] );
 			}
 
@@ -6826,6 +6837,7 @@ class Xili_Language_Admin extends Xili_Language {
 			update_post_meta( $cloned_attachment_id, '_wp_attachment_metadata', $data );
 			update_post_meta( $cloned_attachment_id, '_wp_attached_file', $data_file );
 			if ( '' != $data_alt ) {
+				/* translators: */
 				update_post_meta( $cloned_attachment_id, '_wp_attachment_image_alt', sprintf( __( 'Translate: %1$s', 'xili-language' ), $data_alt ) );
 			}
 			// set language and links of cloned of current
@@ -6866,7 +6878,7 @@ class Xili_Language_Admin extends Xili_Language {
 			if ( 'attachment' == $post->post_type ) {
 				$attachment_post_language = get_cur_language( $post_id, 'slug' );
 				// test meta lang
-				$linked_list = $this->translated_in( $post_id, 'array');
+				$linked_list = $this->translated_in( $post_id, 'array' );
 				if ( array() != $linked_list ) {
 					$this->dont_delete_file = true;
 					// update meta in linked attachments
