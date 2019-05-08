@@ -15,7 +15,7 @@ The other files are available for comments or fixes. Only the version in [WordPr
 
 ## before-rw branch
 
-This branch before rw
+2019-05-08 - This branch contains the source code before rewriting (< 2.23)
 
 ## Master Branch
 
