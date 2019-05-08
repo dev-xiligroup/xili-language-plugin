@@ -19,6 +19,8 @@ The other files are available for comments or fixes. Only the version in [WordPr
 
 ## Master Branch
 
+Since 2019-05-08, master branch contains dev version 2.23.x +. Contains latest dev with source code with wp rules. 
+
 Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to now (April 2018) WP 4.9.5.
 
 ## Gutenberg - need latest version
