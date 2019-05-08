@@ -5767,12 +5767,13 @@ class Xili_Language_Admin extends Xili_Language {
 		?>
 		<p><?php echo $refresh; ?>
 		<?php
-		if ( '' != $curlang && current_user_can('xili_language_clone_tax') && is_object_in_taxonomy( get_post_type( $post_id ), 'category') ) {
+		if ( '' != $curlang && current_user_can( 'xili_language_clone_tax' ) && is_object_in_taxonomy( get_post_type( $post_id ), 'category') ) {
 			//2.6.3
 			printf( '&nbsp|&nbsp;<a href="%1$s" title="%2$s">%3$s</a> ', 'post.php?post=' . $post_id . '&action=edit&xlaction=propataxo', esc_attr__( 'Propagate categories', 'xili-language' ), esc_html__( 'Propagate categories', 'xili-language' ) );
 		}
-		?></p>
-		<label for="xili_language_check" class="selectit"><?php esc_html_e( 'set post to:', 'xili-language'); ?>&nbsp;<input id="xili_language_check" name="xili_language_set" type="radio" value="undefined" <?php checked( $notundefinedlang, '', true ); ?> />&nbsp;<?php esc_html_e( 'undefined', 'xili-language' ); echo $un_id; ?></label>
+		?>
+		</p>
+		<label for="xili_language_check" class="selectit"><?php esc_html_e( 'set post to:', 'xili-language' ); ?>&nbsp;<input id="xili_language_check" name="xili_language_set" type="radio" value="undefined" <?php checked( $notundefinedlang, '', true ); ?> />&nbsp;<?php esc_html_e( 'undefined', 'xili-language' ); ?><?php echo $un_id; ?></label>
 		<?php
 	}
 
@@ -6323,9 +6324,10 @@ class Xili_Language_Admin extends Xili_Language {
 	 * @param unknown_type $found_action -
 	 */
 	public function xili_find_posts_div( $found_action = '', $post_type, $post_label ) {
-
-	?>
+		/* translators: */
+		?>
 		<div id="find-posts" class="find-box" style="display:none;">
+
 			<div id="find-posts-head" class="find-box-head"><?php printf( esc_html__( 'Find %s', 'xili-language' ), $post_label ); ?>
 				<div id="find-posts-close"></div>
 			</div>
@@ -6396,7 +6398,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 			$html_input = '<hr /><select name="attachments[' . $attachment_id . '][attachment_post_language]" ><option value="undefined">' . __( 'Choose…', 'xili-language' ) . '</option>';
 			foreach ( $listlanguages as $language ) {
-				$selected = selected( ( '' != $attachment_post_language && $language->slug == $attachment_post_language), true, false );
+				$selected = selected( ( '' != $attachment_post_language && $language->slug == $attachment_post_language ), true, false );
 				$html_input .= '<option value="' . $language->slug . '" ' . $selected . '>' . $language->description . ' (' . $language->name . ')</option>';
 			}
 			$html_input .= '</select>';
@@ -6468,7 +6470,7 @@ class Xili_Language_Admin extends Xili_Language {
 				$html_input .= '&nbsp;&nbsp;<a href="post.php?post=' . $post->post_parent . '&action=edit" title="' . __( 'Edit' ) . '" >' . __( 'Edit' ) . '</a>';
 				$helps = __( 'This titled post above has this media as attachment.', 'xili-language' );
 			} else {
-				$html_input = '<hr /><strong>' . __( 'not attached to a post.' , 'xili-language' ) . '</strong>';
+				$html_input = '<hr /><strong>' . __( 'not attached to a post.', 'xili-language' ) . '</strong>';
 				$helps = __( 'In the Media Library table, it is possible to attach a media to a post.', 'xili-language' );
 			}
 
@@ -6510,7 +6512,7 @@ class Xili_Language_Admin extends Xili_Language {
 		<div class="misc-pub-section" >
 		<label for="context" class="selectit"><?php esc_html_e( 'Set as', 'xili-language' ); ?>:&nbsp;
 			<select name="context" id="context">
-				<option value="" <?php selected( $context,'custom_xili_flag' ); ?>><?php esc_html_e( 'define...', 'xili-language' ); ?></option>
+				<option value="" <?php selected( $context, 'custom_xili_flag' ); ?>><?php esc_html_e( 'define...', 'xili-language' ); ?></option>
 				<option value="custom_xili_flag" <?php selected( $context, 'custom_xili_flag' ); ?>><?php esc_html_e( 'Menu flag', 'xili-language' ); ?></option>
 				<option value="admin_custom_xili_flag" <?php selected( $context, 'admin_custom_xili_flag' ); ?>><?php esc_html_e( 'Admin flag', 'xili-language' ); ?></option>
 			</select>
