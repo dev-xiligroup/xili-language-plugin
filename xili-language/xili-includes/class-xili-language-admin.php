@@ -7050,7 +7050,8 @@ class Xili_Language_Admin extends Xili_Language {
 								} elseif ( 'attachment' == $type ) {
 									$link = 'media.php?attachment_id=' . $linepost->ID . '&action=edit'; // not used (small settings screen)
 								}
-								$a_content = ( $detail )  ? $language->description . ' (' . $language->name .')' : $language->name;
+								$a_content = ( $detail ) ? $language->description . ' (' . $language->name . ')' : $language->name;
+								/* translators: */
 								$title = sprintf( __( 'link to edit %1$s %3$d in %2$s', 'xili-language' ), $title_type, $language->description, $linepost->ID );
 								$trans[] = sprintf( '<a href="%1$s" title="%2$s" class="lang-%4$s" >%3$s</a>', $link, $title, $a_content, $language->slug ); // no localization 2.18.1
 								break;
