@@ -364,4 +364,3 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 	);
 }
 
-
