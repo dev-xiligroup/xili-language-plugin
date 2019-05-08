@@ -13,6 +13,10 @@ The other files are available for comments or fixes. Only the version in [WordPr
 2. you can change admin side language in top right menu of dashboard screen.
 ( if not pomo script gives fatal error and customizer shows blank screen )
 
+## before-rw branch
+
+This…
+
 ## Master Branch
 
 Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to now (April 2018) WP 4.9.5.
