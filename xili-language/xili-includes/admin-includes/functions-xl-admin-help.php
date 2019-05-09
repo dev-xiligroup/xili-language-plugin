@@ -8,9 +8,14 @@ function xl_message_export_limited() {
 	. '<p>' . esc_html__( 'Therefore, before importing, verify that custom post types are registered in this new clean install.', 'xili-language' ) . '</p></div>';
 }
 
-function xl_add_help_text( $contextual_help, $screen_id, $screen, $params = array() ) {
+function xl_test( &$xili_language_admin ) {
+
+	echo $xili_language_admin->wikilink;
+}
+
+function xl_add_help_text( $contextual_help, $screen_id, $screen, &$xili_language_admin ) {
 	if ( 'nav-menus' == $screen->id ) { // 2.8.8
-		$wikilink = $params['this_wikilink'] . '/index.php/Xili-language:_languages_list_insertion_in_nav_menu';
+		$wikilink = $xili_language_admin->wikilink . '/index.php/Xili-language:_languages_list_insertion_in_nav_menu';
 		$to_remember =
 			'<p><em>' . esc_html__( 'To show insertion metabox, remember to check them inside Screen Options.', 'xili-language' ) . '</em></p>' .
 			'<p><strong>' . esc_html__( 'Things to remember to insert Languages list:', 'xili-language' ) . '</strong></p>' .
@@ -40,7 +45,7 @@ function xl_add_help_text( $contextual_help, $screen_id, $screen, $params = arra
 
 			'</ul>' .
 			/* translators: */
-			'<p>' . sprintf( esc_html__( '%1$sMost recent infos about xili-language trilogy%2$s', 'xili-language' ), '<a href="' . $params['this_fourteenlink'] . '" target="_blank">', '</a>' ) . '</p>' .
+			'<p>' . sprintf( esc_html__( '%1$sMost recent infos about xili-language trilogy%2$s', 'xili-language' ), '<a href="' . $xili_language_admin->fourteenlink . '" target="_blank">', '</a>' ) . '</p>' .
 			/* translators: */
 			'<p>' . sprintf( esc_html__( '<a href="%s" target="_blank">Xili Wiki Documentation</a>', 'xili-language' ), $wikilink ) . '</p>';
 
@@ -63,9 +68,9 @@ function xl_add_help_text( $contextual_help, $screen_id, $screen, $params = arra
 			'<li><em>' . sprintf( esc_html__( 'Fields under the description are available to assign and clone. A side box %s contain also infos and links to go to another clone in other languages.', 'xili-language' ), '<strong>' . __( 'Multilingual informations', 'xili-language' ) . '</strong>' ) . '</em></li>' .
 			'</ul>' .
 			/* translators: */
-			 '<p>' . sprintf( esc_html__( '%1$sXili-language Plugin Documentation in WP repository%2$s', 'xili-language' ), '<a href="' . $params['this->repositorylink'] . '" target="_blank">', '</a>' ) . '</p>' .
+			 '<p>' . sprintf( esc_html__( '%1$sXili-language Plugin Documentation in WP repository%2$s', 'xili-language' ), '<a href="' . $xili_language_admin->repositorylink . '" target="_blank">', '</a>' ) . '</p>' .
 			 /* translators: */
-			'<p>' . sprintf( esc_html__( '%1$sMost recent infos about xili-language trilogy%2$s', 'xili-language' ), '<a href="' . $params['this_fourteenlink'] . '" target="_blank">', '</a>' ) . '</p>';
+			'<p>' . sprintf( esc_html__( '%1$sMost recent infos about xili-language trilogy%2$s', 'xili-language' ), '<a href="' . $xili_language_admin->fourteenlink . '" target="_blank">', '</a>' ) . '</p>';
 
 			$screen->add_help_tab(
 				array(
@@ -114,7 +119,7 @@ function xl_add_help_text( $contextual_help, $screen_id, $screen, $params = arra
 			'<ul>' .
 				'<li>' . $line[ $screen->id ] . '</li>' .
 				/* translators: */
-				'<li>' . sprintf( __( '<a href="%s" target="_blank">Xili Wiki Post</a>', 'xili-language' ), $params['this_wikilink'] . $wiki_page[ $screen->id ] ) . '</li>' .
+				'<li>' . sprintf( __( '<a href="%s" target="_blank">Xili Wiki Post</a>', 'xili-language' ), $xili_language_admin->wikilink . $wiki_page[ $screen->id ] ) . '</li>' .
 			'</ul>';
 
 		$to_remember =
@@ -129,9 +134,10 @@ function xl_add_help_text( $contextual_help, $screen_id, $screen, $params = arra
 		$more_infos =
 			/* translators: */
 			'<p><strong>' . esc_html__( 'For more information:' ) . '</strong></p>' .
-			'<p><a href="' . $params['this_devxililink'] . '/xili-language" target="_blank">' . esc_html__( 'Xili-language Plugin Documentation', 'xili-language' ) . '</a></p>' .
-			'<p>' . sprintf( __( '<a href="%s" target="_blank">Xili Wiki Documentation</a>', 'xili-language' ), $params['this_wikilink'] ) . '</p>' .
-			'<p><a href="' . $params['this_forumxililink'] . '" target="_blank">' . esc_html__( 'Support Forums', 'xili-language' ) . '</a></p>' .
+			'<p><a href="' . $xili_language_admin->devxililink . '/xili-language" target="_blank">' . esc_html__( 'Xili-language Plugin Documentation', 'xili-language' ) . '</a></p>' .
+			/* translators: */
+			'<p>' . sprintf( __( '<a href="%s" target="_blank">Xili Wiki Documentation</a>', 'xili-language' ), $xili_language_admin->wikilink ) . '</p>' .
+			'<p><a href="' . $xili_language_admin->forumxililink . '" target="_blank">' . esc_html__( 'Support Forums', 'xili-language' ) . '</a></p>' .
 			'<p><a href="https://codex.wordpress.org/" target="_blank">' . esc_html__( 'WordPress Documentation', 'xili-language' ) . '</a></p>';
 
 		$screen->add_help_tab(
@@ -196,7 +202,7 @@ function xl_create_library_of_alert_messages( &$admin_messages, $wikilink = '#' 
 	 * @since 2.6.2
 	 *
 	 */
-function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
+function xl_localize_admin_js( $case_news, $news_id, &$xili_language_admin ) {
 	$about = esc_attr__( 'Docs about xili-language', 'xili-language' );
 
 	//$pointer_Offset = '';
@@ -210,21 +216,21 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			/* translators: */
 			$pointer_text .= '<p>' . esc_js( sprintf( __( 'xili-language was updated to version %s', 'xili-language' ), XILILANGUAGE_VER ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'This version %1$s is tested with %2$s. (See details in %3$s) ', 'xili-language' ), XILILANGUAGE_VER, XILILANGUAGE_WP_TESTED, '<a href="' . $params['this_repositorylink'] . 'changelog/" title="' . $params['this_changelog'] . '" >' . $params['this_changelog'] . '</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'This version %1$s is tested with %2$s. (See details in %3$s) ', 'xili-language' ), XILILANGUAGE_VER, XILILANGUAGE_WP_TESTED, '<a href="' . $xili_language_admin->repositorylink . 'changelog/" title="' . $xili_language_admin->changelog . '" >' . $xili_language_admin->changelog . '</a>' ) ) . '</p>';
 
 			$pointer_text .= '<p>' . esc_js(
 				sprintf(
 					/* translators: */
 					__( 'More infos about the previous versions of %1$s here %2$s and %3$s.', 'xili-language' ),
 					XILILANGUAGE_VER,
-					'<a href="' . $params['this_repositorylink'] . 'changelog/" title="' . $params['this_changelog'] . '" >' . $params['this_changelog'] . '</a>',
+					'<a href="' . $xili_language_admin->repositorylink . 'changelog/" title="' . $xili_language_admin->changelog . '" >' . $xili_language_admin->changelog . '</a>',
 					esc_js( ' “<a href="index.php?page=xl-about&xl-updated=1">' . __( 'in welcome page', 'xili-language' ) . '</a>”' )
 				)
 			) . '</p>';
 
 			$pointer_text .= '<p>' . esc_js( __( 'See settings submenu', 'xili-language' ) . ' “<a href="options-general.php?page=language_page">' . __( 'Languages ©xili', 'xili-language' ) . '</a>”' ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-new-version-' . str_replace( '.', '-', XILILANGUAGE_VER );
 			$pointer_div = '#menu-settings';
@@ -238,7 +244,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			$pointer_text = '<h3>' . esc_js( __( 'To define languages', 'xili-language' ) ) . '</h3>';
 			$pointer_text .= '<p>' . esc_js( __( 'This screen is designed to define the list of languages assigned to this website. Use the form below to add a new language with the help of preset list (popup) or by input your own ISO code.', 'xili-language' ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-settings-news';
 			$pointer_div = '#xili-language-lang-list';
@@ -248,7 +254,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			$pointer_text = '<h3>' . esc_js( __( 'To define front-page', 'xili-language' ) ) . '</h3>';
 			$pointer_text .= '<p>' . esc_js( __( 'This screen contains selectors to define the behaviour of frontpage according languages and visitors browser and more...', 'xili-language' ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-frontend-newss';
 			$pointer_div = '#post-body-content';
@@ -262,7 +268,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			$pointer_text = '<h3>' . esc_js( __( 'Infos about current theme', 'xili-language' ) ) . '</h3>';
 			$pointer_text .= '<p>' . esc_js( __( 'This metabox contains infos about the theme and the joined available language files (.mo).', 'xili-language' ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-frontend-theme-news';
 			$pointer_div = '#xili-language-sidebox-theme';
@@ -276,7 +282,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			$pointer_text = '<h3>' . esc_js( __( 'For documented webmaster', 'xili-language' ) ) . '</h3>';
 			$pointer_text .= '<p>' . esc_js( __( 'This screen contains nice selectors and features to customize menus and other objects for your CMS multilingual website.', 'xili-language' ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-expert-news';
 			$pointer_div = '#poststuff';
@@ -290,7 +296,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			$pointer_text = '<h3>' . esc_js( __( 'For documented webmaster', 'xili-language' ) ) . '</h3>';
 			$pointer_text .= '<p>' . esc_js( __( 'This metabox contains advanced selectors and features to customize behaviours for your CMS multilingual website.', 'xili-language' ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 			$pointer_dismiss = 'xl-expert-special-news';
 			$pointer_div = '#xili-language-sidebox-special';
 
@@ -303,7 +309,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 			$pointer_text = '<h3>' . esc_js( __( 'For webmaster and editor', 'xili-language' ) ) . '</h3>';
 			$pointer_text .= '<p>' . esc_js( __( 'This settings page contains advanced selectors and features to customize behaviours when author or editor works in your CMS multilingual website.', 'xili-language' ) ) . '</p>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 			$pointer_dismiss = 'xl-page-author-rules';
 			$pointer_div = '#poststuff';
 
@@ -315,7 +321,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 		case 'languages_support':
 			$pointer_text = '<h3>' . esc_js( __( 'In direct with support', 'xili-language' ) ) . '</h3>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to check needed website infos and to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Before to question dev.xiligroup support, do not forget to check needed website infos and to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-support-news';
 			$pointer_div = '#poststuff';
@@ -328,7 +334,7 @@ function xl_localize_admin_js( $case_news, $news_id, $params = array() ) {
 		case 'media_language':
 			$pointer_text = '<h3>' . esc_js( __( 'Language of media', 'xili-language' ) ) . '</h3>';
 			/* translators: */
-			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Language concern title, caption and description of media. With clonage approach, the file is shared between version for each language. When modifying a media, new fields are available at end of form. Before to assign language to media, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $params['this_wikilink'] . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
+			$pointer_text .= '<p>' . esc_js( sprintf( __( 'Language concern title, caption and description of media. With clonage approach, the file is shared between version for each language. When modifying a media, new fields are available at end of form. Before to assign language to media, do not forget to visit %s documentation', 'xili-language' ), '<a href="' . $xili_language_admin->wikilink . '" title="' . $about . '" >wiki</a>' ) ) . '</p>';
 
 			$pointer_dismiss = 'xl-media-uploads';
 			$pointer_div = '#language';

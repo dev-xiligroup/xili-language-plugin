@@ -127,9 +127,9 @@ class Xili_Language_Admin extends Xili_Language {
 			if ( isset( $one_locale->wp_locale ) && '' != $one_locale->wp_locale ) {
 				/* translators: */
 				$this->examples_list[ $one_locale->wp_locale ] = sprintf( _x( '%1$s/%2$s', 'locales', 'xili-language' ), $one_locale->english_name, $one_locale->native_name );
-			} else { 
+			} else {
 				// a * inserted if no existing WP_locale declared...
-				// /* translators: */
+				/* translators: */
 				$this->examples_list[ $key ] = sprintf( _x( '%1$s/%2$s *', 'locales', 'xili-language' ), $one_locale->english_name, $one_locale->native_name );
 			}
 		}
@@ -372,7 +372,7 @@ class Xili_Language_Admin extends Xili_Language {
 			if ( '' != $translation_state && false !== strpos( $translation_state, 'initial' ) ) {
 				$perma = ( get_option( 'permalink_structure' ) ) ? __( '(permalink)', 'xili-language' ) : '';
 				?>
-				<p><label for="xl_permalink_option" class="selectit"><input name="xl_permalink_option" type="checkbox" id="xl_permalink_option" value="slug" /> <?php /* translators: */ printf( __( 'Renew slug %s with title', 'xili-language' ), $perma ); ?></label></p>
+				<p><label for="xl_permalink_option" class="selectit"><input name="xl_permalink_option" type="checkbox" id="xl_permalink_option" value="slug" /> <?php /* translators: */ printf( esc_html__( 'Renew slug %s with title', 'xili-language' ), $perma ); ?></label></p>
 				<?php
 			}
 		}
@@ -538,7 +538,8 @@ class Xili_Language_Admin extends Xili_Language {
 		if ( class_exists( 'xili_tidy_tags' ) && current_user_can( 'xili_tidy_editor_group' ) ) {
 			$this->add_node_if_version(
 				array(
-					'title' => sprintf( __( '%s groups','xili_tidy_tags' ), __( 'Tags' ) ),
+					/* translators: */
+					'title' => sprintf( __( '%s groups', 'xili_tidy_tags' ), __( 'Tags' ) ),
 					'href' => admin_url( 'admin.php?page=xili_tidy_tags_assign' ),
 					'id' => 'xtt-group',
 					'parent' => 'xili_links',
@@ -933,7 +934,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 			$statusxili[] = $this->plugin_status( 'xili-dictionary', 'xili-dictionary/xili-dictionary.php', $status );
 
-			$statusxili[] = $this->plugin_status( 'xili-tidy-tags', 'xili-tidy-tags/xili-tidy-tags.php' , $status );
+			$statusxili[] = $this->plugin_status( 'xili-tidy-tags', 'xili-tidy-tags/xili-tidy-tags.php', $status );
 
 			if ( is_child_theme() ) {
 				$theme_name = get_option( 'stylesheet' ) . ' ' . __( 'child of', 'xili-language' ) . ' ' . get_option( 'template' );
@@ -943,7 +944,7 @@ class Xili_Language_Admin extends Xili_Language {
 			/* translators: */
 			$statusxili[] = sprintf( __( 'For Appearance the current active theme is <em>%s</em>', 'xili-language' ), $theme_name );
 
-			if ( '' == $this->parent->xili_settings[ 'theme_domain' ] ) {
+			if ( '' == $this->parent->xili_settings['theme_domain'] ) {
 				/* translators: */
 				$statusxili[] = sprintf( __( 'This theme <em>%s</em> seems to not contain localization function (load_theme_textdomain) to be used for a multilingual website', 'xili-language' ), $theme_name );
 			} else {
@@ -1054,7 +1055,7 @@ class Xili_Language_Admin extends Xili_Language {
 			<h1>
 				<?php
 				/* translators: */
-				printf( __( 'Welcome to xili-language %s', 'xili-language' ), XILILANGUAGE_VER );
+				printf( esc_html__( 'Welcome to xili-language %s', 'xili-language' ), XILILANGUAGE_VER );
 				?>
 			</h1>
 
@@ -1071,7 +1072,7 @@ class Xili_Language_Admin extends Xili_Language {
 					$type = 0;
 				}
 				/* translators: */
-				printf( __( '%1$s xili-language %2$s is more powerful, stable and secure than ever before. We hope you enjoy using it.', 'xili-language' ), $message, XILILANGUAGE_VER );
+				printf( esc_html__( '%1$s xili-language %2$s is more powerful, stable and secure than ever before. We hope you enjoy using it.', 'xili-language' ), $message, XILILANGUAGE_VER );
 				?>
 			</div>
 
@@ -1106,11 +1107,11 @@ class Xili_Language_Admin extends Xili_Language {
 							<p><?php esc_html_e( 'Following the WordPress Core rules, including specific elements (tags, shortcode, functions, filters,...) xili-language is a CMS plateform add-on able to work with custom post types without adding tables in db or cookies or redirecting.', 'xili-language' ); ?></p>
 							<p>
 								<?php
-							printf(
-								/* translators: */
-								esc_html__( 'Development until this version (%1$s) are documented here %2$s and inside sources.', 'xili-language' ),
-								XILILANGUAGE_VER,
-								'<a href="' . $this->repositorylink . 'changelog/" title="' . $this->changelog . '" >'.$this->changelog . '</a>'
+								printf(
+									/* translators: */
+									esc_html__( 'Development until this version (%1$s) are documented here %2$s and inside sources.', 'xili-language' ),
+									XILILANGUAGE_VER,
+									'<a href="' . $this->repositorylink . 'changelog/" title="' . $this->changelog . '" >'.$this->changelog . '</a>'
 								);
 								?>
 								</p>
@@ -1164,7 +1165,7 @@ class Xili_Language_Admin extends Xili_Language {
 			),
 			'author_rules' => array(
 				'label' => __( 'Managing Authoring rules', 'xili-language' ),
-				'url' => 'options-general.php?page=' . 'author_rules',
+				'url' => 'options-general.php?page=author_rules',
 			),
 			'language_support' => array(
 				'label' => __( 'xili-language support', 'xili-language' ),
@@ -1177,7 +1178,7 @@ class Xili_Language_Admin extends Xili_Language {
 			'language_expert' => __( 'xili-language plugin', 'xili-language' ) . ', 3: ' . $this->xl_tabs['language_expert']['label'],
 			'language_files' => __( 'xili-language plugin', 'xili-language' ) . ', 4: ' . $this->xl_tabs['language_files']['label'],
 			'author_rules' => __( 'xili-language plugin', 'xili-language' ) . ' - ' . $this->xl_tabs['author_rules']['label'],
-			'language_support' => __('xili-language plugin', 'xili-language' ) . ', 5: ' . $this->xl_tabs['language_support']['label'],
+			'language_support' => __( 'xili-language plugin', 'xili-language' ) . ', 5: ' . $this->xl_tabs['language_support']['label'],
 		);
 
 		$hooks = array(); // to prepare highlight those in tabs
@@ -1314,15 +1315,9 @@ class Xili_Language_Admin extends Xili_Language {
 	 * @updated 2.23.01
 	 */
 	public function localize_admin_js( $case_news, $news_id ) {
-		$params = array(
-			'this_wikilink' => $this->wikilink,
-			'this_fourteenlink' => $this->fourteenlink,
-			'this_repositorylink' => $this->repositorylink,
-			'this_devxililink' => $this->devxililink,
-			'this_forumxililink' => $this->forumxililink,
-			'this_changelog' => $this->changelog,
-		);
-		return xl_localize_admin_js( $case_news, $news_id, $params );
+		global $xili_language_admin;
+
+		return xl_localize_admin_js( $case_news, $news_id, $xili_language_admin );
 	}
 
 	/**
@@ -1939,7 +1934,7 @@ class Xili_Language_Admin extends Xili_Language {
 			do_settings_sections( $this->settings_frontend . '_group' );
 			?>
 			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php printf( __( '%1$s of %2$s', 'xili-language' ), __( 'Save Changes' ), __( 'Front-end behaviour settings', 'xili-language' ) ); ?>" />
+				<input type="submit" class="button-primary" value="<?php /* translators: */ printf( __( '%1$s of %2$s', 'xili-language' ), __( 'Save Changes' ), __( 'Front-end behaviour settings', 'xili-language' ) ); ?>" />
 			</p>
 			<div class="clearb1">&nbsp;</div>
 		</form>
@@ -2047,7 +2042,7 @@ class Xili_Language_Admin extends Xili_Language {
 								$selected_menu_locations[ $menu_location ]['navtype'] = $_POST[ 'xili_navmenu_check_optiontype_' . $menu_location ]; //0.9.1
 							}
 							// page list in array 2.8.4.3
-							$enable = ( isset( $_POST[ 'xili_navmenu_check_option_page_' . $menu_location ] ) && 'enable' == $_POST['xili_navmenu_check_option_page_' . $menu_location ] ) ? 'enable' : '';
+							$enable = ( isset( $_POST[ 'xili_navmenu_check_option_page_' . $menu_location ] ) && 'enable' == $_POST[ 'xili_navmenu_check_option_page_' . $menu_location ] ) ? 'enable' : '';
 							$pagenablelist .= $enable;
 							$args = $_POST[ 'xili_navmenu_page_args_' . $menu_location ];
 							$thenewvalue = array(
@@ -2080,7 +2075,7 @@ class Xili_Language_Admin extends Xili_Language {
 				}
 				/* UPDATE OPTIONS */
 				update_option( 'xili_language_settings', $this->xili_settings );
-				/* messages */
+				/* translators: */
 				$optionmessage .= ' - ' . sprintf( __( 'Options are updated: Automatic Nav Menu = %s, Selection of pages in Nav Menu = %s', 'xili-language' ), $this->xili_settings['in_nav_menu'], $this->xili_settings['page_in_nav_menu'] );
 
 				$msg = 1;
@@ -2096,6 +2091,7 @@ class Xili_Language_Admin extends Xili_Language {
 				$lang_permalink = ( isset( $_POST['lang_permalink'] ) ) ? $_POST['lang_permalink'] : 'perma_not';
 				if ( $lang_permalink != $this->xili_settings['lang_permalink'] ) {
 					$this->xili_settings['lang_permalink'] = $lang_permalink;
+					/* translators: */
 					$special_msg[] = sprintf( __( 'Language begins permalink: %s ', 'xili-language' ), $this->xili_settings['lang_permalink'] );
 					// 2.20.3
 					if ( 'perma_not' != $this->xili_settings['lang_permalink'] ) {
@@ -2105,7 +2101,7 @@ class Xili_Language_Admin extends Xili_Language {
 							$special_msg[] = ' ' . __('Alias imported from Polylang.', 'xili-language');
 						}
 						*/
-					$dummy = 1;
+						$dummy = 1;
 					}
 				}
 
@@ -2133,6 +2129,7 @@ class Xili_Language_Admin extends Xili_Language {
 				$temp_wp_locale = ( isset( $_POST['xili_language_wp_locale'] ) ) ? $_POST['xili_language_wp_locale'] : 'db_locale';
 				if ( $temp_wp_locale != $this->xili_settings['wp_locale'] ) {
 					$this->xili_settings['wp_locale'] = $temp_wp_locale;
+					/* translators: */
 					$special_msg[] = sprintf( __( 'Locale changed: %s', 'xili-language' ), $this->xili_settings['wp_locale'] );
 				}
 
@@ -2140,6 +2137,7 @@ class Xili_Language_Admin extends Xili_Language {
 				update_option( 'xili_language_settings', $this->xili_settings );
 				/* messages */
 				if ( $special_msg ) {
+					/* translators: */
 					$optionmessage .= ' - ' . sprintf( __( 'Options are updated ( %s )', 'xili-language' ), implode( ' & ', $special_msg ) );
 				} else {
 					$optionmessage .= ' - ' . __( 'no change', 'xili-language' );
@@ -2156,6 +2154,7 @@ class Xili_Language_Admin extends Xili_Language {
 					$this->xili_settings['enable_fc_theme_class'] = 'disable';
 				}
 				update_option( 'xili_language_settings', $this->xili_settings );
+				/* translators: */
 				$optionmessage = sprintf( __( 'Settings for JetPack are updated to ‘%s’.', 'xili-language' ), $this->xili_settings['enable_fc_theme_class'] );
 				$msg = 1; // green
 				break;
@@ -2163,7 +2162,8 @@ class Xili_Language_Admin extends Xili_Language {
 			case 'xl-bbp-addon-integrate':
 				check_admin_referer( 'xili-language-expert' );
 				update_option( 'xl-bbp-addon-activated-folder', $_POST['xl-bbp-addon'] );
-				$optionmessage = sprintf( __( 'Settings for bbPress are updated to %1$s. Now %2$s', 'xili-language' ), ( '' != $_POST['xl-bbp-addon'] ) ? $_POST['xl-bbp-addon'] : __( 'no integration', 'xili-language' ) , '<a href="" >' . __( 'click to refresh dashboard...', 'xili-language' ) . '</a>' );
+				/* translators: */
+				$optionmessage = sprintf( __( 'Settings for bbPress are updated to %1$s. Now %2$s', 'xili-language' ), ( '' != $_POST['xl-bbp-addon'] ) ? $_POST['xl-bbp-addon'] : __( 'no integration', 'xili-language' ), '<a href="" >' . __( 'click to refresh dashboard...', 'xili-language' ) . '</a>' );
 				$msg = 1; // green
 				break;
 
@@ -2224,6 +2224,7 @@ class Xili_Language_Admin extends Xili_Language {
 	public function add_language_nav_menu_meta_boxes() {
 		add_meta_box(
 			'insert-xl-list',
+			/* translators: */
 			sprintf( __( '%s Languages list', 'xili-language' ), '[©xili]' ),
 			array( $this, 'language_nav_menu_link' ),
 			'nav-menus',
@@ -2431,6 +2432,7 @@ class Xili_Language_Admin extends Xili_Language {
 	public function add_sub_select_nav_menu_meta_boxes() {
 		add_meta_box(
 			'insert-xlmenus-list',
+			/* translators: */
 			sprintf( __( '%s Menus selection', 'xili-language' ), '[©xili]' ),
 			array( $this, 'sub_select_nav_menus' ),
 			'nav-menus',
@@ -2476,10 +2478,11 @@ class Xili_Language_Admin extends Xili_Language {
 						echo '<li>';
 						$listlanguages = $this->get_listlanguages();
 						foreach ( $listlanguages as $language ) {
-							echo '<span class="lang-menu-name" > ' . esc_html__( $language->description, 'xili-language' ) . '</span>'; ?>&nbsp;
-							<select name="menu" id="menu-wlid-<?php echo $language->term_id; ?>" class="menu-wo">
+							echo '<span class="lang-menu-name" > ' . xl_esc_html__( $language->description, 'xili-language' ) . '</span>';
+							?>
+							&nbsp;<select name="menu" id="menu-wlid-<?php echo $language->term_id; ?>" class="menu-wo">
 								<option value="0" ><?php esc_attr_e( 'Select a menu...', 'xili-language' ); ?></option>
-								<?php foreach ( $nav_menus_wo as $_nav_menu ) {  // now save slug ?>
+								<?php foreach ( $nav_menus_wo as $_nav_menu ) { ?>
 										<option value = "<?php echo esc_attr( $_nav_menu->slug ); ?>" >
 											<?php echo wp_html_excerpt( $_nav_menu->name, 40, '&hellip;' ); ?>
 										</option>
@@ -2531,7 +2534,7 @@ class Xili_Language_Admin extends Xili_Language {
 					if ( $(this).attr('checked') ) {
 						var langindex = new Array();
 						var menuvalue = new Array();
-						var message = '<?php echo esc_js ( __( 'Assign at least one menu to a language !!!', 'xili-language' ) ); ?>';
+						var message = '<?php echo esc_js( __( 'Assign at least one menu to a language !!!', 'xili-language' ) ); ?>';
 						var total = '';
 						$('.menu-wo').each(function() {
 
@@ -2620,12 +2623,12 @@ class Xili_Language_Admin extends Xili_Language {
 
 							$version = str_replace( 'Auto_', '', $_POST[ 'download_' . $language->name ] );
 
-						// download_mo_from_automattic( $locale = 'en_US', $upgrade = false, $theme_name = "" )
-							$a = $this->download_mo_from_automattic( $language->name, $version, $theme, 1 );
+							// download_mo_from_automattic( $locale = 'en_US', $upgrade = false, $theme_name = "" )
+							$a = xl_download_mo_from_automattic( $language->name, $version, $theme, 1, $this->embedded_themes );
 
-						} elseif ( isset( $_POST['download_' . $language->name ] ) && false !== ( strpos( $_POST[ 'download_' . $language->name ], 'GlotPress' ) ) ) {
+						} elseif ( isset( $_POST[ 'download_' . $language->name ] ) && false !== ( strpos( $_POST[ 'download_' . $language->name ], 'GlotPress' ) ) ) {
 
-							$a = $this->download_mo_from_translate_wordpress( $language->name, $wp_version, $theme, 1 );
+							$a = xl_download_mo_from_translate_wordpress( $language->name, $wp_version, $theme, 1, $this->embedded_themes );
 
 						} elseif ( isset( $_POST[ 'downloadtheme_' . $language->name ] ) && 'Choose' !== $_POST[ 'downloadtheme_' . $language->name ] ) {
 
@@ -2637,11 +2640,11 @@ class Xili_Language_Admin extends Xili_Language {
 
 								$version = $this->find_if_version_exists( $language->name, $versions_to_check, $url_base );
 
-								$a = $this->download_mo_from_automattic( $language->name, $version, $theme, 2 );
+								$a = xl_download_mo_from_automattic( $language->name, $version, $theme, 2, $this->embedded_themes );
 
 							} else {
 
-								$a = $this->download_mo_from_translate_wordpress( $language->name, $wp_version, $theme, 2 );
+								$a = xl_download_mo_from_translate_wordpress( $language->name, $wp_version, $theme, 2, $this->embedded_themes );
 							}
 						}
 					}
@@ -2670,6 +2673,7 @@ class Xili_Language_Admin extends Xili_Language {
 				<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 				<p class="width23 boldtext">
 				<?php
+				/* translators: */
 				printf( esc_html__( 'This tab is added to help aware webmaster to find WP core MO files from %1$s Automattic SVN server %2$s or %3$s GlotPress server%2$s. <br />Be aware that files are not always available for the current WP version (%4$s).<br /> So, the rules for Automattic SVN are set to find the most recent version equal or below the current (exp. 3.5.x or 3.4.x for 3.6). Only check the wished files if language is used in dashboard or default theme (2011, 2012,… ).', 'xili-language' ), '<a href="http://svn.automattic.com/wordpress-i18n/" target="_blank">', '</a>', '<a href="http://translate.wordpress.org/projects/wp" target="_blank">', $wp_version );
 				echo '<br />' . esc_html__( 'In GlotPress, if nothing found in known versions, the /dev/ subfolder will be explored.', 'xili-language' );
 				echo '<br /><strong>' . esc_html__( 'Be aware that choosen files will be downloaded in Core or Theme languages sub-folder. Verify folder rights !', 'xili-language' ) . '</strong>';
@@ -2759,10 +2763,11 @@ class Xili_Language_Admin extends Xili_Language {
 				$glot = false;
 				if ( 'en_US' != $language->name ) {
 
-					if ( $ver = $this->check_versions_in_glotpress( $language->name, $wp_version ) ) {
+					if ( $ver = xl_check_versions_in_glotpress( $language->name, $wp_version ) ) {
 						if ( 'dev' == $ver ) { //2.8.8k
 							echo '<p><em>' . esc_html__( 'Development Version available on GlotPress WordPress.org server', 'xili-language' ) . '</em></p>';
 						} else {
+							/* translators: */
 							echo '<p><em>' . sprintf( esc_html__( 'Version %s ready to be downloaded on GlotPress WordPress.org server', 'xili-language' ), $wp_version ) . '</em></p>';
 						}
 						$glot = true;
@@ -2780,6 +2785,7 @@ class Xili_Language_Admin extends Xili_Language {
 					echo '<p>' . esc_html__( 'Root language of WordPress', 'xili-language' ) . '</p>';
 					$auto = false;
 				} elseif ( $version = $this->find_if_version_exists( $language->name, $versions_to_check, $url_base ) ) {
+					/* translators: */
 					echo '<p><em>' . sprintf( esc_html__( 'Version %s ready to be downloaded from Automattic SVN server', 'xili-language' ), $version ) . '</em></p>';
 
 					$auto = true;
@@ -2806,19 +2812,21 @@ class Xili_Language_Admin extends Xili_Language {
 			}
 			if ( 'en_US' != $language->name && in_array( $parent_theme_name, $this->embedded_themes ) ) {
 				echo '<fieldset class="themebox"><legend>';
+				/* translators: */
 				echo sprintf( esc_html__( 'Theme\'s files %s', 'xili-language' ), ( ( is_child_theme() ) ? $theme_name . ' (' . $parent_theme_name . ') ': $theme_name ) );
 				echo '</legend>';
 
 				$mofile = get_template_directory() . '/languages/' . $language->name . '.mo';
 				if ( file_exists( $mofile ) ) {
 					if ( is_child_theme() ) {
-
+						/* translators: */
 						echo '<p>' . sprintf( esc_html__( 'Installed in parent theme\'s (%s) languages folder', 'xili-language' ), $parent_theme_name ) . '</p>';
 					} else {
 						echo '<p>' . esc_html__( 'Installed in theme\'s languages folder', 'xili-language' ) . '</p>';
 					}
 				} else {
 					if ( is_child_theme() ) {
+						/* translators: */
 						echo '<p>' . sprintf( esc_html__( 'Not installed in parent theme\'s (%s) languages folder', 'xili-language' ), $parent_theme_name ) . '</p>';
 					} else {
 						echo '<p>' . esc_html__( 'Not installed in theme\'s languages folder', 'xili-language' ) . '</p>';
@@ -2847,7 +2855,7 @@ class Xili_Language_Admin extends Xili_Language {
 			foreach ( $versions_to_check as $version ) {
 				$url = $url_base . "$version/messages/$language.mo";
 
-				if ( $this->url_exists( $url ) ) {
+				if ( xl_url_exists( $url ) ) {
 					return $version;
 				}
 			}
@@ -2862,7 +2870,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 		$wp_version_details = explode( '.', $wp_version );
 
-		if ( $this->url_exists( $url_base ) ) {
+		if ( xl_url_exists( $url_base ) ) {
 			// get all the versions available in the subdirectory
 			$resp = wp_remote_get( $url_base );
 			if ( is_wp_error( $resp ) || 200 != $resp['response']['code'] ) {
@@ -2899,44 +2907,6 @@ class Xili_Language_Admin extends Xili_Language {
 		} else {
 			return false;
 		}
-	}
-	//TO DO - uses wp_download_language_pack
-	public function check_versions_in_glotpress( $locale, $version = 'dev' ) {
-
-		$version_folder = $this->glotPress_version_folder( $version );
-		if ( '' == $version_folder ) {
-			$version_folder = 'dev';
-		}
-		// Get the list of available translation from Translate WordPress. This is expected to be JSON.
-		$translations = wp_remote_get( sprintf( 'http://translate.wordpress.org/api/projects/wp/%1$s', $version_folder ) ); // 2.8.8k
-
-		if ( is_wp_error( $translations ) || 200 !== wp_remote_retrieve_response_code( $translations ) ) {
-			// again with forcing 'dev'
-			$translations = wp_remote_get( sprintf( 'http://translate.wordpress.org/api/projects/wp/%1$s', 'dev' ) ); // rules changed in glot
-			if ( is_wp_error( $translations ) || 200 !== wp_remote_retrieve_response_code( $translations ) ) {
-				return false;
-			}
-		}
-
-		$translations = json_decode( wp_remote_retrieve_body( $translations ) );
-		if ( is_null( $translations ) ) {
-			return false;
-		}
-
-		$filtered = wp_list_filter(
-			$translations->translation_sets,
-			array(
-				'locale' => substr( $locale, 0, 2 ),
-			)
-		); // 2.9.10 (no more wp_locale)
-		// See if the requested $locale has an available translation
-		$translations = array_shift( $filtered ); // param variable
-
-		if ( empty( $translations ) ) {
-			return false;
-		}
-
-		return $translations->locale;
 	}
 
 	public function set_author_rules_register_setting() {
@@ -3050,6 +3020,7 @@ class Xili_Language_Admin extends Xili_Language {
 			'type' => 'checkbox',
 			'id' => 'external_xl_style',
 			'name' => 'external_xl_style',
+			/* translators: */
 			'desc' => sprintf( __( 'Dashboard style: %s', 'xili-language' ), $style_state ),
 			'std' => 'on',
 			'label_for' => 'external_xl_style',
@@ -3079,6 +3050,7 @@ class Xili_Language_Admin extends Xili_Language {
 						'type' => 'checkbox',
 						'id' => 'cpt_' . $type,
 						'name' => 'cpt_' . $type,
+						/* translators: */
 						'desc' => sprintf( __( 'Custom post type named: %s', 'xili-language' ), $thecustom ['name'] ),
 						'std' => 'enable',
 						'label_for' => 'cpt_' . $type,
@@ -3119,6 +3091,7 @@ class Xili_Language_Admin extends Xili_Language {
 					'type' => 'checkbox',
 					'id' => 'link_cat_' . $link_cat->term_id,
 					'name' => 'link_cat_' . $link_cat->term_id,
+					/* translators: */
 					'desc' => sprintf( __( 'If checked, %s bookmark will be subselected according current language.', 'xili-language' ), $link_cat->name ),
 					'std' => '1',
 					'label_for' => 'link_cat_' . $link_cat->term_id,
@@ -3207,7 +3180,7 @@ class Xili_Language_Admin extends Xili_Language {
 			</h3>
 
 			<p class="width23 boldtext">
-			<?php printf( __( 'This settings screen contains new miscellaneous features.', 'xili-language' ), '<a href="' . $this->repositorylink . '" target="_blank">', '</a>' ); ?>
+			<?php printf( esc_html__( 'This settings screen contains new miscellaneous features.', 'xili-language' ), '<a href="' . $this->repositorylink . '" target="_blank">', '</a>' ); ?>
 			</p>
 
 			<?php $this->setting_form_content( $this->thehook6, $data ); ?>
@@ -3228,7 +3201,7 @@ class Xili_Language_Admin extends Xili_Language {
 			do_settings_sections( $this->settings_authoring_settings . '_group' );
 			?>
 			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php printf( __( '%1$s of %2$s', 'xili-language' ), __( 'Save Changes' ), __( ' Authoring and data settings', 'xili-language' ) ); ?>" />
+				<input type="submit" class="button-primary" value="<?php printf( esc_html__( '%1$s of %2$s', 'xili-language' ), esc_html__( 'Save Changes' ), esc_html__( ' Authoring and data settings', 'xili-language' ) ); ?>" />
 			</p>
 			<div class="clearb1">&nbsp;</div>
 		</form>
@@ -3247,7 +3220,7 @@ class Xili_Language_Admin extends Xili_Language {
 			do_settings_sections( $this->settings_author_rules . '_group' );
 			?>
 			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php printf( __( '%1$s of %2$s', 'xili-language' ), __( 'Save Changes' ), __( 'Authoring rules', 'xili-language' ) ); ?>" />
+				<input type="submit" class="button-primary" value="<?php printf( esc_html__( '%1$s of %2$s', 'xili-language' ), esc_html__( 'Save Changes' ), esc_html__( 'Authoring rules', 'xili-language' ) ); ?>" />
 			</p>
 			<div class="clearb1">&nbsp;</div>
 		</form>
@@ -3372,6 +3345,7 @@ class Xili_Language_Admin extends Xili_Language {
 					$thecheck[] = $type;
 				}
 				$clabel = implode( ', ', $thecheck );
+				/* translators: */
 				$text = ( 1 == count( $thecustoms ) ) ? sprintf( __( 'One custom post (%s) is available.', 'xili-language' ), $clabel ) : sprintf( __( 'More than one custom post (%s) are available.', 'xili-language' ), $clabel );
 				echo '<p class="section">' . $text . '</p>';
 				echo '<p class="section">' . __( 'Check to define as multilingual (a translation box will appear in edit page).', 'xili-language' ) . '</p>';
@@ -3596,7 +3570,7 @@ class Xili_Language_Admin extends Xili_Language {
 					$headers .= 'Cc: <' . $_POST['ccmail'] . '>' . "\r\n";
 					$headers .= 'Reply-To: <' . $_POST['ccmail'] . '>' . "\r\n";
 				}
-				$headers .= "\\";
+				$headers .= '\\';
 				$message = 'Message sent by: ' . get_bloginfo( 'admin_email' ) . "\n\n";
 				$message .= 'Subject: ' . $_POST['subject'] . "\n\n";
 				$message .= 'Topic: ' . $_POST['thema'] . "\n\n";
@@ -3609,10 +3583,12 @@ class Xili_Language_Admin extends Xili_Language {
 					$message = __( 'Email sent.', 'xili-language' );
 					$msg = 1;
 					$sent = ( $result ) ? __( 'WP Mail OK', 'xili-language' ) : __( 'Issue in wp_mail or smtp config', 'xili-language' );
-					$emessage = sprintf( __( 'Thanks for your email. A copy was sent to %1$s (%2$s)', 'xili-language' ), $_POST['ccmail'], $sent );
+					/* translators: */
+					$emessage = sprintf( esc_html__( 'Thanks for your email. A copy was sent to %1$s (%2$s)', 'xili-language' ), $_POST['ccmail'], $sent );
 				} else {
 					$msg = 2;
-					$emessage = sprintf( __( 'Issue in your email. NOT sent to Cc: %1$s or the return address %2$s is not good !', 'xili-language' ), $_POST['ccmail'], get_bloginfo( 'admin_email' ) );
+					/* translators: */
+					$emessage = sprintf( esc_html__( 'Issue in your email. NOT sent to Cc: %1$s or the return address %2$s is not good !', 'xili-language' ), $_POST['ccmail'], get_bloginfo( 'admin_email' ) );
 				}
 				break;
 		}
@@ -3821,8 +3797,9 @@ class Xili_Language_Admin extends Xili_Language {
 			<p><small><em><?php esc_html_e( 'If checked, xili-language incorporates language (or alias) at the begining of permalinks... (premium services for donators, see docs)', 'xili-language' ); ?></em><br/>
 			<?php
 			/* translators: */
-			printf( __( 'URI will be like %s, xx is slug/alias of current language.', 'xili-language' ), '<em>' . get_option( 'home' ) . '<strong>/xx</strong>' . get_option( 'permalink_structure' ) . '</em>' );
-			?></small><p>
+			printf( esc_html__( 'URI will be like %s, xx is slug/alias of current language.', 'xili-language' ), '<em>' . get_option( 'home' ) . '<strong>/xx</strong>' . get_option( 'permalink_structure' ) . '</em>' );
+			?>
+			</small><p>
 			<?php // to force permalinks flush  ?>
 			<label for="force_permalinks_flush" class="selectit"><input id="force_permalinks_flush" name="force_permalinks_flush" type="checkbox" value="enable" /> <?php esc_html_e( 'force permalinks flush', 'xili-language' ); ?></label>
 			</fieldset>
@@ -3855,7 +3832,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 		<fieldset class="box"><legend><?php esc_html_e( 'Translation domains settings', 'xili-language' ); ?></legend><p>
 			<?php esc_html_e( 'For experts in multilingual CMS: Choose the rule to modify domains switching.', 'xili-language' ); ?><br />
-			<em><?php printf( __( 'Some plugins are well built to be translation ready. On front-end side, xili-language is able to switch the text_domain of the good plugin file or to the local theme_domain. So, if terms (and translations) are available in these .mo files, these terms are displayed in the right language. Rule for plugins without front-end text don’t need to be changed. Others need modification of php source via a customized filter (add_action).<br />More infos in sources and perhaps soon in <a href=\"%s\">wiki</a>.', 'xili-language' ), $this->wikilink ) ; ?>
+			<em><?php /* translators: */ printf( __( 'Some plugins are well built to be translation ready. On front-end side, xili-language is able to switch the text_domain of the good plugin file or to the local theme_domain. So, if terms (and translations) are available in these .mo files, these terms are displayed in the right language. Rule for plugins without front-end text don’t need to be changed. Others need modification of php source via a customized filter (add_action).<br />More infos in sources and perhaps soon in <a href=\"%s\">wiki</a>.', 'xili-language' ), $this->wikilink ); ?>
 			<br /><?php esc_html_e( 'Sometime languages sub-folder (Domain Path) containing .mo files is not well defined in plugin source header. So, after looking inside plugin folder, insert the good one between / !', 'xili-language' ); ?><br />
 			</em><br /><br />
 			<table class="widefat trans-domain"><thead>
@@ -3871,7 +3848,7 @@ class Xili_Language_Admin extends Xili_Language {
 				}
 			}
 			foreach ( $this->xili_settings['domains'] as $domain => $state ) {
-				if ( $domain == 'default' || ( ! in_array( $domain, $this->unusable_domains) && isset( $active_plugin_by_domain[ $domain ] ) ) ) {
+				if ( 'default' == $domain || ( ! in_array( $domain, $this->unusable_domains ) && isset( $active_plugin_by_domain[ $domain ] ) ) ) {
 					$domaininlist = ( 'default' == $domain ) ? __( 'Switch default domain of WP', 'xili-language' ) : $active_plugin_by_domain[ $domain ]['plugin-data']['Name'];
 				?>
 				<tr><th>
@@ -3879,7 +3856,7 @@ class Xili_Language_Admin extends Xili_Language {
 					<select id="xili_language_domains_<?php echo $domain; ?>" name="xili_language_domains_<?php echo $domain; ?>" >
 						<option value="" <?php selected( $state, '' ); ?> /><?php esc_html_e( 'no modification', 'xili-language' ); ?></option>
 						<option value="enable" <?php selected( $state, 'enable' ); ?> /> <?php esc_html_e( 'translation in local', 'xili-language' ); ?></option>
-						<?php if( 'default' != $domain ) { ?>
+						<?php if ( 'default' != $domain ) { ?>
 						<option value="renamed" <?php selected( $state, 'renamed' ); ?> /> <?php esc_html_e( 'translation in plugin', 'xili-language' ); ?></option>
 						<option value="filter" <?php selected( $state, 'filter' ); ?> /> <?php esc_html_e( 'custom translation', 'xili-language' ); ?></option>
 						<?php } ?>
@@ -3946,7 +3923,7 @@ class Xili_Language_Admin extends Xili_Language {
 			$theme_name = $current_theme_obj->get( 'Name' ); // get_option("current_theme"); // name of theme
 		}
 		?>
-		<fieldset class="themeinfo"><legend><?php  esc_html_e( 'Theme type and domain:', 'xili-language' ); ?></legend>
+		<fieldset class="themeinfo"><legend><?php esc_html_e( 'Theme type and domain:', 'xili-language' ); ?></legend>
 			<strong><?php echo ' - ' . $theme_name . ' -'; ?></strong>
 			<?php
 			if ( '' != $this->parent->thetextdomain ) {
@@ -4000,14 +3977,16 @@ class Xili_Language_Admin extends Xili_Language {
 				<fieldset class="box"><legend><?php echo __( 'Language files in parent theme:', 'xili-language' ); ?></legend>
 					<p>
 					<?php echo __( 'Languages sub-folder:', 'xili-language' ) . ' ' . $this->xili_settings['parent_langs_folder']; ?><br />
-					<?php esc_html_e( 'Available MO files:', 'xili-language' ); echo '<br />';
+					<?php
+					esc_html_e( 'Available MO files:', 'xili-language' );
+					echo '<br />';
 					$template_directory = $this->get_parent_theme_directory;
 					if ( file_exists( $template_directory ) ) { // when theme was unavailable
 						$this->find_files( $template_directory, '/^(\w\w_\w\w|\w\w).mo$/', array( &$this, 'available_mo_files' ) );
 					}
 					if ( file_exists( WP_LANG_DIR . '/themes' ) ) { // when languages/themes was unavailable
-						echo '<br /><em>' . __( 'in WP_LANG_DIR/themes:', 'xili-language' ) . '</em>'.'<br />';
-						$this->find_files( WP_LANG_DIR . '/themes', '/(' . $this->parent->thetextdomain . ')-(\w\w_\w\w|\w\w).mo$/', array( &$this, 'available_mo_files' ) , true );
+						echo '<br /><em>' . __( 'in WP_LANG_DIR/themes:', 'xili-language' ) . '</em>' . '<br />';
+						$this->find_files( WP_LANG_DIR . '/themes', '/(' . $this->parent->thetextdomain . ')-(\w\w_\w\w|\w\w).mo$/', array( &$this, 'available_mo_files' ), true );
 					}
 					if ( false === $this->parent->ltd_parent ) {
 						echo '<br /><span class="red-alert">' . $this->admin_messages['alert']['no_load_function'] . '</span>';
@@ -4049,10 +4028,10 @@ class Xili_Language_Admin extends Xili_Language {
 		<fieldset class="themeinfo"><legend><?php esc_html_e( 'Header infos', 'xili-language' ); ?></legend>
 		<?php
 		echo '<p>Name: ' . $the_theme->get( 'Name' ) . '</p>'; // fix get value
-		echo '<p>Author: '. $the_theme->get( 'Author' ) . '</p>';
-		echo '<p>Version: '. $the_theme->get( 'Version' ) . '</p>';
+		echo '<p>Author: ' . $the_theme->get( 'Author' ) . '</p>';
+		echo '<p>Version: ' . $the_theme->get( 'Version' ) . '</p>';
 		if ( is_child_theme() ) {
-			echo '<p>Template: '. $the_theme->get( 'Template' ) . '</p>';
+			echo '<p>Template: ' . $the_theme->get( 'Template' ) . '</p>';
 		};
 		if ( $textdomain = $the_theme->get( 'TextDomain' ) ) {
 			echo '<p>Text Domain: ' . $textdomain . '</p>';
@@ -4096,7 +4075,7 @@ class Xili_Language_Admin extends Xili_Language {
 		if ( current_theme_supports( 'menus' ) ) {
 			?>
 
-		<p><em><?php esc_html_e( 'These options are still present for compatibility reasons with previous versions < 2.9.22. <strong>For new installation, it is preferable to use the insertion points and menu options.</strong>', 'xili-language' ); ?></em><br /><?php printf( __( "Goto <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus</a> settings.", 'xili-language' ), 'nav-menus.php' );?></p>
+		<p><em><?php esc_html_e( 'These options are still present for compatibility reasons with previous versions < 2.9.22. <strong>For new installation, it is preferable to use the insertion points and menu options.</strong>', 'xili-language' ); ?></em><br /><?php printf( __( 'Goto <a href="%s" title="Menu Items definition">Appearance Menus</a> settings.', 'xili-language' ), 'nav-menus.php' ) ;?></p>
 
 		<label for="show-menus-boxes" class="selectit"><input name="show-menus-boxes" id="show-menus-boxes" type="checkbox" value="show">&nbsp;<?php esc_html_e( 'Show previous menus settings (reserved for backwards compatibility)', 'xili-language' ); ?></label>
 
@@ -4110,8 +4089,8 @@ class Xili_Language_Admin extends Xili_Language {
 			?>
 			<fieldset class="box leftbox">
 				<?php esc_html_e( 'Choose location(s) of nav menu(s) where languages list will be automatically inserted. For each location, choose the type of list. Experts can create their own list by using api (hook) available in plugin.', 'xili-language' ); ?>
-				<br><strong><?php printf( __( "Since version 2.8.8, it is possible to insert the languages list anywhere in the navigation menu via the <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus Builder</a> (drag and drop method).", 'xili-language' ), 'nav-menus.php' ); ?></strong>
-				<br><em><?php printf( __( 'To avoid unwanted double items in navigation menu, choose one of the 2 methods but not both ! The future version will use only menus set in <a href="%s" title="Menu Items definition">Appearance Menus Builder</a>.', 'xili-language' ), 'nav-menus.php' ); ?></em>
+				<br><strong><?php /* translators: */ printf( __( 'Since version 2.8.8, it is possible to insert the languages list anywhere in the navigation menu via the <a href="%s" title="Menu Items definition">Appearance Menus Builder</a> (drag and drop method).', 'xili-language' ), 'nav-menus.php' ); ?></strong>
+				<br><em><?php /* translators: */ printf( __( 'To avoid unwanted double items in navigation menu, choose one of the 2 methods but not both ! The future version will use only menus set in <a href="%s" title="Menu Items definition">Appearance Menus Builder</a>.', 'xili-language' ), 'nav-menus.php' ); ?></em>
 
 			</fieldset>
 			<fieldset class="box rightbox">
@@ -4126,7 +4105,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 				$locations_enable = ( isset( $selected_menu_locations[ $menu_location ] ) ) ? $selected_menu_locations[ $menu_location ]['navenable'] : '';
 
-				if ( 'enable' == $locations_enable || ( !isset( $this->xili_settings['navmenu_check_options'] ) && isset( $this->xili_settings['navmenu_check_option'] ) && $this->xili_settings['navmenu_check_option'] == $menu_location ) ) {
+				if ( 'enable' == $locations_enable || ( ! isset( $this->xili_settings['navmenu_check_options'] ) && isset( $this->xili_settings['navmenu_check_option'] ) && $this->xili_settings['navmenu_check_option'] == $menu_location ) ) {
 					$checked = 'checked="checked"'; // ascendant compatibility ( !isset($this->xili_settings['navmenu_check_options']) &&
 				} else {
 					$checked = '';
@@ -4142,7 +4121,7 @@ class Xili_Language_Admin extends Xili_Language {
 					$subtitle = '';
 					foreach ( $this->langs_list_options as $typeoption ) {
 						if ( false !== strpos( $typeoption[0], 'navmenu' ) ) {
-							$seltypeoption = ( isset( $this->xili_settings['navmenu_check_options'][ $menu_location ]['navtype']) ) ? $this->xili_settings['navmenu_check_options'][ $menu_location ]['navtype'] : '';
+							$seltypeoption = ( isset( $this->xili_settings['navmenu_check_options'][ $menu_location ]['navtype'] ) ) ? $this->xili_settings['navmenu_check_options'][ $menu_location ]['navtype'] : '';
 							if ( $seltypeoption == $typeoption[0] ) {
 								$subtitle = $typeoption[2]; // 2.8.6
 							}
@@ -4199,14 +4178,14 @@ class Xili_Language_Admin extends Xili_Language {
 					<?php esc_html_e( 'Choose location of nav menu where sub-selection of pages list will be automatically inserted according current displayed language:', 'xili-language' ); ?><br /><?php esc_html_e( 'Args is like in function wp_list_pages, example: <em>include=11,15</em><br />Note: If args kept empty, the selection will done on all pages (avoid it).', 'xili-language' ); ?>
 				<br><strong>
 					<?php
-				/* translators: */
-				printf( __( "Since version 2.9.10, it is possible to insert a list of pages sub-selected according current language anywhere in the navigation menu via the <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus Builder</a> (drag and drop method).", 'xili-language' ), 'nav-menus.php' );
-				?></strong>
+					/* translators: */
+					printf( __( "Since version 2.9.10, it is possible to insert a list of pages sub-selected according current language anywhere in the navigation menu via the <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus Builder</a> (drag and drop method).", 'xili-language' ), 'nav-menus.php' );
+					?></strong>
 				<br><em>
 					<?php
-				/* translators: */
-				printf( __( 'To avoid unwanted double items in navigation menu, choose one of the 2 methods but not both ! The future version will use only menus set in <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus Builder</a>.', 'xili-language' ), 'nav-menus.php' );
-				?></em>
+					/* translators: */
+					printf( __( 'To avoid unwanted double items in navigation menu, choose one of the 2 methods but not both ! The future version will use only menus set in <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus Builder</a>.', 'xili-language' ), 'nav-menus.php' );
+					?></em>
 				</fieldset>
 					<fieldset class="box rightbox">
 						<?php
@@ -4218,21 +4197,22 @@ class Xili_Language_Admin extends Xili_Language {
 								$args = ( isset( $selected_page_menu_locations[ $menu_location ]['args'] ) ) ? $selected_page_menu_locations[ $menu_location ]['args'] : '';
 								?>
 								<tr>
-									<th style="text-align:left;"><label for="xili_navmenu_check_option_page_<?php echo $menu_location; ?>" class="selectit"><input id="xili_navmenu_check_option_page_<?php echo $menu_location; ?>" name="xili_navmenu_check_option_page_<?php echo $menu_location; ?>" type="checkbox" value="enable" <?php echo checked( ( isset( $selected_page_menu_locations[ $menu_location ]['enable'] ) ) ? $selected_page_menu_locations[ $menu_location ]['enable'] : '' , 'enable' ) ; ?> /> <?php echo $menu_location; ?></label>&nbsp;&nbsp;<?php echo ( has_nav_menu( $menu_location ) ) ? '' : '<abbr title="menu location without content" class="red-alert"> (?) </abbr>'; ?>
+									<th style="text-align:left;">
+										<label for="xili_navmenu_check_option_page_<?php echo $menu_location; ?>" class="selectit"><input id="xili_navmenu_check_option_page_<?php echo $menu_location; ?>" name="xili_navmenu_check_option_page_<?php echo $menu_location; ?>" type="checkbox" value="enable" <?php echo checked( ( isset( $selected_page_menu_locations[ $menu_location ]['enable'] ) ) ? $selected_page_menu_locations[ $menu_location ]['enable'] : '', 'enable' ); ?> /> <?php echo $menu_location; ?></label>&nbsp;&nbsp;<?php echo ( has_nav_menu( $menu_location ) ) ? '' : '<abbr title="menu location without content" class="red-alert"> (?) </abbr>'; ?>
 									</th>
 									<td>
 										<label for="xili_navmenu_page_args_<?php echo $menu_location; ?>"><?php esc_html_e( 'Args', 'xili-language' ); ?>:
-					<input id="xili_navmenu_page_args_<?php echo $menu_location; ?>" name="xili_navmenu_page_args_<?php echo $menu_location; ?>" type="text" value="<?php echo $args ?>" />
-					</label>
-					<?php
-					$point = $this->has_insertion_point_list_menu( $menu_location, $this->insertion_point_dummy_link_page );
-					if ( 0 != $point ) {
-						echo '<br />&nbsp; <span class="red-alert">' . __( 'This menu location contains a page sub-list insertion point !', 'xili-language' ) . '</span>';
-					}
-					?>
-					</td>
-				</tr>
-					<?php
+											<input id="xili_navmenu_page_args_<?php echo $menu_location; ?>" name="xili_navmenu_page_args_<?php echo $menu_location; ?>" type="text" value="<?php echo $args; ?>" />
+										</label>
+									<?php
+									$point = $this->has_insertion_point_list_menu( $menu_location, $this->insertion_point_dummy_link_page );
+									if ( 0 != $point ) {
+										echo '<br />&nbsp; <span class="red-alert">' . __( 'This menu location contains a page sub-list insertion point !', 'xili-language' ) . '</span>';
+									}
+									?>
+									</td>
+								</tr>
+						<?php
 							}
 							echo '</tbody></table>';
 						}
@@ -4246,7 +4226,7 @@ class Xili_Language_Admin extends Xili_Language {
 					esc_html_e( "This theme doesn't contain active Nav Menu. List of languages cannot be automatically added.", 'xili-language' );
 					echo '<br />';
 					/* translators: */
-					printf( __( "See <a href=\"%s\" title=\"Menu Items definition\">Appearance Menus activation</a> settings.", 'xili-language' ), 'nav-menus.php' );
+					printf( __( 'See <a href="%s" title="Menu Items definition">Appearance Menus activation</a> settings.', 'xili-language' ), 'nav-menus.php' );
 				}
 				?>
 
@@ -4264,7 +4244,7 @@ class Xili_Language_Admin extends Xili_Language {
 								<fieldset class="box leftbox">
 									<?php
 									/* translators: */
-									printf( __( 'This theme (%1$s) contains %2$d Nav Menu(s).', 'xili-language' ), $theme_name, $loc_count);
+									printf( __( 'This theme (%1$s) contains %2$d Nav Menu(s).', 'xili-language' ), $theme_name, $loc_count );
 									?>
 									<p><?php esc_html_e( 'Choose nav menu where languages list will be manually inserted:', 'xili-language' ); ?></p>
 								</fieldset>
@@ -4301,7 +4281,7 @@ class Xili_Language_Admin extends Xili_Language {
 						esc_html_e( "This theme doesn't contain active Nav Menu.", 'xili-language' );
 						echo '<br />';
 						/* translators: */
-						printf( __( 'See <a href="%s" title="Menu Items definition">Appearance Menus</a> settings.', 'xili-language' ), 'nav-menus.php' );
+						printf( esc_html__( 'See <a href="%s" title="Menu Items definition">Appearance Menus</a> settings.', 'xili-language' ), 'nav-menus.php' );
 					}
 					?>
 		</fieldset>
@@ -4400,7 +4380,7 @@ class Xili_Language_Admin extends Xili_Language {
 		if ( '' != $this->get_wplang() ) {
 			?>
 			<label for="wplangenable">
-				<input type="checkbox" id="wplangenable" name="wplangenable" value="enable" <?php checked( $wplang, 'enable', true ) ; ?> />&nbsp;<?php echo 'WPLANG= ' . $this->get_wplang(); ?>
+				<input type="checkbox" id="wplangenable" name="wplangenable" value="enable" <?php checked( $wplang, 'enable', true ); ?> />&nbsp;<?php echo 'WPLANG= ' . $this->get_wplang(); ?>
 			</label><br />
 		<?php
 		}
@@ -4413,8 +4393,10 @@ class Xili_Language_Admin extends Xili_Language {
 		<label for="versionenable">
 			<input type="checkbox" id="versionenable" name="versionenable" value="enable" <?php checked( isset( $this->xili_settings['version-wp'] ) && 'enable' == $this->xili_settings['version-wp'], true, true ); ?> />&nbsp;<?php echo 'WP version: ' . $wp_version; ?>
 		</label><br />
-		<?php if ( get_option( 'permalink_structure' ) ) {
-		// 2.10.0 - ?>
+		<?php
+		if ( get_option( 'permalink_structure' ) ) {
+		// 2.10.0 -
+		?>
 		<label for="versionenable">
 			<input type="checkbox" id="permalink_structure" name="permalink_structure" value="enable" <?php checked( isset( $this->xili_settings['permalink_structure'] ) && 'enable' == $this->xili_settings['permalink_structure'], true, true ); ?> />&nbsp;<?php echo 'Permalink structure: <small>' . get_option( 'permalink_structure' ) . '</small>'; ?>
 		</label><br />
@@ -5257,6 +5239,7 @@ class Xili_Language_Admin extends Xili_Language {
 			if ( 'enable' == $customtype['multilingual'] ) {
 				$plural_name = ( isset( $customtype['name'] ) ) ? $customtype['name'] : $key;
 				$singular_name = ( isset( $customtype['singular_name'] ) ) ? $customtype['singular_name'] : $key;
+				/* translators: */
 				add_meta_box( 'post_state', sprintf( __( '%1$s of this %2$s', 'xili-language' ), __( 'Translations', 'xili-language' ), $singular_name ), array( &$this, 'post_state_box' ), $key, 'normal', 'high' );
 			}
 		}
@@ -5276,7 +5259,7 @@ class Xili_Language_Admin extends Xili_Language {
 		</div>
 		<div id="msg-states-comments">
 			<?php $this->post_status_addons( $post_id, $curlang ); ?>
-			<p class="docinfos" ><?php printf( __( 'This list gathers together the titles and infos about (now and future) linked posts by language. For more info, visit the <a href="%s">wiki</a> website.', 'xili-language' ), $this->wikilink ); ?></p>
+			<p class="docinfos" ><?php /* translators: */ printf( __( 'This list gathers together the titles and infos about (now and future) linked posts by language. For more info, visit the <a href="%s">wiki</a> website.', 'xili-language' ), $this->wikilink ); ?></p>
 			<p class="xlversion">©xili-language v. <?php echo XILILANGUAGE_VER; ?></p>
 		</div>
 		<div class="clearb1">&nbsp;</div>
@@ -5438,8 +5421,7 @@ class Xili_Language_Admin extends Xili_Language {
 						// 2.22
 						echo $this->multiple_checkbox( $post_id, $language->slug );
 					}
-					echo '<td>' . $display_link . '</td><td>' . $linepost->post_title
-					. '</td><td>';
+					echo '<td>' . $display_link . '</td><td>' . $linepost->post_title . '</td><td>';
 
 					switch ( $linepost->post_status ) {
 						case 'private':
@@ -5477,7 +5459,20 @@ class Xili_Language_Admin extends Xili_Language {
 						echo $this->multiple_checkbox( $post_id, $language->slug );
 					}
 					echo '<td>' . $hiddeninput . ' </td><td>' . __( 'not yet translated', 'xili-language' )
-						. '&nbsp;&nbsp;' . sprintf( '<a href="%1$s" title="%2$s">' . $creation_edit . '</a>', 'post.php?post=' . $post_id . '&action=edit&xlaction=transcreate&xllang=' . $language->slug, sprintf( esc_attr__( 'For create a linked draft translation in %s', 'xili-language' ), $language->name ) ) . '&nbsp;|&nbsp;' .  $search
+
+						. '&nbsp;&nbsp;' .
+						sprintf(
+							/* translators: */
+							'<a href="%1$s" title="%2$s">' . $creation_edit . '</a>',
+							'post.php?post=' . $post_id . '&action=edit&xlaction=transcreate&xllang=' . $language->slug,
+
+							sprintf(
+								/* translators: name of language */
+								esc_attr__( 'For create a linked draft translation in %s', 'xili-language' ),
+								$language->name
+							)
+						)
+						. '&nbsp;|&nbsp;' .  $search
 						. '</td><td>&nbsp;</td><td>' . $search
 						. '&nbsp;'
 						. '</td></tr>';
@@ -5529,7 +5524,9 @@ class Xili_Language_Admin extends Xili_Language {
 						echo $this->multiple_checkbox( $post_id, $language->slug );
 					}
 					echo '<td>' . $hiddeninput . '</td><td>'
+					/* translators: */
 					. sprintf( esc_html__( 'not yet translated in %s', 'xili-language' ), $language->description )
+					/* translators: */
 					. '&nbsp;&nbsp;' . sprintf( '<a href="%s" title="%s">' . $creation_edit . '</a>', 'post.php?post=' . $post_id . '&action=edit&xlaction=transcreate&xllang=' . $language->slug, sprintf( esc_html__( 'For create a linked draft translation in %s', 'xili-language' ), $language->name ) ) . '&nbsp;|&nbsp;' . $search
 					. '</td><td>&nbsp;</td><td>'
 					. '&nbsp;'
@@ -5616,7 +5613,7 @@ class Xili_Language_Admin extends Xili_Language {
 		?>
 		<p><?php echo $refresh; ?>
 		<?php
-		if ( '' != $curlang && current_user_can( 'xili_language_clone_tax' ) && is_object_in_taxonomy( get_post_type( $post_id ), 'category') ) {
+		if ( '' != $curlang && current_user_can( 'xili_language_clone_tax' ) && is_object_in_taxonomy( get_post_type( $post_id ), 'category' ) ) {
 			//2.6.3
 			printf( '&nbsp|&nbsp;<a href="%1$s" title="%2$s">%3$s</a> ', 'post.php?post=' . $post_id . '&action=edit&xlaction=propataxo', esc_attr__( 'Propagate categories', 'xili-language' ), esc_html__( 'Propagate categories', 'xili-language' ) );
 		}
@@ -6177,7 +6174,7 @@ class Xili_Language_Admin extends Xili_Language {
 		?>
 		<div id="find-posts" class="find-box" style="display:none;">
 
-			<div id="find-posts-head" class="find-box-head"><?php printf( esc_html__( 'Find %s', 'xili-language' ), $post_label ); ?>
+			<div id="find-posts-head" class="find-box-head"><?php /* translators: */ printf( esc_html__( 'Find %s', 'xili-language' ), $post_label ); ?>
 				<div id="find-posts-close"></div>
 			</div>
 			<div class="find-box-inside">
@@ -6480,7 +6477,7 @@ class Xili_Language_Admin extends Xili_Language {
 			'id' => 'flags_list',
 			'name' => 'flags_list',
 			/* translators: */
-			'desc' => sprintf( __( 'The list of images uploaded and assigned as flag in Media table. (%s)', 'xili-language' ), '<small>'. __( '*: from theme subfolder', 'xili-language' ) . '</small>' ),
+			'desc' => sprintf( __( 'The list of images uploaded and assigned as flag in Media table. (%s)', 'xili-language' ), '<small>' . __( '*: from theme subfolder', 'xili-language' ) . '</small>' ),
 			'std' => 'with-flag',
 			'label_for' => 'flags_list',
 			'class' => 'css_class settings',
@@ -6591,10 +6588,11 @@ class Xili_Language_Admin extends Xili_Language {
 					$path = '%2$s/images/flags/' . $one_language->slug . '.png';
 					if ( file_exists( sprintf( $path, '', $path_root ) ) ) {
 						$url = get_stylesheet_directory_uri() . '/images/flags/' . $one_language->slug . '.png'; // only in current (child or not)
+						/* translators: */
 						echo '<li><img src="' . $url . '"> (' .  $one_language->name . ', ' . $one_language->description . ') <small>' . sprintf( __( 'undeclared flag (in theme support custom_xili_flag) available for %s', 'xili-language' ), $one_language->name . ', ' . $one_language->description ) . '</small></li>';
 					} else {
 						/* translators: */
-						echo '<li>' . sprintf( __( 'no flag available for %s', 'xili-language' ), $one_language->name . ', '. $one_language->description ) . '</li>';
+						echo '<li>' . sprintf( __( 'no flag available for %s', 'xili-language' ), $one_language->name . ', ' . $one_language->description ) . '</li>';
 					}
 				}
 			}
@@ -6853,7 +6851,6 @@ class Xili_Language_Admin extends Xili_Language {
 		}
 		$xdmsg = ( defined( 'XDMSG' ) ) ? XDMSG : '';
 
-
 		//$post_type = ( isset( $wp_query->query_vars['post_type' ] ) ) ? $wp_query->query_vars['post_type' ] : '' ;
 
 		if ( $post_type != $xdmsg ) { // no for XDMSG
@@ -7055,7 +7052,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 			$posts_count = intval( $_REQUEST['bulk_posts_processed'] );
 			echo '<div class="notice notice-success is-dismissible">';
-			printf( 
+			printf(
 				' ' . _n( 'Processed %1$s %2$s.', 'Processed %1$s %3$s.', $posts_count, 'xili-language' )
 				. '<br />' . __( 'Secondary languages deleted.', 'xili-language' ),
 				$posts_count,
@@ -7157,7 +7154,7 @@ class Xili_Language_Admin extends Xili_Language {
 		<label class="alignright">
 			<span class="title"><?php esc_html_e( 'Language', 'xili-language' ); ?></span>
 			<select name="xlpop" id="xlpop">
-			<option value="-1"> <?php _e( '&mdash; No Change &mdash;' ); ?> </option>
+			<option value="-1"> <?php esc_html_e( '&mdash; No Change &mdash;' ); ?> </option>
 			<option value="*"> <?php esc_html_e( 'undefined', 'xili-language' ); ?> </option>
 			<?php
 			foreach ( $listlanguages as $language ) {
@@ -7187,6 +7184,7 @@ class Xili_Language_Admin extends Xili_Language {
 		if ( $menu_obj ) {
 			echo '<strong>' . wp_html_excerpt( $menu_obj->name, 40, '&hellip;' ) . '</strong>';
 		} else {
+			/* translators: */
 			echo '<strong>' . sprintf( __( 'Warning: Unavailable menu with slug %s', 'xili-language' ), $menu_slug ) . '</strong>';
 		}
 
@@ -7281,6 +7279,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 			$without = ( defined( 'XDMSG' ) && XDMSG == $post_type ) ? __( 'Only msgid', 'xili-language' ) : __( 'Without language', 'xili-language' );
 			$view_all = ( defined( 'XDMSG' ) && XDMSG == $post_type ) ? __( 'All msg', 'xili-language' ) : __( 'View all languages', 'xili-language' );
+			/* translators: */
 			$cpt_name = ( defined( 'XDMSG' ) && XDMSG == $post_type ) ? __( 'msgstr in %s', 'xili-language' ) : '%s';
 			?>
 			<select name="<?php echo QUETAG; ?>" id="<?php echo QUETAG; ?>" class='postform'>
@@ -7392,6 +7391,7 @@ class Xili_Language_Admin extends Xili_Language {
 				$nbterms = $xili_dictionary->xili_read_catsterms_cpt( $taxonomy, $xili_dictionary->local_tag );
 
 				if ( $nbterms[0] + $nbterms[1] > 0 ) {
+					/* translators: */
 					echo '<p>' . sprintf( __( 'xili-dictionary: msgid list updated (n=%1$s, d=%2$s', 'xili-dictionary' ), $nbterms[0], $nbterms[1] ) . ')</p>';
 				}
 			}
@@ -7582,43 +7582,13 @@ class Xili_Language_Admin extends Xili_Language {
 				$folder_file = '';
 			}
 
-			$res = $this->pomo_import_MO( $reflanguage->name, $folder_file, true ); // local only
+			$res = xl_pomo_import_mo( $reflanguage->name, $folder_file, true, $this ); // local only
 			if ( false !== $res ) {
 				$local_theme_mos[ $reflanguage->slug ] = $res->entries;
 			}
 		}
 
 		return $local_theme_mos;
-	}
-
-	/**
-	 * Import MO file in class PO
-	 *
-	 *
-	 * @since 1.0.2 - only WP >= 2.8.4
-	 * @updated 1.0.5 - for wpmu
-	 * @param lang
-	 * @param $mofile since 1.0.5
-	 */
-	public function pomo_import_MO( $lang = '', $mofile = '', $local = false ) {
-		$mo = new MO();
-
-		if ( '' == $mofile && true == $local ) {
-			$mofile = $this->get_template_directory . $this->xili_settings['langs_folder'] . '/' . 'local-' . $lang . '.mo';
-		} elseif ( '' == $mofile ) {
-			$mofile = $this->get_template_directory.$this->xili_settings['langs_folder'] . '/' . $lang . '.mo';
-		}
-
-		if ( file_exists( $mofile ) ) {
-			if ( !$mo->import_from_file( $mofile ) ) {
-				return false;
-			} else {
-
-				return $mo;
-			}
-		} else {
-			return false;
-		}
 	}
 
 	/******************************* LINKS ****************************/
@@ -7641,7 +7611,7 @@ class Xili_Language_Admin extends Xili_Language {
 		add_meta_box( 'linklanguagediv', __( "Link's language", 'xili-language' ), array( &$this, 'link_language_meta_box' ), 'link', 'side', 'core' );
 	}
 
-	public function link_language_meta_box( $link) {
+	public function link_language_meta_box( $link ) {
 
 		if ( isset( $link->link_id ) ) {
 			$ress = wp_get_object_terms( $link->link_id, 'link_' . TAXONAME );
@@ -7755,214 +7725,6 @@ class Xili_Language_Admin extends Xili_Language {
 	}
 
 	/**
-	 * Function to manage mo files downloaded from automattic
-	 *
-	 *
-	 */
-	public function download_mo_from_automattic( $locale = 'en_US', $version, $theme_name = '', $upgrade = 0 ) {
-
-		$mofile = WP_LANG_DIR . "/$locale.mo";
-
-		// does core file exists in current installation ?
-		if ( ( file_exists( $mofile ) && 0 == $upgrade ) || 'en_US' == $locale ) {
-			return true;
-		}
-
-		// does language directory exists in current installation ?
-		if ( ! is_dir( WP_LANG_DIR ) ) {
-			if ( ! @mkdir( WP_LANG_DIR ) ) {
-				return false;
-			}
-		}
-
-		// will first look in tags/ (most languages) then in branches/ (only Greek ?)
-		$automattic_locale_root = 'http://svn.automattic.com/wordpress-i18n/' . $locale;
-		$automattic_locale_root = $automattic_locale_root . '/branches/'; // replaces /tags/ 2014-02-01
-
-		$args = array(
-			'timeout' => 30,
-			'stream' => true,
-		);
-
-		if ( 2 != $upgrade ) {
-			// only core files
-			// try to download the file
-
-			$resp = wp_remote_get(
-				$automattic_locale_root . "$version/messages/$locale.mo",
-				$args + array(
-					'filename' => $mofile,
-				)
-			);
-			if ( is_wp_error( $resp ) || 200 != $resp['response']['code'] ) {
-				//continue; - forum 2015-12-04 - 16-01-29
-				$dummy = 1;
-			} else {
-				// try to download ms and continents-cities files if exist (will not return false if failed)
-				// with new files introduced in WP 3.4
-				foreach ( array( 'ms', 'continents-cities', 'admin', 'admin-network' ) as $file ) {
-					$url = $automattic_locale_root . "$version/messages/$file-$locale.mo";
-					if ( $this->url_exists( $url ) ) {
-						wp_remote_get(
-							$url,
-							$args + array(
-								'filename' => WP_LANG_DIR . "/$file-$locale.mo",
-							)
-						);
-					}
-				}
-			}
-		}
-
-				// try to download theme files if exist (will not return false if failed)
-				// FIXME not updated when the theme is updated outside a core update
-		if ( in_array( $theme_name, $this->embedded_themes ) ) {
-			$url = $automattic_locale_root . "$version/messages/$theme_name/$locale.mo";
-			if ( $this->url_exists( $url ) ) {
-				wp_remote_get(
-					$url,
-					$args + array(
-						'filename' => get_theme_root() . "/$theme_name/languages/$locale.mo",
-					)
-				);
-			}
-		}
-		return true;
-
-	}
-
-	// GlotPress version sub-folder
-
-	public function glotPress_version_folder( $version ) {
-		$version_parts = explode( '.', $version );
-		$version_to_search = $version_parts[0] . '.' . $version_parts[1] . '.x';
-		$list = wp_remote_get( 'http://translate.wordpress.org/api/projects/wp/' );
-		if ( is_wp_error( $list ) || 200 !== wp_remote_retrieve_response_code( $list ) ) {
-			return '';
-		}
-		$list = json_decode( wp_remote_retrieve_body( $list ) );
-		if ( is_null( $list ) ) {
-			return '';
-		}
-
-		$filtered = wp_list_filter( $list->sub_projects, array( 'name' => $version_to_search ) ); // search in list  of sub_projects 2014-02-01
-
-		$filtereds = array_shift( $filtered );
-		if ( empty( $filtereds ) ) {
-			return '';
-		}
-
-		return $filtereds->slug;
-	}
-
-	/**
-	 * Download from translation.wordpress.org
-	 *
-	 */
-	public function download_mo_from_translate_wordpress( $locale = 'en_US', $version, $theme_name = '', $upgrade = 0 ) {
-
-		$locale_subfolder = $this->check_versions_in_glotpress( $locale, $version );
-		// return subfolder at WP (en, en-ca, fr, zn-tw…)
-		if ( false === $locale_subfolder ) {
-			return false;
-		}
-
-		$version_folder = $this->glotPress_version_folder( $version );
-
-		if ( '' == $version_folder ) {
-			$version_folder = 'dev'; // 2.12.2
-		}
-		$mofile = WP_LANG_DIR . "/$locale.mo";
-
-		// does file exists in current installation ?
-		if ( ( file_exists( $mofile ) && 0 == $upgrade ) || 'en_US' == $locale ) {
-			return true;
-		}
-
-		// does language directory exists in current installation ?
-		if ( ! is_dir( WP_LANG_DIR ) ) {
-			if ( ! @mkdir( WP_LANG_DIR ) ) {
-				return false;
-			}
-		}
-
-		// will first look in tags/ (most languages) then in branches/ (only Greek ?)
-		$translate_wordpress_root = 'http://translate.wordpress.org/projects/wp/' . $version_folder . '/';
-
-		$suffix = 'mo'; // tested with po
-
-		// 'http://translate.wordpress.org/projects/wp/3.5.x/admin/fr/default/export-translations'
-		// GET ( sent by verified jquery in above url)
-
-		$sub_folder_array = array(
-			'default' => '%lang%/default',
-			'admin' => 'admin/%lang%/default',
-			'admin-network' => 'admin/network/%lang%/default',
-			'continents-cities' => 'cc/%lang%/default',
-		);
-		if ( 2 != $upgrade ) {
-			// only theme files
-			foreach ( $sub_folder_array as $prename => $one_subfolder ) {
-
-				$url = $translate_wordpress_root . str_replace( '%lang%', $locale_subfolder, $one_subfolder ) . '/export-translations?format=' . $suffix;
-
-				$fileprename = ( 'default' != $prename ) ? $prename . '-' : '';
-				$request = wp_remote_get(
-					$url,
-					array(
-						'filename' => WP_LANG_DIR . '/' . $fileprename . $locale . '.' . $suffix,
-						'timeout' => 15,
-						'stream' => true,
-						'body' => array(),
-					)
-				);
-
-				if ( 200 != wp_remote_retrieve_response_code( $request ) ) {
-					unlink( WP_LANG_DIR . '/' . $fileprename . $locale . '.' . $suffix );
-					// see /wp-includes/file.php
-				}
-			}
-		}
-
-		if ( in_array( $theme_name, $this->embedded_themes ) ) {
-
-			// thanks for format - markoheijnen - http://buddypress.trac.wordpress.org/raw-attachment/ticket/4857/translatecode-003.php, http://buddypress.trac.wordpress.org/attachment/ticket/4857/translatecode-003.php
-
-			// temp patch for twentythirteen 20130503 - fixed 20130504 via polyglots blog
-			//$theme_subfolder = ( $theme_name == 'twentythirteen' ) ? 'twenty-thirteen' : $theme_name ;
-
-			$url = $translate_wordpress_root . $theme_name . '/' . $locale_subfolder . '/default/export-translations?format=' . $suffix;
-			$request = wp_remote_get(
-				$url,
-				array(
-					'filename' => get_theme_root() . "/$theme_name/languages/$locale." . $suffix,
-					'timeout' => 15,
-					'stream' => true,
-					'body' => array(),
-				)
-			);
-
-			if ( 200 != wp_remote_retrieve_response_code( $request ) ) {
-				@unlink( get_theme_root() . "/$theme_name/languages/$locale." . $suffix );
-				// see /wp-includes/file.php
-			}
-		}
-		return true;
-	}
-
-	public function url_exists( $url ) {
-		//if (!$fp = curl_init($url)) return false;
-		//return true;
-		$file = $url;
-		$file_headers = @get_headers( $file );
-		if ( 'HTTP/1.1 404 Not Found' == $file_headers[0] ) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	/**
 	 * set new default value screen options for new admin user
 	 *
 	 * @since 2.9.30
@@ -8059,14 +7821,8 @@ class Xili_Language_Admin extends Xili_Language {
 	 * @updated 2.4.1, 2.6.2, 2.8.8, 2.23.01
 	 */
 	public function add_help_text( $contextual_help, $screen_id, $screen ) {
-		$params = array(
-			'this_wikilink'       => $this->wikilink,
-			'this_fourteenlink'   => $this->fourteenlink,
-			'this_repositorylink' => $this->repositorylink,
-			'this_devxililink'    => $this->devxililink,
-			'this_forumxililink'  => $this->forumxililink,
-		);
-		return xl_add_help_text( $contextual_help, $screen_id, $screen, $params ); // contextual_help
+		global $xili_language_admin;
+		return xl_add_help_text( $contextual_help, $screen_id, $screen, $xili_language_admin ); // contextual_help
 	}
 
 }
