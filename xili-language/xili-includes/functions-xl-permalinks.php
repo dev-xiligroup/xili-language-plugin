@@ -1,6 +1,11 @@
 <?php
-// permalinks functions
-
+/**
+ * XL class permalinks functions
+ *
+ * @package Xili-Language
+ * @subpackage core
+ * @since 2.23
+ */
 /**
  * called by add_action( 'plugins_loaded', 'permalink_init', 1);
  *

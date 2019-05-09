@@ -1,5 +1,11 @@
 <?php
-// languages functions
+/**
+ * XL class pomo functions
+ *
+ * @package Xili-Language
+ * @subpackage core
+ * @since 2.23
+ */
 
 /**
  * Return the current language of theme.
@@ -597,6 +603,10 @@ function xl_esc_attr_e( $text, $domain = 'default' ) {
 
 function xl_esc_html__( $text, $domain = 'default' ) {
 	return esc_html( translate( $text, $domain ) );
+}
+
+function xl_esc_html_e( $text, $domain = 'default' ) {
+	echo esc_html( translate( $text, $domain ) );
 }
 
 function xl_x( $text, $context, $domain = 'default' ) {

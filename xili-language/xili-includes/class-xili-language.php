@@ -171,19 +171,19 @@ class Xili_Language {
 	public $flag_settings_name; // to get and save (in admin) current theme flag option
 	// names same in widgets
 	public $xili_widgets = array(
-		'xili_Widget_Recent_Posts' => array(
+		'Xili_Widget_Recent_Posts' => array(
 			'value' => 'enabled',
 			'name' => 'List of recent posts',
 		),
-		'xili_language_Widgets' => array(
+		'Xili_Language_Widgets' => array(
 			'value' => 'enabled',
 			'name' => 'List of languages',
 		),
-		'xili_WP_Widget_Recent_Comments' => array(
+		'Xili_WP_Widget_Recent_Comments' => array(
 			'value' => 'enabled',
 			'name' => 'Recent Comments list',
 		),
-		'xili_Widget_Categories' => array(
+		'Xili_Widget_Categories' => array(
 			'value' => '',
 			'name' => 'Categories',
 		),
@@ -2206,7 +2206,7 @@ class Xili_Language {
 		$permalink_structure = get_option( 'permalink_structure' );
 
 		if ( '' != $permalink_structure ) {
-			if ( $feed == get_default_feed() ) {
+			if ( get_default_feed() == $feed ) {
 				$feed_link = 'feed';
 			} else {
 				$feed_link = "feed/$feed";

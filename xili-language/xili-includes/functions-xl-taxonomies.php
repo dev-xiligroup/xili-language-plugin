@@ -1,7 +1,10 @@
 <?php
-//
 /**
- * == Functions that improve taxinomy.php ==
+ * XL class taxonomies functions
+ *
+ * @package Xili-Language
+ * @subpackage core
+ * @since 2.23
  */
 
 /**

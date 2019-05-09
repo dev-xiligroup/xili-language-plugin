@@ -1,5 +1,11 @@
 <?php
-// functions-xl-admin-pomo
+/**
+ * XL Admin class pomo functions
+ *
+ * @package Xili-Language
+ * @subpackage admin
+ * @since 2.23
+ */
 
 /**
  * Import MO file in class PO

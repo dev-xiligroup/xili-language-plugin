@@ -1,6 +1,12 @@
 <?php
-// date and time
-//
+/**
+ * XL class date time functions
+ *
+ * @package Xili-Language
+ * @subpackage core
+ * @since 2.23
+ */
+
 /**
  * Return the current date or a date formatted with strftime.
  *

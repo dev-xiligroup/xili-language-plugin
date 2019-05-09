@@ -1,5 +1,11 @@
 <?php
-// compat with other plugins
+/**
+ * XL class compat functions
+ *
+ * @package Xili-Language
+ * @subpackage core
+ * @since 2.23
+ */
 
 /****************** Customization for bbPress *****************/
 

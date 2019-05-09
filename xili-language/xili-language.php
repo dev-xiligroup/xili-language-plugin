@@ -114,7 +114,7 @@ function xili_language_start() {
 
 		// new sub-folder since 2.6
 		require_once plugin_dir_path( __FILE__ ) . 'xili-includes/xili-language-widgets.php';
-		require_once plugin_dir_path( __FILE__ ) . 'xili-includes/theme-multilingual-classes.php'; // since 2.20.0
+		require_once plugin_dir_path( __FILE__ ) . 'xili-includes/class-theme-multilingual-classes.php'; // since 2.20.0
 		/**
 		 * instantiation of xili_language class
 		 *

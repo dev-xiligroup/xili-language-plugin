@@ -65,93 +65,138 @@
  * @updated 2.9.22 - new query
  * @updated 2.12 - is_preview added
  */
-class xili_Widget_Recent_Posts extends WP_Widget {
+class Xili_Widget_Recent_Posts extends WP_Widget {
 
-	function __construct() {
-		$widget_ops = array('classname' => 'xili_widget_recent_entries', 'description' => __( "The most recent posts on your blog by xili-language",'xili-language').' © v. '.XILILANGUAGE_VER );
-		parent::__construct('xili-recent-posts', '[©xili] ' . __('List of recent posts','xili-language'), $widget_ops);
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'xili_widget_recent_entries',
+			'description' => esc_html__( 'The most recent posts on your blog by xili-language', 'xili-language' ) . ' © v. ' . XILILANGUAGE_VER,
+		);
+		parent::__construct( 'xili-recent-posts', '[©xili] ' . esc_html__( 'List of recent posts', 'xili-language' ), $widget_ops );
 		$this->alt_option_name = 'xili_widget_recent_entries';
 
-		add_action( 'save_post', array(&$this, 'flush_widget_cache') );
-		add_action( 'deleted_post', array(&$this, 'flush_widget_cache') );
-		add_action( 'switch_theme', array(&$this, 'flush_widget_cache') );
+		add_action( 'save_post', array( &$this, 'flush_widget_cache' ) );
+		add_action( 'deleted_post', array( &$this, 'flush_widget_cache' ) );
+		add_action( 'switch_theme', array( &$this, 'flush_widget_cache' ) );
 	}
 
-	function widget($args, $instance) {
-		if  ( method_exists($this,'is_preview') ) { // 3.9
+	public function widget( $args, $instance ) {
+		if ( method_exists( $this, 'is_preview' ) ) {
+			// 3.9
 
 			$cache = array();
 			if ( ! $this->is_preview() ) {
 				$cache = wp_cache_get( 'xili_widget_recent_posts', 'widget' );
 			}
 		} else {
-			$cache = wp_cache_get('xili_widget_recent_posts', 'widget');
+			$cache = wp_cache_get( 'xili_widget_recent_posts', 'widget' );
 		}
 
-		if ( !is_array($cache) )
+		if ( ! is_array( $cache ) ) {
 			$cache = array();
+		}
 
-		if ( isset($cache[$args['widget_id']]) ) {
-			echo $cache[$args['widget_id']];
+		if ( isset( $cache[ $args['widget_id'] ] ) ) {
+			echo $cache[ $args['widget_id'] ];
 			return;
 		}
 
 		ob_start();
-		extract($args);
+		extract( $args );
 
-		$title = apply_filters('widget_title', empty($instance['title']) ? __('Recent Posts') : $instance['title']);
-		if ( !$number = (int) $instance['number'] )
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? esc_html__( 'Recent Posts' ) : $instance['title'] );
+		if ( ! $number = (int) $instance['number'] ) {
 			$number = 10;
-		else if ( $number < 1 )
+		} elseif ( $number < 1 ) {
 			$number = 1;
-		else if ( $number > 15 )
+		} elseif ( $number > 15 ) {
 			$number = 15;
+		}
 		$show_date = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
-		$the_lang =	$instance['the_lang'];
+		$the_lang = $instance['the_lang'];
 
-		if ( !isset ( $instance['post_type'] ) || $instance['post_type'] == '' ) {
-			$post_type_arr = array('post');
+		if ( ! isset( $instance['post_type'] ) || '' == $instance['post_type'] ) {
+			$post_type_arr = array( 'post' );
 		} else {
-			$post_type_arr = explode (',', $instance['post_type'] );
+			$post_type_arr = explode( ',', $instance['post_type'] );
 		}
 
-		if ( class_exists('xili_language') ) {
-			$tmp_query = ( isset( $wp_query->query_vars[QUETAG]) ) ? $wp_query->query_vars[QUETAG] : "" ;
+		if ( class_exists( 'xili_language' ) ) {
+			$tmp_query = ( isset( $wp_query->query_vars[ QUETAG ] ) ) ? $wp_query->query_vars[ QUETAG ] : '';
 
-			if ( $the_lang == '' ) {
+			if ( '' == $the_lang ) {
 				// new filter 'xili_widget_posts_args' with two params: array and args 2.9.22
-				$thequery = apply_filters( 'xili_widget_posts_args', array( 'posts_per_page' => $number,
-					'post_type' => $post_type_arr , 'no_found_rows' => true,
-					'post_status' => 'publish', 'ignore_sticky_posts' => true ), $args );
+				$thequery = apply_filters(
+					'xili_widget_posts_args',
+					array(
+						'posts_per_page' => $number,
+						'post_type' => $post_type_arr,
+						'no_found_rows' => true,
+						'post_status' => 'publish',
+						'ignore_sticky_posts' => true,
+					),
+					$args
+				);
 			} else {
-				$lang =  ($the_lang == '*')	? the_curlang() : $the_lang ;
-			 	$thequery = apply_filters( 'xili_widget_posts_args', array ( 'posts_per_page' => $number,
-			 		'post_type' => $post_type_arr , 'no_found_rows' => true,
-			 	 	'post_status' => 'publish',  'ignore_sticky_posts' => true,
-			 	 	'tax_query'   => array(
-						array(
-							'field'    => 'slug',
-							'taxonomy' => TAXONAME,
-							'terms'    => $lang,
+				$lang = ( '*' == $the_lang ) ? the_curlang() : $the_lang;
+				$thequery = apply_filters(
+					'xili_widget_posts_args',
+					array(
+						'posts_per_page' => $number,
+						'post_type' => $post_type_arr,
+						'no_found_rows' => true,
+						'post_status' => 'publish',
+						'ignore_sticky_posts' => true,
+						'tax_query'   => array(
+							array(
+								'field'    => 'slug',
+								'taxonomy' => TAXONAME,
+								'terms'    => $lang,
+							),
 						),
 					),
-			 	 ), $args );
+					$args
+				);
 			}
 
-			$r = new WP_Query($thequery);
+			$r = new WP_Query( $thequery );
 
 		} else {
-			$thequery = apply_filters( 'widget_posts_args', array( 'posts_per_page' => $number, 'no_found_rows' => true, 'post_status' => 'publish', 'ignore_sticky_posts' => true ) ) ;
-			$r = new WP_Query($thequery);
+			$thequery = apply_filters(
+				'widget_posts_args',
+				array(
+					'posts_per_page' => $number,
+					'no_found_rows' => true,
+					'post_status' => 'publish',
+					'ignore_sticky_posts' => true,
+				)
+			);
+			$r = new WP_Query( $thequery );
 		}
 
-		if ($r->have_posts()) :
+		if ( $r->have_posts() ) :
 ?>
-		<?php echo $before_widget; ?>
-		<?php if ( $title ) echo $before_title . $title . $after_title; ?>
+		<?php
+		echo $before_widget;
+		if ( $title ) {
+			echo $before_title . $title . $after_title;
+		}
+		?>
 		<ul>
-		<?php  while ($r->have_posts()) : $r->the_post(); ?>
-			<li><a href="<?php the_permalink() ?>" title="<?php echo esc_attr(get_the_title() ? get_the_title() : get_the_ID()); ?>"><?php if ( get_the_title() ) the_title(); else the_ID(); ?> </a>
+		<?php
+		while ( $r->have_posts() ) :
+			$r->the_post();
+			?>
+			<li><a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( get_the_title() ? get_the_title() : get_the_ID() ); ?>">
+				<?php
+				if ( get_the_title() ) {
+					the_title();
+				} else {
+					the_ID();
+				}
+				?>
+
+				</a>
 			<?php if ( $show_date ) : ?>
 				<span class="post-date"><?php echo get_the_date(); ?></span>
 			<?php endif; ?>
@@ -159,12 +204,13 @@ class xili_Widget_Recent_Posts extends WP_Widget {
 			</li>
 		<?php endwhile; ?>
 		</ul>
-		<?php echo $after_widget; ?>
-<?php
+		<?php
+		echo $after_widget;
 		wp_reset_postdata();
 		endif;
 
-		if  ( method_exists($this,'is_preview') ) { // 3.9
+		if ( method_exists( $this, 'is_preview' ) ) {
+			// 3.9
 			if ( ! $this->is_preview() ) {
 				$cache[ $args['widget_id'] ] = ob_get_flush();
 				wp_cache_set( 'xili_widget_recent_posts', $cache, 'widget' );
@@ -172,67 +218,74 @@ class xili_Widget_Recent_Posts extends WP_Widget {
 				ob_flush();
 			}
 		} else {
-			$cache[$args['widget_id']] = ob_get_flush();
-			wp_cache_set('xili_widget_recent_posts', $cache, 'widget');
+			$cache[ $args['widget_id'] ] = ob_get_flush();
+			wp_cache_set( 'xili_widget_recent_posts', $cache, 'widget' );
 		}
 	}
 
-	function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['the_lang'] = strtolower($new_instance['the_lang']);
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['the_lang'] = strtolower( $new_instance['the_lang'] );
 		$instance['number'] = (int) $new_instance['number'];
 		$instance['show_date'] = isset( $new_instance['show_date'] ) ? (bool) $new_instance['show_date'] : false;
 		$instance['post_type'] = $new_instance['post_type'];
 		$this->flush_widget_cache();
 
 		$alloptions = wp_cache_get( 'alloptions', 'options' );
-		if ( isset($alloptions['xili_widget_recent_entries']) )
-			delete_option('xili_widget_recent_entries');
+		if ( isset( $alloptions['xili_widget_recent_entries'] ) ) {
+			delete_option( 'xili_widget_recent_entries' );
+		}
 
 		return $instance;
 	}
 
-	function flush_widget_cache() {
-		wp_cache_delete('xili_widget_recent_posts', 'widget');
+	public function flush_widget_cache() {
+		wp_cache_delete( 'xili_widget_recent_posts', 'widget' );
 	}
 
-	function form( $instance ) {
-		$title = isset($instance['title']) ? esc_attr($instance['title']) : '';
-		$the_lang = isset($instance['the_lang']) ? strtolower($instance['the_lang']) : '';
-		if ( !isset($instance['number']) || !$number = (int) $instance['number'] )
+	public function form( $instance ) {
+		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+		$the_lang = isset( $instance['the_lang'] ) ? strtolower ($instance['the_lang'] ) : '';
+		if ( ! isset( $instance['number'] ) || ! $number = (int) $instance['number'] )
 			$number = 5;
 		$show_date = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
-		$post_type = isset($instance['post_type']) ? esc_attr($instance['post_type']) : 'post';
+		$post_type = isset( $instance['post_type'] ) ? esc_attr( $instance['post_type'] ) : 'post';
 ?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
-		<?php if (class_exists('xili_language')) { global $xili_language; ?>
+		<?php
+		if ( class_exists( 'xili_language' ) ) {
+			global $xili_language;
+			?>
 		<p>
-			<label for="<?php echo $this->get_field_id('the_lang'); ?>"><?php _e('Language:','xili-language'); ?></label>
-			<select name="<?php echo $this->get_field_name('the_lang'); ?>" id="<?php echo $this->get_field_id('the_lang'); ?>" class="widefat">
-				<option value=""<?php selected( $the_lang, '' ); ?>><?php _e('All languages','xili-language'); ?></option>
-				<option value="*"<?php selected( $the_lang, '*' ); ?>><?php _e('Current language','xili-language'); ?></option>
-				<?php $listlanguages = get_terms_of_groups_lite ($xili_language->langs_group_id,TAXOLANGSGROUP,TAXONAME,'ASC');
-					foreach ($listlanguages as $language) { ?>
-					<option value="<?php echo $language->slug ?>"<?php selected( $the_lang, $language->slug ); ?>><?php _e($language->description,'xili-language'); ?></option>
+			<label for="<?php echo $this->get_field_id( 'the_lang' ); ?>"><?php esc_html_e( 'Language:', 'xili-language' ); ?></label>
+			<select name="<?php echo $this->get_field_name( 'the_lang' ); ?>" id="<?php echo $this->get_field_id( 'the_lang' ); ?>" class="widefat">
+				<option value=""<?php selected( $the_lang, '' ); ?>><?php esc_html_e( 'All languages', 'xili-language' ); ?></option>
+				<option value="*"<?php selected( $the_lang, '*' ); ?>><?php esc_html_e( 'Current language', 'xili-language' ); ?></option>
+				<?php
+				$listlanguages = get_terms_of_groups_lite( $xili_language->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
+				foreach ( $listlanguages as $language ) {
+						?>
+					<option value="<?php echo $language->slug; ?>"<?php selected( $the_lang, $language->slug ); ?>><?php xl_e( $language->description, 'xili-language' ); ?></option>
 
-					<?php } /* end */
+					<?php
+				} /* end */
 				?>
 			</select>
 		</p>
 		<?php } ?>
 		<p>
-			<label for="<?php echo $this->get_field_id('post_type'); ?>"><?php _e('Post type(s):','xili-language'); ?></label>
-			<input class="widefat" id="<?php echo $this->get_field_id('post_type'); ?>" name="<?php echo $this->get_field_name('post_type'); ?>" type="text" value="<?php echo $post_type; ?>" /><br />
+			<label for="<?php echo $this->get_field_id( 'post_type' ); ?>"><?php esc_html_e( 'Post type(s):', 'xili-language' ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'post_type' ); ?>" name="<?php echo $this->get_field_name( 'post_type' ); ?>" type="text" value="<?php echo $post_type; ?>" /><br />
 		</p>
 
-		<p><label for="<?php echo $this->get_field_id('number'); ?>"><?php _e('Number of posts to show:','xili-language'); ?></label>
-		<input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" size="3" /><br />
-		<small><?php _e('(at most 15)', 'xili-language'); ?></small></p>
+		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php esc_html_e( 'Number of posts to show:', 'xili-language' ); ?></label>
+		<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /><br />
+		<small><?php esc_html_e( '(at most 15)', 'xili-language' ); ?></small></p>
 		<p><input class="checkbox" type="checkbox" <?php checked( $show_date ); ?> id="<?php echo $this->get_field_id( 'show_date' ); ?>" name="<?php echo $this->get_field_name( 'show_date' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display post date?','xili-language' ); ?></label></p>
+		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php esc_html_e( 'Display post date?', 'xili-language' ); ?></label></p>
 		<p><small>© xili-language v. <?php echo XILILANGUAGE_VER; ?></small></p>
 <?php
 	}
@@ -246,142 +299,175 @@ class xili_Widget_Recent_Posts extends WP_Widget {
  * @since 1.8.3
  * @updated 2.9.22
  */
-class xili_WP_Widget_Recent_Comments extends WP_Widget {
+class Xili_WP_Widget_Recent_Comments extends WP_Widget {
 
-	function __construct() {
-		$widget_ops = array('classname' => 'xili_widget_recent_comments', 'description' => __( 'The most recent comments by xili-language','xili-language' ).' © v. '.XILILANGUAGE_VER );
-		parent::__construct('xili-recent-comments', '[©xili] ' . __('Recent Comments list','xili-language'), $widget_ops);
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'xili_widget_recent_comments',
+			'description' => esc_html__( 'The most recent comments by xili-language','xili-language' ) . ' © v. ' . XILILANGUAGE_VER,
+		);
+		parent::__construct( 'xili-recent-comments', '[©xili] ' . esc_html__( 'Recent Comments list', 'xili-language' ), $widget_ops );
 		$this->alt_option_name = 'xili_widget_recent_comments';
 
-		if ( is_active_widget(false, false, $this->id_base) )
-			add_action( 'wp_head', array(&$this, 'recent_comments_style') );
+		if ( is_active_widget( false, false, $this->id_base ) )
+			add_action( 'wp_head', array( &$this, 'recent_comments_style' ) );
 
-		add_action( 'comment_post', array(&$this, 'flush_widget_cache') );
-		add_action( 'edit_comment', array($this, 'flush_widget_cache') );
-		add_action( 'transition_comment_status', array(&$this, 'flush_widget_cache') );
+		add_action( 'comment_post', array( &$this, 'flush_widget_cache' ) );
+		add_action( 'edit_comment', array( $this, 'flush_widget_cache' ) );
+		add_action( 'transition_comment_status', array( &$this, 'flush_widget_cache' ) );
 	}
 
-	function recent_comments_style() {
-		if ( ! current_theme_supports( 'widgets' ) // Temp hack #14876
-			|| ! apply_filters( 'show_recent_comments_widget_style', true, $this->id_base ) )
+	public function recent_comments_style() {
+		if ( ! current_theme_supports( 'widgets' ) || ! apply_filters( 'show_recent_comments_widget_style', true, $this->id_base ) ) {
 			return;
+		}
 		?>
 	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
 <?php
 	}
 
-	function flush_widget_cache() {
-		wp_cache_delete('xili_widget_recent_comments', 'widget');
+	public function flush_widget_cache() {
+		wp_cache_delete( 'xili_widget_recent_comments', 'widget' );
 	}
 
-	function widget( $args, $instance ) {
+	public function widget( $args, $instance ) {
 		global $comments, $comment;
 
-		if  ( method_exists($this,'is_preview') ) { // 3.9
+		if  ( method_exists( $this, 'is_preview' ) ) {
+			// 3.9
 
 			$cache = array();
 			if ( ! $this->is_preview() ) {
 				$cache = wp_cache_get( 'xili_widget_recent_comments', 'widget' );
 			}
 		} else {
-			$cache = wp_cache_get('xili_widget_recent_comments', 'widget');
+			$cache = wp_cache_get( 'xili_widget_recent_comments', 'widget' );
 		}
 
-		if ( ! is_array( $cache ) )
+		if ( ! is_array( $cache ) ) {
 			$cache = array();
+		}
 
-		if ( isset( $cache[$args['widget_id']] ) ) {
-			echo $cache[$args['widget_id']];
+		if ( isset( $cache[ $args['widget_id'] ] ) ) {
+			echo $cache[ $args['widget_id'] ];
 			return;
 		}
 
- 		extract($args, EXTR_SKIP);
- 		$output = '';
- 		$title = apply_filters('widget_title', empty($instance['title']) ? __('Recent Comments') : $instance['title']);
+		extract( $args, EXTR_SKIP );
+		$output = '';
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? esc_html__( 'Recent Comments' ) : $instance['title'] );
 
-		if ( ! $number = (int) $instance['number'] )
- 			$number = 5;
- 		else if ( $number < 1 )
- 			$number = 1;
+		if ( ! $number = (int) $instance['number'] ) {
+			$number = 5;
+		} elseif ( $number < 1 ) {
+			$number = 1;
+		}
 		/* if xili-language plugin is activated */
-		$lang = ( isset( $instance['the_lang'] ) ) ? $instance['the_lang'] : '*' ; // update from previous release
-		if ( class_exists ('xili_language' ) && '' != $lang ) {
+		$lang = ( isset( $instance['the_lang'] ) ) ? $instance['the_lang'] : '*'; // update from previous release
+		if ( class_exists('xili_language' ) && '' != $lang ) {
 			global $xili_language;
 
-			add_filter ( 'comments_clauses' , array($xili_language, 'xili_language_comments_clauses'), 10, 2); // line #3705 in xl
+			add_filter( 'comments_clauses' , array( $xili_language, 'xili_language_comments_clauses' ), 10, 2); // line #3705 in xl
 			// new filter 'xili_widget_comments_args' with two params: array and args 2.9.22
-			$comments = get_comments( apply_filters( 'xili_widget_comments_args', array( 'number' => $number, 'status' => 'approve', 'post_status' => 'publish', QUETAG => $lang ), $args ) );
-			remove_filter ( 'comments_clauses' , array($xili_language, 'xili_language_comments_clauses'), 10, 2) ;
+			$comments = get_comments(
+				apply_filters(
+					'xili_widget_comments_args',
+					array(
+						'number' => $number,
+						'status' => 'approve',
+						'post_status' => 'publish',
+						QUETAG => $lang,
+					),
+					$args
+				)
+			);
+			remove_filter( 'comments_clauses' , array( $xili_language, 'xili_language_comments_clauses' ), 10, 2 );
 
 		} else {
-			$comments = get_comments( apply_filters( 'widget_comments_args', array( 'number' => $number, 'status' => 'approve', 'post_status' => 'publish' ) ) );
+			$comments = get_comments(
+				apply_filters(
+					'widget_comments_args',
+					array(
+						'number' => $number,
+						'status' => 'approve',
+						'post_status' => 'publish',
+					)
+				)
+			);
 
 		}
 		$output .= $before_widget;
-		if ( $title )
+		if ( $title ) {
 			$output .= $before_title . $title . $after_title;
+		}
 
 		$output .= '<ul id="recentcomments">';
 		if ( $comments ) {
-			foreach ( (array) $comments as $comment) {
-				$output .=  '<li class="recentcomments">' . /* translators: comments widget: 1: comment author, 2: post link */ sprintf(_x('%1$s on %2$s', the_theme_domain()), get_comment_author_link(), '<a href="' . esc_url( get_comment_link($comment->comment_ID) ) . '">' . get_the_title($comment->comment_post_ID) . '</a>') . '</li>';
+			foreach ( (array) $comments as $comment ) {
+				/* translators: comments widget: 1: comment author, 2: post link */
+				$output .= '<li class="recentcomments">' . sprintf( _x( '%1$s on %2$s', the_theme_domain() ), get_comment_author_link(), '<a href="' . esc_url( get_comment_link( $comment->comment_ID ) ) . '">' . get_the_title( $comment->comment_post_ID ) . '</a>' ) . '</li>';
 			}
- 		}
+		}
 		$output .= '</ul>';
 		$output .= $after_widget;
 
 		echo $output;
 
-		if  ( method_exists($this,'is_preview') ) { // 3.9
+		if  ( method_exists( $this, 'is_preview' ) ) {
+			// 3.9
 			if ( ! $this->is_preview() ) {
 				$cache[ $args['widget_id'] ] = $output;
 				wp_cache_set( 'xili_widget_recent_comments', $cache, 'widget' );
 			}
 		} else {
-			$cache[$args['widget_id']] = $output;
-			wp_cache_set('xili_widget_recent_comments', $cache, 'widget');
+			$cache[ $args['widget_id'] ] = $output;
+			wp_cache_set( 'xili_widget_recent_comments', $cache, 'widget' );
 		}
 	}
 
-	function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['the_lang'] = strtolower($new_instance['the_lang']);
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['the_lang'] = strtolower( $new_instance['the_lang'] );
 		$instance['number'] = (int) $new_instance['number'];
 		$this->flush_widget_cache();
 
 		$alloptions = wp_cache_get( 'alloptions', 'options' );
-		if ( isset($alloptions['xili_widget_recent_comments']) )
-			delete_option('xili_widget_recent_comments');
+		if ( isset( $alloptions['xili_widget_recent_comments'] ) )
+			delete_option( 'xili_widget_recent_comments' );
 
 		return $instance;
 	}
 
-	function form( $instance ) {
-		$title = isset($instance['title']) ? esc_attr($instance['title']) : '';
-		$the_lang = isset($instance['the_lang']) ? strtolower($instance['the_lang']) : '*';
-		$number = isset($instance['number']) ? absint($instance['number']) : 5;
+	public function form( $instance ) {
+		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+		$the_lang = isset( $instance['the_lang'] ) ? strtolower( $instance['the_lang'] ) : '*';
+		$number = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;
 
 ?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
-		<?php if (class_exists('xili_language')) { global $xili_language; ?>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
+		<?php
+		if ( class_exists('xili_language') ) {
+			global $xili_language;
+			?>
 		<p>
-			<label for="<?php echo $this->get_field_id('the_lang'); ?>"><?php _e('Language:','xili-language'); ?></label>
-			<select name="<?php echo $this->get_field_name('the_lang'); ?>" id="<?php echo $this->get_field_id('the_lang'); ?>" class="widefat">
-				<option value=""<?php selected( $the_lang, '' ); ?>><?php _e('All languages','xili-language'); ?></option>
-				<option value="*"<?php selected( $the_lang, '*' ); ?>><?php _e('Current language','xili-language'); ?></option>
-				<?php $listlanguages = get_terms_of_groups_lite ($xili_language->langs_group_id,TAXOLANGSGROUP,TAXONAME,'ASC');
+			<label for="<?php echo $this->get_field_id( 'the_lang' ); ?>"><?php esc_html_e( 'Language:', 'xili-language' ); ?></label>
+			<select name="<?php echo $this->get_field_name( 'the_lang' ); ?>" id="<?php echo $this->get_field_id( 'the_lang' ); ?>" class="widefat">
+				<option value=""<?php selected( $the_lang, '' ); ?>><?php esc_html_e( 'All languages', 'xili-language' ); ?></option>
+				<option value="*"<?php selected( $the_lang, '*' ); ?>><?php esc_html_e( 'Current language', 'xili-language' ); ?></option>
+				<?php $listlanguages = get_terms_of_groups_lite( $xili_language->langs_group_id, TAXOLANGSGROUP, TAXONAME, 'ASC' );
 					foreach ($listlanguages as $language) { ?>
-					<option value="<?php echo $language->slug ?>"<?php selected( $the_lang, $language->slug ); ?>><?php _e($language->description,'xili-language'); ?></option>
+					<option value="<?php echo $language->slug ?>"<?php selected( $the_lang, $language->slug ); ?>><?php esc_html_e( $language->description, 'xili-language' ); ?></option>
 
-					<?php } /* end */
+					<?php
+				} /* end */
 				?>
 			</select>
 		</p>
 		<?php } ?>
-		<p><label for="<?php echo $this->get_field_id('number'); ?>"><?php _e('Number of comments to show:'); ?></label>
-		<input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
+		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php esc_html_e( 'Number of comments to show:' ); ?></label>
+		<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
 		<p><small>© xili-language v. <?php echo XILILANGUAGE_VER; ?></small></p>
 <?php
 	}
@@ -394,146 +480,161 @@ class xili_WP_Widget_Recent_Comments extends WP_Widget {
  * @since 1.8.3
  * rewritten
  */
-class xili_language_Widgets extends WP_Widget {
+class Xili_Language_Widgets extends WP_Widget {
 
-	function __construct() {
+	public function __construct() {
 
-		$widget_ops = array('classname' => 'xili-language_Widgets',
-			'description' => __( "List of available languages by xili-language plugin", 'xili-language' ).' © v. '.XILILANGUAGE_VER );
-		parent::__construct('xili_language_widgets',
-			'[©xili] ' . __("List of languages", 'xili-language'), $widget_ops );
+		$widget_ops = array(
+			'classname' => 'Xili_Language_Widgets',
+			'description' => esc_html__( 'List of available languages by xili-language plugin', 'xili-language' ) . ' © v. ' . XILILANGUAGE_VER,
+		);
+		parent::__construct(
+			'xili_language_widgets',
+			'[©xili] ' . esc_html__( 'List of languages', 'xili-language' ),
+			$widget_ops
+		);
 		$this->alt_option_name = 'xili_language_widgets_options';
 	}
 
-	function widget( $args, $instance ) {
+	public function widget( $args, $instance ) {
 
-		extract($args, EXTR_SKIP);
-		$thecondition = trim( $instance['thecondition'],'!' ) ;
+		extract( $args, EXTR_SKIP );
+		$thecondition = trim( $instance['thecondition'], '!' );
 
 		if ( '' != $instance['thecondition'] && function_exists( $thecondition ) ) {
-			$not = ( $thecondition == $instance['thecondition'] ) ? false : true ;
-			$arr_params = ('' != $instance['theparams']) ? array(explode( ',', $instance['theparams'] )) : array();
- 			$condition_ok = ($not) ? !call_user_func_array ( $thecondition, $arr_params ) : call_user_func_array ( $thecondition, $arr_params );
+			$not = ( $thecondition == $instance['thecondition'] ) ? false : true;
+			$arr_params = ( '' != $instance['theparams'] ) ? array( explode( ',', $instance['theparams'] ) ) : array();
+			$condition_ok = ( $not ) ? ! call_user_func_array( $thecondition, $arr_params ) : call_user_func_array( $thecondition, $arr_params );
 		} else {
- 			$condition_ok = true;
- 		}
+			$condition_ok = true;
+		}
 
- 		if ( $condition_ok ) {
- 			$output = '';
-	 		$output .= $before_widget;
-	 		$title = apply_filters( 'widget_title', $instance['title'] );
-			if ( $title )
+		if ( $condition_ok ) {
+			$output = '';
+			$output .= $before_widget;
+			$title = apply_filters( 'widget_title', $instance['title'] );
+			if ( $title ) {
 				$output .= $before_title . $title . $after_title;
+			}
 
 			if ( function_exists( 'xili_language_list' ) ) {
-				//$hidden = ( $instance['hidden'] == 'hidden' ) ? true : false ;
-				$flagstyle = isset($instance['flagstyle']) ? $instance['flagstyle'] : '' ; // update
+				//$hidden = ( $instance['hidden'] == 'hidden' ) ? true : false;
+				$flagstyle = isset( $instance['flagstyle'] ) ? $instance['flagstyle'] : ''; // update
 				$output .= $instance['beforelist'];
 				// $output .= xili_language_list( $instance['beforeline'], $instance['afterline'], $instance['theoption'], false, $hidden );
-				$output .= xili_language_list( array(
-					'before' => $instance['beforeline'],
-					'after' => $instance['afterline'],
-					'option' => $instance['theoption'],
-					'echo' => false,
-					'hidden' => $instance['hidden'],
-					'flagstyle' => $flagstyle,
-					) );
+				$output .= xili_language_list(
+					array(
+						'before' => $instance['beforeline'],
+						'after' => $instance['afterline'],
+						'option' => $instance['theoption'],
+						'echo' => false,
+						'hidden' => $instance['hidden'],
+						'flagstyle' => $flagstyle,
+					)
+				);
 				$output .= $instance['afterlist'];
 			}
 			$output .= $after_widget;
 			echo $output;
- 		}
+		}
 	}
 
-	function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['beforelist'] = stripslashes($new_instance['beforelist']);
-		$instance['beforeline'] = stripslashes($new_instance['beforeline']);
-		$instance['afterline'] = stripslashes($new_instance['afterline']);
-		$instance['afterlist'] = stripslashes($new_instance['afterlist']);
-		$instance['theoption'] = strip_tags(stripslashes($new_instance['theoption']));
-		$instance['thecondition'] = strip_tags(stripslashes($new_instance['thecondition'])); // 1.8.4
-		$instance['theparams'] = strip_tags(stripslashes($new_instance['theparams']));
-		$instance['hidden'] = isset($new_instance['hidden']) ? $new_instance['hidden'] : '' ;  // 2.4.0 checkbox
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['beforelist'] = stripslashes( $new_instance['beforelist'] );
+		$instance['beforeline'] = stripslashes( $new_instance['beforeline'] );
+		$instance['afterline'] = stripslashes( $new_instance['afterline'] );
+		$instance['afterlist'] = stripslashes( $new_instance['afterlist'] );
+		$instance['theoption'] = strip_tags( stripslashes( $new_instance['theoption'] ) );
+		$instance['thecondition'] = strip_tags( stripslashes( $new_instance['thecondition'] ) ); // 1.8.4
+		$instance['theparams'] = strip_tags( stripslashes( $new_instance['theparams'] ) );
+		$instance['hidden'] = isset( $new_instance['hidden'] ) ? $new_instance['hidden'] : '';  // 2.4.0 checkbox
 		$instance['flagstyle'] = $new_instance['flagstyle']; // 2.20.3
 		return $instance;
 	}
 
-	function form( $instance ) {
+	public function form( $instance ) {
 		global $xili_language;
-		$title = isset($instance['title']) ? esc_attr($instance['title']) : '';
-		$beforelist = isset($instance['beforelist']) ? htmlentities(stripslashes($instance['beforelist'])) : "<ul class='xililanguagelist'>";
-		$beforeline =  isset($instance['beforeline']) ? htmlentities(stripslashes($instance['beforeline'])) : '<li>';
-		$afterline =  isset($instance['afterline']) ? htmlentities(stripslashes($instance['afterline'])): '</li>';
-		$afterlist =  isset($instance['afterlist']) ? htmlentities(stripslashes($instance['afterlist'])) : '</ul>';
-		$theoption =  isset($instance['theoption']) ? stripslashes($instance['theoption']) : '' ;
- 		$thecondition =  isset($instance['thecondition']) ? stripslashes($instance['thecondition']) : '' ;
- 		$theparams =  isset($instance['theparams']) ? stripslashes($instance['theparams']) : '' ;
- 		$hidden = isset($instance['hidden']) ? $instance['hidden'] : '' ; // 1.8.9.1
- 		$flagstyle = isset($instance['flagstyle']) ? $instance['flagstyle'] : '' ; // 2.20.3
+		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+		$beforelist = isset( $instance['beforelist'] ) ? htmlentities( stripslashes( $instance['beforelist'] ) ) : "<ul class='xililanguagelist'>";
+		$beforeline = isset( $instance['beforeline'] ) ? htmlentities( stripslashes( $instance['beforeline'] ) ) : '<li>';
+		$afterline = isset( $instance['afterline'] ) ? htmlentities( stripslashes( $instance['afterline'] ) ) : '</li>';
+		$afterlist = isset( $instance['afterlist'] ) ? htmlentities( stripslashes( $instance['afterlist'] ) ) : '</ul>';
+		$theoption = isset( $instance['theoption'] ) ? stripslashes( $instance['theoption'] ) : '';
+		$thecondition = isset( $instance['thecondition'] ) ? stripslashes( $instance['thecondition'] ) : '';
+		$theparams = isset( $instance['theparams'] ) ? stripslashes( $instance['theparams'] ) : '';
+		$hidden = isset( $instance['hidden'] ) ? $instance['hidden'] : ''; // 1.8.9.1
+		$flagstyle = isset( $instance['flagstyle'] ) ? $instance['flagstyle'] : ''; // 2.20.3
 
 	?>
-	<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-	<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
+	<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:' ); ?></label>
+	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 	<?php
 
-	if ( class_exists('xili_language') ) {
-		if ( $xili_language->this_has_external_filter('xili_language_list')) // one external action
+	if ( class_exists( 'xili_language' ) ) {
+		if ( $xili_language->this_has_external_filter( 'xili_language_list' ) ) {
 			$xili_language->langs_list_options = array();
-		if ( has_filter('xili_language_list_options') ) {	// is list of options described
-			do_action('xili_language_list_options', $theoption); // update the list of external action
+		}
+		if ( has_filter( 'xili_language_list_options' ) ) {
+			// is list of options described
+			do_action( 'xili_language_list_options', $theoption ); // update the list of external action
 		}
 	}
-	if ( class_exists('xili_language') && isset($xili_language->langs_list_options) && $xili_language->langs_list_options != array()) {
-		echo '<br /><label for="'.$this->get_field_id('theoption').'">'.__('Type','xili-language').':';
-		echo '<select name="'.$this->get_field_name('theoption').'" id="'.$this->get_field_id('theoption').'">';
-		foreach ($xili_language->langs_list_options as $typeoption) {
-			if ( empty($typeoption[0]) || false === strpos( $typeoption[0], 'navmenu' ) ) { // 2.0.1
-				echo '<option value="'.$typeoption[0].'" '. selected( $theoption, $typeoption[0], false ) . ' >' . $typeoption[1] .'</option>';
+	if ( class_exists( 'xili_language' ) && isset( $xili_language->langs_list_options ) && array() != $xili_language->langs_list_options ) {
+		echo '<br /><label for="' . $this->get_field_id( 'theoption' ) . '">' . esc_html__( 'Type', 'xili-language' ) . ':';
+		echo '<select name="' . $this->get_field_name( 'theoption' ) . '" id="' . $this->get_field_id( 'theoption' ) . '">';
+		foreach ( $xili_language->langs_list_options as $typeoption ) {
+			if ( empty( $typeoption[0] ) || false === strpos( $typeoption[0], 'navmenu' ) ) { // 2.0.1
+				echo '<option value="' . $typeoption[0] . '" ' . selected( $theoption, $typeoption[0], false ) . ' >' . $typeoption[1] . '</option>';
 			}
 		}
 		echo '</select></label>';
 	} else {
-			echo '<br /><label for="'.$this->get_field_id('theoption').'">'.__('Type','xili-language').': <input id="'.$this->get_field_id('theoption').'" name="'.$this->get_field_name('theoption').'" type="text" value="'.$theoption.'" /></label>';
+			echo '<br /><label for="' . $this->get_field_id( 'theoption' ) . '">' . esc_html__( 'Type', 'xili-language' ) . ': <input id="' . $this->get_field_id( 'theoption' ) . '" name="' . $this->get_field_name( 'theoption' ) . '" type="text" value="' . $theoption . '" /></label>';
 	}
 
 	?>
-	<br /><label for="<?php echo $this->get_field_id('hidden'); ?>"><?php _e('Do not display hidden languages:','xili-language'); ?>&nbsp;<input id="<?php echo $this->get_field_id('hidden'); ?>" name="<?php echo $this->get_field_name('hidden'); ?>" type="checkbox" value="hidden" <?php checked( $hidden, 'hidden' ); ?> /></label>
+	<br />
+	<label for="<?php echo $this->get_field_id( 'hidden' ); ?>">
+		<?php esc_html_e( 'Do not display hidden languages:', 'xili-language' ); ?>&nbsp;
+		<input id="<?php echo $this->get_field_id( 'hidden' ); ?>" name="<?php echo $this->get_field_name( 'hidden' ); ?>" type="checkbox" value="hidden" <?php checked( $hidden, 'hidden' ); ?> />
+	</label>
 	<hr />
-	<label for="<?php echo $this->get_field_id('flagstyle'); ?>"><?php _e('Display style:', 'xili-language'); ?>
-	<select name="<?php echo $this->get_field_name('flagstyle'); ?>" id="<?php echo $this->get_field_id('flagstyle'); ?>">
-		<option value="" <?php selected( $flagstyle, '' ); ?> ><?php _e('only text', 'xili-language'); ?></option>
-		<option value="flagstyle" <?php selected( $flagstyle, 'flagstyle'); ?> ><?php _e('with flag', 'xili-language'); ?></option>
-		<option value="flagstyletext" <?php selected( $flagstyle, 'flagstyletext'); ?> ><?php _e('with flag and text', 'xili-language'); ?></option>
+	<label for="<?php echo $this->get_field_id( 'flagstyle' ); ?>"><?php esc_html_e( 'Display style:', 'xili-language' ); ?>
+	<select name="<?php echo $this->get_field_name( 'flagstyle' ); ?>" id="<?php echo $this->get_field_id( 'flagstyle' ); ?>">
+		<option value="" <?php selected( $flagstyle, '' ); ?> ><?php esc_html_e( 'only text', 'xili-language' ); ?></option>
+		<option value="flagstyle" <?php selected( $flagstyle, 'flagstyle' ); ?> ><?php esc_html_e( 'with flag', 'xili-language' ); ?></option>
+		<option value="flagstyletext" <?php selected( $flagstyle, 'flagstyletext' ); ?> ><?php esc_html_e( 'with flag and text', 'xili-language' ); ?></option>
 	</select></label>
 	<?php
 	echo '<br /><small>';
 	if ( current_theme_supports( 'custom_xili_flag' ) ) {
-		_e( 'The current theme supports flags, see Media and Appearance xili flag options submenu.', 'xili-language' );
+		esc_html_e( 'The current theme supports flags, see Media and Appearance xili flag options submenu.', 'xili-language' );
 	} else {
-		printf( __( 'The current theme needs to support xili_flags (%s).', 'xili-language' ), 'custom_xili_flag');
+		/* translators */
+		printf( esc_html__( 'The current theme needs to support xili_flags (%s).', 'xili-language' ), 'custom_xili_flag' );
 	}
 	echo '</small>';
 	?>
 	<br /><br />
-	<fieldset style="margin:2px; padding:3px; border:1px solid #ccc;"><legend><?php _e('HTML tags of list','xili-language'); ?></legend>
-	<label title="<?php esc_attr_e('if flag style, do not erase xililanguagelist class','xili-language'); ?>" for="<?php echo $this->get_field_id('beforelist'); ?>"><?php _e('before list','xili-language'); ?></label>:
-	<input class="widefat" id="<?php echo $this->get_field_id('beforelist'); ?>" name="<?php echo $this->get_field_name('beforelist'); ?>" type="text" value="<?php echo $beforelist; ?>" />
+	<fieldset style="margin:2px; padding:3px; border:1px solid #ccc;"><legend><?php esc_html_e( 'HTML tags of list', 'xili-language' ); ?></legend>
+	<label title="<?php esc_attr_e( 'if flag style, do not erase xililanguagelist class', 'xili-language' ); ?>" for="<?php echo $this->get_field_id( 'beforelist' ); ?>"><?php esc_html_e( 'before list', 'xili-language' ); ?></label>:
+	<input class="widefat" id="<?php echo $this->get_field_id( 'beforelist' ); ?>" name="<?php echo $this->get_field_name( 'beforelist' ); ?>" type="text" value="<?php echo $beforelist; ?>" />
 
-	<label for="<?php echo $this->get_field_id('beforeline'); ?>"><?php _e('before line','xili-language'); ?></label>:
-	<input class="widefat" id="<?php echo $this->get_field_id('beforeline'); ?>" name="<?php echo $this->get_field_name('beforeline'); ?>" type="text" value="<?php echo $beforeline; ?>" />
+	<label for="<?php echo $this->get_field_id( 'beforeline' ); ?>"><?php esc_html_e( 'before line', 'xili-language' ); ?></label>:
+	<input class="widefat" id="<?php echo $this->get_field_id( 'beforeline' ); ?>" name="<?php echo $this->get_field_name( 'beforeline' ); ?>" type="text" value="<?php echo $beforeline; ?>" />
 
-	<label for="<?php echo $this->get_field_id('afterline'); ?>"><?php _e('after line','xili-language'); ?></label>:
-	<input class="widefat" id="<?php echo $this->get_field_id('afterline'); ?>" name="<?php echo $this->get_field_name('afterline'); ?>" type="text" value="<?php echo $afterline; ?>" />
+	<label for="<?php echo $this->get_field_id( 'afterline' ); ?>"><?php esc_html_e( 'after line', 'xili-language' ); ?></label>:
+	<input class="widefat" id="<?php echo $this->get_field_id( 'afterline' ); ?>" name="<?php echo $this->get_field_name( 'afterline' ); ?>" type="text" value="<?php echo $afterline; ?>" />
 
-	<label for="<?php echo $this->get_field_id('afterlist'); ?>"><?php _e('after list','xili-language'); ?></label>:
-	<input class="widefat" id="<?php echo $this->get_field_id('afterlist'); ?>" name="<?php echo $this->get_field_name('afterlist'); ?>" type="text" value="<?php echo $afterlist; ?>" /></fieldset>
+	<label for="<?php echo $this->get_field_id( 'afterlist' ); ?>"><?php esc_html_e( 'after list', 'xili-language' ); ?></label>:
+	<input class="widefat" id="<?php echo $this->get_field_id( 'afterlist' ); ?>" name="<?php echo $this->get_field_name( 'afterlist' ); ?>" type="text" value="<?php echo $afterlist; ?>" /></fieldset>
 	<fieldset style="margin:2px; padding:3px; border:1px solid #ccc;" >
-	<label for="<?php echo $this->get_field_id('thecondition'); ?>"><?php _e('Condition','xili-language'); ?></label>:
-	<input class="widefat" id="<?php echo $this->get_field_id('thecondition'); ?>" name="<?php echo $this->get_field_name('thecondition'); ?>" type="text" value="<?php echo $thecondition; ?>" />
-	( <input id="<?php echo $this->get_field_id('theparams'); ?>" name="<?php echo $this->get_field_name('theparams'); ?>" type="text" value="<?php echo $theparams; ?>" /> )
+	<label for="<?php echo $this->get_field_id( 'thecondition' ); ?>"><?php esc_html_e( 'Condition','xili-language' ); ?></label>:
+	<input class="widefat" id="<?php echo $this->get_field_id( 'thecondition' ); ?>" name="<?php echo $this->get_field_name( 'thecondition' ); ?>" type="text" value="<?php echo $thecondition; ?>" />
+	( <input id="<?php echo $this->get_field_id( 'theparams' ); ?>" name="<?php echo $this->get_field_name( 'theparams' ); ?>" type="text" value="<?php echo $theparams; ?>" /> )
 	</fieldset>
 	<p><small>© xili-language v. <?php echo XILILANGUAGE_VER; ?></small></p>
 	<?php
@@ -547,27 +648,27 @@ class xili_language_Widgets extends WP_Widget {
  * @since 2.20.3
  *
  */
-function xili_language_list_widget_style () {
-	if ( is_active_widget( false, false, 'xili_language_widgets') ) {
+function xili_language_list_widget_style() {
+	if ( is_active_widget( false, false, 'xili_language_widgets' ) ) {
 		//
 		$insert_style = array();
 		$styletext = array();
 		if ( $widgets_xll = get_option( 'widget_xili_language_widgets' ) ) {
 			foreach ( $widgets_xll as $key => $one_xll ) {
-				if ( isset( $one_xll['flagstyle'] ) && in_array( $one_xll['flagstyle'],  array ('flagstyle', 'flagstyletext' ) ) ) {
+				if ( isset( $one_xll['flagstyle'] ) && in_array( $one_xll['flagstyle'], array( 'flagstyle', 'flagstyletext' ) ) ) {
 					$insert_style[] = $key;
-					$styletext[$key] = ( $one_xll['flagstyle'] == 'flagstyletext' ) ? true : false ;
+					$styletext[ $key ] = ( 'flagstyletext' == $one_xll['flagstyle'] ) ? true : false;
 				}
 			}
 		}
-		if ( $insert_style != array() ) {
+		if ( array() != $insert_style ) {
 			//
 			$style_lines = '<!--- Xili-language widgets css -->' . "\n";
 			$style_lines .= '<style type="text/css">';
 
-			$style_lines .= '.widget.xili-language_Widgets {margin-bottom:10px}'. "\n"; // depends theme
-			$style_lines .= '.xililanguagelist {list-style: none; margin:0}'. "\n";
-			$style_lines .= '.xililanguagelist li a {display:block;}'. "\n";
+			$style_lines .= '.widget.xili-language_Widgets {margin-bottom:10px}' . "\n"; // depends theme
+			$style_lines .= '.xililanguagelist {list-style: none; margin:0}' . "\n";
+			$style_lines .= '.xililanguagelist li a {display:block;}' . "\n";
 			$style_lines .= '</style>';
 
 			/**
@@ -577,16 +678,16 @@ function xili_language_list_widget_style () {
 			 *
 			 * @param int       ID of the active widget
 			 */
-			echo apply_filters ( 'xili_language_widgets_head', $style_lines );
+			echo apply_filters( 'xili_language_widgets_head', $style_lines );
 			foreach ( $insert_style as $key ) {
 				/**
- 				 * Filter action whether a widget needs flag css.
+				 * Filter action whether a widget needs flag css.
 				 *
 				 * @since 2.20.3
 				 *
 				 * @param int       ID of the active widget
 				 */
-				do_action ( 'xili_language_widgets_list_head', $key, $styletext[$key] ); // see example below
+				do_action( 'xili_language_widgets_list_head', $key, $styletext[ $key ] ); // see example below
 			}
 		}
 	}
@@ -601,21 +702,21 @@ add_action( 'wp_head', 'xili_language_list_widget_style', 13 ); // after menu st
  * @since 2.20.3
  *
  */
-function xili_language_widgets_head_test ( $key,  $styletext ) {
+function xili_language_widgets_head_test( $key, $styletext ) {
 	$widget_uid = 'xili_language_widgets-' . $key;
-	$name = is_active_widget( false, $widget_uid, 'xili_language_widgets');
+	$name = is_active_widget( false, $widget_uid, 'xili_language_widgets' );
 	if ( $name ) {
-		printf('<!--- Xili-language list widget ID %s in %s -->', $key, $name ); // only active and visible in sidebar with $name
+		printf( '<!--- Xili-language list widget ID %s in %s -->', $key, $name ); // only active and visible in sidebar with $name
 		$style_lines = '<style type="text/css">';
 		if ( $styletext ) {
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {text-indent:30px;}'. "\n";
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {width:100%; height:100%; background-position: left 1px; }'. "\n"; // cancel image size
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a:hover {background-position: left 2px !important; }'. "\n";
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li {display:list-item;}'. "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {text-indent:30px;}' . "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {width:100%; height:100%; background-position: left 1px; }' . "\n"; // cancel image size
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a:hover {background-position: left 2px !important; }' . "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li {display:list-item;}' . "\n";
 		} else {
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {text-indent:-9999px;}'. "\n";
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a:hover {background-position: center 2px !important;}' ."\n";
-			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li {display:inline-block;}'. "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a {text-indent:-9999px;}' . "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li[class*="lang-"] a:hover {background-position: center 2px !important;}' . "\n";
+			$style_lines .= '#' . $widget_uid . ' .xililanguagelist li {display:inline-block;}' . "\n";
 		}
 		$style_lines .= '</style>';
 		echo $style_lines;
@@ -630,17 +731,20 @@ add_action( 'xili_language_widgets_list_head', 'xili_language_widgets_head_test'
  * @since 2.8.0
  * @since XL 2.16.3
  */
-class xili_Widget_Categories extends WP_Widget {
+class Xili_Widget_Categories extends WP_Widget {
 
 	public function __construct() {
-		$widget_ops = array( 'classname' => 'widget_categories', 'description' => __( "A multilingual list or dropdown of categories.", 'xili-language' ) );
-		parent::__construct('xl_categories', '[©xili] ' . __('Categories', 'xili-language'), $widget_ops);
+		$widget_ops = array(
+			'classname' => 'Xili_Widget_Categories',
+			'description' => esc_html__( 'A multilingual list or dropdown of categories.', 'xili-language' ),
+		);
+		parent::__construct( 'xl_categories', '[©xili] ' . esc_html__( 'Categories', 'xili-language' ), $widget_ops );
 	}
 
 	public function widget( $args, $instance ) {
 
 		/** This filter is documented in wp-includes/default-widgets.php */
-		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Categories', 'xili-language' ) : $instance['title'], $instance, $this->id_base );
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? esc_html__( 'Categories', 'xili-language' ) : $instance['title'], $instance, $this->id_base );
 
 		$c = ! empty( $instance['count'] ) ? '1' : '0';
 		$h = ! empty( $instance['hierarchical'] ) ? '1' : '0';
@@ -651,10 +755,14 @@ class xili_Widget_Categories extends WP_Widget {
 			echo $args['before_title'] . $title . $args['after_title'];
 		}
 
-		$cat_args = array('orderby' => 'name', 'show_count' => $c, 'hierarchical' => $h);
+		$cat_args = array(
+			'orderby' => 'name',
+			'show_count' => $c,
+			'hierarchical' => $h,
+		);
 
 		if ( $d ) {
-			$cat_args['show_option_none'] = __('Select Category', 'xili-language');
+			$cat_args['show_option_none'] = esc_html__( 'Select Category', 'xili-language' );
 
 			/**
 			 * Filter the arguments for the Categories widget drop-down.
@@ -686,7 +794,7 @@ class xili_Widget_Categories extends WP_Widget {
 		<ul>
 <?php
 		$cat_args['title_li'] = '';
-		$cat_args['walker'] = new XL_tax_walker; // multilingual taxonomy customized walker
+		$cat_args['walker'] = new XL_Tax_Walker(); // multilingual taxonomy customized walker
 		/**
 		 * Filter the arguments for the Categories widget.
 		 *
@@ -705,33 +813,33 @@ class xili_Widget_Categories extends WP_Widget {
 
 	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['count'] = !empty($new_instance['count']) ? 1 : 0;
-		$instance['hierarchical'] = !empty($new_instance['hierarchical']) ? 1 : 0;
-		$instance['dropdown'] = !empty($new_instance['dropdown']) ? 1 : 0;
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['count'] = ! empty( $new_instance['count'] ) ? 1 : 0;
+		$instance['hierarchical'] = ! empty( $new_instance['hierarchical'] ) ? 1 : 0;
+		$instance['dropdown'] = ! empty( $new_instance['dropdown'] ) ? 1 : 0;
 
 		return $instance;
 	}
 
 	public function form( $instance ) {
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
+		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
 		$title = esc_attr( $instance['title'] );
-		$count = isset($instance['count']) ? (bool) $instance['count'] :false;
+		$count = isset( $instance['count'] ) ? (bool) $instance['count'] : false;
 		$hierarchical = isset( $instance['hierarchical'] ) ? (bool) $instance['hierarchical'] : false;
 		$dropdown = isset( $instance['dropdown'] ) ? (bool) $instance['dropdown'] : false;
 ?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e( 'Title:' ); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
-		<p><input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('dropdown'); ?>" name="<?php echo $this->get_field_name('dropdown'); ?>"<?php checked( $dropdown ); ?> />
-		<label for="<?php echo $this->get_field_id('dropdown'); ?>"><?php _e( 'Display as dropdown', 'xili-language' ); ?></label><br />
+		<p><input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id( 'dropdown' ); ?>" name="<?php echo $this->get_field_name( 'dropdown' ); ?>"<?php checked( $dropdown ); ?> />
+		<label for="<?php echo $this->get_field_id( 'dropdown' ); ?>"><?php esc_html_e( 'Display as dropdown', 'xili-language' ); ?></label><br />
 
-		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('count'); ?>" name="<?php echo $this->get_field_name('count'); ?>"<?php checked( $count ); ?> />
-		<label for="<?php echo $this->get_field_id('count'); ?>"><?php _e( 'Show post counts in this language', 'xili-language' ); ?></label><br />
+		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>"<?php checked( $count ); ?> />
+		<label for="<?php echo $this->get_field_id( 'count' ); ?>"><?php esc_html_e( 'Show post counts in this language', 'xili-language' ); ?></label><br />
 
-		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('hierarchical'); ?>" name="<?php echo $this->get_field_name('hierarchical'); ?>"<?php checked( $hierarchical ); ?> />
-		<label for="<?php echo $this->get_field_id('hierarchical'); ?>"><?php _e( 'Show hierarchy', 'xili-language' ); ?></label></p>
+		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id( 'hierarchical' ); ?>" name="<?php echo $this->get_field_name('hierarchical'); ?>"<?php checked( $hierarchical ); ?> />
+		<label for="<?php echo $this->get_field_id( 'hierarchical' ); ?>"><?php esc_html_e( 'Show hierarchy', 'xili-language' ); ?></label></p>
 <?php
 	}
 
@@ -744,7 +852,7 @@ class xili_Widget_Categories extends WP_Widget {
  * @since XL 2.16.3
  *
  */
-class XL_tax_walker extends Walker_Category {
+class XL_Tax_Walker extends Walker_Category {
 
 	public function start_el( &$output, $category, $depth = 0, $args = array(), $id = 0 ) {
 		/** This filter is documented in wp-includes/category-template.php */
@@ -780,7 +888,8 @@ class XL_tax_walker extends Walker_Category {
 			$link .= '<a href="' . esc_url( get_term_feed_link( $category->term_id, $category->taxonomy, $args['feed_type'] ) ) . '"';
 
 			if ( empty( $args['feed'] ) ) {
-				$alt = ' alt="' . sprintf(__( 'Feed for all posts filed under %s' ), $cat_name ) . '"';
+				/* translators: */
+				$alt = ' alt="' . sprintf( xl__( 'Feed for all posts filed under %s' ), $cat_name ) . '"';
 			} else {
 				$alt = ' alt="' . $args['feed'] . '"';
 				$name = $args['feed'];
@@ -811,12 +920,12 @@ class XL_tax_walker extends Walker_Category {
 			if ( ! empty( $args['current_category'] ) ) {
 				$_current_category = get_term( $args['current_category'], $category->taxonomy );
 				if ( $category->term_id == $args['current_category'] ) {
-					$class .=  ' current-cat';
+					$class .= ' current-cat';
 				} elseif ( $category->term_id == $_current_category->parent ) {
-					$class .=  ' current-cat-parent';
+					$class .= ' current-cat-parent';
 				}
 			}
-			$output .=  ' class="' . $class . '"';
+			$output .= ' class="' . $class . '"';
 			$output .= ">$link\n";
 		} else {
 			$output .= "\t$link<br />\n";
@@ -831,14 +940,14 @@ class XL_tax_walker extends Walker_Category {
  * @since XL 2.16.3
  *
  */
-function xili_cached_taxonomy_count ( $taxonomy, $slug, $term_id ) {
+function xili_cached_taxonomy_count( $taxonomy, $slug, $term_id ) {
 	global $xili_language;
 	$curlang = xili_curlang();
-	$transient_name = 'xili_count_' . $taxonomy . '_' . $term_id . '_' . $curlang ;
+	$transient_name = 'xili_count_' . $taxonomy . '_' . $term_id . '_' . $curlang;
 	if ( false === ( $xili_count = get_transient( $transient_name ) ) ) {
-    // It wasn't there, so regenerate the data and save the transient
-     	$xili_count = $xili_language->count_posts_in_taxonomy_and_lang ( $taxonomy, $slug, $curlang ); // post by default here
-     	set_transient( $transient_name, $xili_count, 12 * HOUR_IN_SECONDS );
+		// It wasn't there, so regenerate the data and save the transient
+		$xili_count = $xili_language->count_posts_in_taxonomy_and_lang( $taxonomy, $slug, $curlang ); // post by default here
+		set_transient( $transient_name, $xili_count, 12 * HOUR_IN_SECONDS );
 	}
 	return $xili_count;
 }
@@ -849,18 +958,17 @@ function xili_cached_taxonomy_count ( $taxonomy, $slug, $term_id ) {
  * @since XL 2.16.3
  *
  */
-function xili_reset_transient_count ( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
-  if ( $taxonomy != 'category' ) return;
-  $languages = xili_get_listlanguages();
-  foreach ($languages as $curlang) {
-  	foreach ($terms as $term_id ){
-  		$transient_name = 'xili_count_' . $taxonomy . '_' . $term_id . '_' . $curlang->slug ;
-  		delete_transient( $transient_name );
-  	}
-  }
+function xili_reset_transient_count( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
+	if ( 'category' != $taxonomy ) {
+		return;
+	}
+	$languages = xili_get_listlanguages();
+	foreach ( $languages as $curlang ) {
+		foreach ( $terms as $term_id ) {
+			$transient_name = 'xili_count_' . $taxonomy . '_' . $term_id . '_' . $curlang->slug;
+			delete_transient( $transient_name );
+		}
+	}
 
 }
-add_action( 'set_object_terms', 'xili_reset_transient_count', 10, 6);
-
-
-?>
+add_action( 'set_object_terms', 'xili_reset_transient_count', 10, 6 );

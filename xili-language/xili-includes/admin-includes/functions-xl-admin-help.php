@@ -1,6 +1,11 @@
 <?php
-
-// admin help functions
+/**
+ * XL Admin class help adn pointer functions
+ *
+ * @package Xili-Language
+ * @subpackage admin
+ * @since 2.23
+ */
 
 // with xili-language, it is now possible to export/import xml with language for all authorized cpts
 function xl_message_export_limited() {

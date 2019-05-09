@@ -5465,7 +5465,6 @@ class Xili_Language_Admin extends Xili_Language {
 							/* translators: */
 							'<a href="%1$s" title="%2$s">' . $creation_edit . '</a>',
 							'post.php?post=' . $post_id . '&action=edit&xlaction=transcreate&xllang=' . $language->slug,
-
 							sprintf(
 								/* translators: name of language */
 								esc_attr__( 'For create a linked draft translation in %s', 'xili-language' ),

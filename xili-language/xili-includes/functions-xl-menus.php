@@ -1,5 +1,11 @@
 <?php
-// MENUS add-ons for xili-language
+/**
+ * XL class menu functions
+ *
+ * @package Xili-Language
+ * @subpackage core
+ * @since 2.23
+ */
 
 /**
  * insert a dummy items to precede lang list insertion since WP 3.5
