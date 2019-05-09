@@ -37,14 +37,14 @@ function xl_permalinks_theme() {
 		global $xl_permalinks_rules;
 
 		$ok = ( isset( $xili_language_settings['lang_permalink'] ) && 'perma_ok' == $xili_language_settings['lang_permalink'] ) ? true : false;
-		if ( $ok && get_option( 'permalink_structure' ) && class_exists( 'XL_Permalinks_rules' ) ) {
+		if ( $ok && get_option( 'permalink_structure' ) && class_exists( 'XL_Permalinks_Rules' ) ) {
 
 			// back compatibility 2.20
 			if ( ! has_filter( 'alias_rule', 'xili_language_trans_slug_qv' ) ) {
 				add_filter( 'alias_rule', 'xili_language_trans_slug_qv' ); // alias insertion
 			}
 
-			$xl_permalinks_rules = new XL_Permalinks_rules();
+			$xl_permalinks_rules = new XL_Permalinks_Rules();
 
 			add_permastruct( 'language', '%lang%', true, 1 );
 			add_permastruct( 'language', '%lang%', array( 'with_front' => false ) );

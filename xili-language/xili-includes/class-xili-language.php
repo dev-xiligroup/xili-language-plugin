@@ -2162,7 +2162,7 @@ class Xili_Language {
 	// to fixe event in WP 3.4 - 2.7.1
 	public function xili_test_lang_perma() {
 		global $xl_permalinks_rules;
-		$this->lang_perma = ( class_exists( 'XL_Permalinks_rules' ) && method_exists( $xl_permalinks_rules, 'insert_lang_tag_root' ) ); // 2.9.23 - must have instanciation in theme
+		$this->lang_perma = ( class_exists( 'XL_Permalinks_Rules' ) && method_exists( $xl_permalinks_rules, 'insert_lang_tag_root' ) ); // 2.9.23 - must have instanciation in theme
 		$this->lpr = '-'; // 2.16.6
 	}
 
