@@ -29,25 +29,25 @@
 	 	$edit_row.find( 'select[name="xlpop"]' ).find("option[value='"+$lang+"']").each(function()
 			{
 		 		jQuery(this).attr("selected","selected");
-  
+
 			});
       	}
    };
-   
+
    $( '#bulk_edit' ).live( 'click', function() {
 
 	   // define the bulk edit row
 	   var $bulk_row = $( '#bulk-edit' );
-	
+
 	   // get the selected post ids that are being edited
 	   var $post_ids = new Array();
 	   $bulk_row.find( '#bulk-titles' ).children().each( function() {
 	      $post_ids.push( $( this ).attr( 'id' ).replace( /^(ttle)/i, '' ) );
 	   });
-	
+
 	   // get the release date
 	   var $lang = $bulk_row.find( 'select[name="xlpop"]' ).val();
-	
+
 	   // save the data
 	   $.ajax({
 	      url: ajaxurl, // this is a variable that WordPress has already defined for us
@@ -60,7 +60,7 @@
 		 	 assigned_lang: $lang
 	      }
 	   });
-	
+
 	});
 
 })(jQuery);

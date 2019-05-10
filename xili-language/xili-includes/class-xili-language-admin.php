@@ -1685,7 +1685,7 @@ class Xili_Language_Admin extends Xili_Language {
 			case 'refreshlinks':
 				// refresh from PLL
 				check_admin_referer( 'refresh_pll_links' );
-				$themessages[11] = apply_filters( 'recreate_links_from_previous', array() ); // in pll_functions.php file
+				$themessages[11] = apply_filters( 'recreate_links_from_previous', array() ); // in pll-functions.php file
 				$msg = 11;
 				$actiontype = 'add';
 				break;

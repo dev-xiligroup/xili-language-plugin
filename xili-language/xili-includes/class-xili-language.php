@@ -389,7 +389,7 @@ class Xili_Language {
 		// test pll was previously installed but not deleted
 		if ( ( $settings = get_option( 'polylang', false ) ) && ( empty( $this->xili_settings['pll_cleaned'] ) || 4 >= $this->xili_settings['pll_cleaned'] ) ) {
 			if ( version_compare( $settings['version'], XILILANGUAGE_PLL_TESTED, '>=' ) ) {
-				include_once $this->plugin_path . 'xili-includes/pll_functions.php';
+				include_once $this->plugin_path . 'xili-includes/pll-functions.php';
 			}
 		}
 
