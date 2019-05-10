@@ -1371,8 +1371,8 @@ class Xili_Language {
 	 * @since 2.22 now detect first language
 	 *
 	 */
-	public function get_post_language( $post_ID, $result = 'slug' ) {
-		$ress = wp_get_object_terms( $post_ID, TAXONAME );
+	public function get_post_language( $post_id, $result = 'slug' ) {
+		$ress = wp_get_object_terms( $post_id, TAXONAME );
 		$postlang = '';
 
 		if ( ! is_wp_error( $ress ) && isset( $ress[0] ) ) { // 2.18.2 (error if membership plugin )
@@ -1380,7 +1380,7 @@ class Xili_Language {
 				$obj_term = $ress[0]; // today only one language per post
 			} else { // since 2.22 - multiple lang
 
-				if ( metadata_exists( 'post', $post_ID, '_multiple_lang' ) && $lang_array = get_post_meta( $post_ID, '_multiple_lang', true ) ) {
+				if ( metadata_exists( 'post', $post_id, '_multiple_lang' ) && $lang_array = get_post_meta( $post_id, '_multiple_lang', true ) ) {
 					$primary_slug = $lang_array[0];
 					$obj_term = '';
 					foreach ( $ress as $one_term ) {
@@ -1448,7 +1448,7 @@ class Xili_Language {
 
 		if ( 0 != $post_id ) {
 			// taxonomy
-			wp_set_object_terms( $post_ID, $target_lang, TAXONAME );
+			wp_set_object_terms( $post_id, $target_lang, TAXONAME );
 			// metas
 			// from
 			update_post_meta( $from_post_id, QUETAG . '-' . $target_lang, $post_id );
@@ -1459,13 +1459,13 @@ class Xili_Language {
 				if ( $language->slug != $target_lang && $language->slug != $frompostlang ) {
 					$id = get_post_meta( $from_post_id, QUETAG . '-' . $language->slug, true );
 					if ( '' != $id ) {
-						update_post_meta( $post_ID, QUETAG . '-' . $language->slug, $id );
+						update_post_meta( $post_id, QUETAG . '-' . $language->slug, $id );
 					}
 				}
 			}
 			// this
-			update_post_meta( $post_ID, QUETAG . '-' . $frompostlang, $from_post_id );
-			update_post_meta( $post_ID, $this->translation_state, 'initial ' . $frompostlang ); // to update further slug - post_name
+			update_post_meta( $post_id, QUETAG . '-' . $frompostlang, $from_post_id );
+			update_post_meta( $post_id, $this->translation_state, 'initial ' . $frompostlang ); // to update further slug - post_name
 
 			do_action( 'xl_propagate_post_attributes', $from_post_id, $post_id ); // to personalize features - see class theme-multilingual-classes
 
@@ -1633,6 +1633,13 @@ class Xili_Language {
 			'singular_name' => $clabels->singular_name,
 			'multilingual' => 'enable',
 		);
+		$custom = get_post_type_object( 'wp_block' ); // since 5.0
+		$clabels = $custom->labels;
+		$custompoststype['wp_block'] = array(
+			'name' => $custom->label,
+			'singular_name' => $clabels->singular_name,
+			'multilingual' => '',
+		);
 		if ( $fully ) {
 			$custompoststype_enabled = array();
 			foreach ( $custompoststype as $post_type => $one ) {
@@ -1746,7 +1753,7 @@ class Xili_Language {
 	 * @since 0.9.0
 	 * @updated 0.9.7.6, 0.9.9
 	 *
-	 * @param $post_ID.
+	 * @param $post_id.
 	 * @return slug of language of post or false if var langstate is false.
 	 */
 	public function get_cur_language( $post_id ) {
@@ -3691,7 +3698,7 @@ class Xili_Language {
 
 			foreach ( $types as $type ) {
 				$true_xd = ( defined( 'XDMSG' ) ) ? ( XDMSG != $type ) : true; // exclude xdmsg of xili-dictionary
-				if ( 'attachment' != $type && 'page' != $type && 'post' != $type && true == $true_xd ) { // temporary WP 3.5 attachement UI
+				if ( ! in_array( $type, array( 'attachment', 'post', 'page', 'wp_block' ) ) && true == $true_xd ) { // temporary WP 3.5 attachement UI
 					$custom = get_post_type_object( $type );
 					$clabels = $custom->labels;
 					$thecustoms[ $type ] = array(
@@ -4645,16 +4652,16 @@ class Xili_Language {
 	 *
 	 *
 	 */
-	public function the_other_posts( $post_ID, $before = 'This post in', $separator = ', ', $type = 'display' ) {
+	public function the_other_posts( $post_id, $before = 'This post in', $separator = ', ', $type = 'display' ) {
 		/* default here*/
 		$outputarr = array();
 		$output = '';
 
 		$listlanguages = get_terms( TAXONAME, array( 'hide_empty' => false ) );
-		$langpost = $this->get_cur_language( $post_ID ); // to be used in multilingual loop since 1.1
+		$langpost = $this->get_cur_language( $post_id ); // to be used in multilingual loop since 1.1
 		$post_lang = $langpost[ QUETAG ];
 		foreach ( $listlanguages as $language ) {
-			$otherpost = $this->linked_post_in( $post_ID, $language->slug ); //get_post_meta($post_ID, 'lang-'.$language->slug, true);
+			$otherpost = $this->linked_post_in( $post_id, $language->slug ); //get_post_meta($post_id, 'lang-'.$language->slug, true);
 
 			if ( 'display' == $type || '' == $type ) {
 				// 2.8.8
@@ -4682,7 +4689,7 @@ class Xili_Language {
 			}
 		} elseif ( 'array' == $type ) {
 			if ( ! empty( $outputarr ) ) {
-				$outputarr[ $post_ID ] = $post_lang;
+				$outputarr[ $post_id ] = $post_lang;
 				// add a key with curid to give his lang (empty if undefined)
 				return $outputarr;
 			} else {
@@ -4699,11 +4706,11 @@ class Xili_Language {
 	 * can be hooked by add_action xiliml_the_category in functions.php
 	 *
 	 */
-	public function the_category( $post_ID, $separator = ', ', $echo = true ) {
+	public function the_category( $post_id, $separator = ', ', $echo = true ) {
 		global $wp_rewrite;
 		/* default here*/
 		$thelist = '';
-		$the_cats_list = wp_get_object_terms( $post_ID, 'category' );
+		$the_cats_list = wp_get_object_terms( $post_id, 'category' );
 		$rel = ( is_object( $wp_rewrite ) && $wp_rewrite->using_permalinks() ) ? 'rel="category tag"' : 'rel="category"'; // 2.8.9
 		$i = 0;
 

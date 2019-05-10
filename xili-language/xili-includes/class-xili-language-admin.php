@@ -3057,7 +3057,6 @@ class Xili_Language_Admin extends Xili_Language {
 						'class' => 'css_class settings',
 					);
 					add_settings_field( $field_args['id'], $field_args['title'], array( $this, 'display_one_setting' ), $this->settings_authoring_settings . '_group', 'option_section_settings_2', $field_args );
-
 				}
 			}
 		}
@@ -3767,7 +3766,7 @@ class Xili_Language_Admin extends Xili_Language {
 	public function on_sidebox_info_content() {
 		?>
 
-		<p><?php esc_html_e( 'This plugin was developed with the taxonomies, terms tables and WP specifications. <br /> xili-language create a new taxonomy used for language of posts and pages and custom post types. For settings (basic or expert), 5 tabs were available.<br /><br /> To attach a language to a post, a box gathering infos in available in new and edit post admin side pages. Also, selectors are in Quick Edit bulk mode of Posts list.', 'xili-language' ); ?></p>
+		<p><?php esc_html_e( 'This plugin was developed with the taxonomies, terms tables and WP specifications.', 'xili-language' ); ?><br /><?php esc_html_e( 'xili-language create a new taxonomy used for language of posts and pages and custom post types. For settings (basic or expert), 5 tabs were available.', 'xili-language' ); ?><br /><br /><?php esc_html_e( 'To attach a language to a post, a box gathering infos in available in new and edit post admin side pages. Also, selectors are in Quick Edit bulk mode of Posts list.', 'xili-language' ); ?></p>
 		<?php
 	}
 
