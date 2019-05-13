@@ -3200,7 +3200,7 @@ class Xili_Language_Admin extends Xili_Language {
 			do_settings_sections( $this->settings_authoring_settings . '_group' );
 			?>
 			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php printf( esc_html__( '%1$s of %2$s', 'xili-language' ), esc_html__( 'Save Changes' ), esc_html__( ' Authoring and data settings', 'xili-language' ) ); ?>" />
+				<input type="submit" class="button-primary" value="<?php /* translators: */ printf( esc_html__( '%1$s of %2$s', 'xili-language' ), esc_html__( 'Save Changes' ), esc_html__( ' Authoring and data settings', 'xili-language' ) ); ?>" />
 			</p>
 			<div class="clearb1">&nbsp;</div>
 		</form>
@@ -3219,7 +3219,7 @@ class Xili_Language_Admin extends Xili_Language {
 			do_settings_sections( $this->settings_author_rules . '_group' );
 			?>
 			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php printf( esc_html__( '%1$s of %2$s', 'xili-language' ), esc_html__( 'Save Changes' ), esc_html__( 'Authoring rules', 'xili-language' ) ); ?>" />
+				<input type="submit" class="button-primary" value="<?php /* translators: */ printf( esc_html__( '%1$s of %2$s', 'xili-language' ), esc_html__( 'Save Changes' ), esc_html__( 'Authoring rules', 'xili-language' ) ); ?>" />
 			</p>
 			<div class="clearb1">&nbsp;</div>
 		</form>

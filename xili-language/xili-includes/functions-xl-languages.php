@@ -593,6 +593,10 @@ function xl__( $text, $domain = 'default' ) {
 	return translate( $text, $domain );
 }
 
+function xl_e( $text, $domain = 'default' ) {
+	echo translate( $text, $domain );
+}
+
 function xl_esc_attr__( $text, $domain = 'default' ) {
 	return esc_attr( translate( $text, $domain ) );
 }
