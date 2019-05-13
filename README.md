@@ -13,16 +13,17 @@ The other files are available for comments or fixes. Only the version in [WordPr
 2. you can change admin side language in top right menu of dashboard screen.
 ( if not pomo script gives fatal error and customizer shows blank screen )
 
-## before-rw branch
-
-2019-05-08 - This branch contains the source code before rewriting (< 2.23)
-
 ## Master Branch
 
-Since 2019-05-10, master branch contains dev version 2.23.x +. Contains latest dev with source code with wp rules. 
-**REQUIRES PHP 7.2+ !**
+Since 2019-05-10, master branch contains dev version 2.23.x +. Contains latest dev with rewritten sources code with [WP Coding Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards). 
+**REQUIRES PHP 7.2+ !** 
+**pre-tested with WP 5.2**
 
 Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to now (April 2018) WP 4.9.5.
+
+## before-rw branch
+
+2019-05-08 - This branch contains the source code before rewriting in Master Branch with WP Coding Standards and Php Code Sniffer (< 2.23)
 
 ## Gutenberg - need latest version
 
@@ -30,7 +31,7 @@ Since Gutenberg 2.7 (April 18th 2018), the (private) taxonomy language metabox o
 
 ## Taxonomy language
 
-Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new "language" object (*) is created to contain all language features.
+Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new "language" object (*) is created to contain all language features. This new “language” description allows now to use (option) several languages per post around a main language.
 
 ...
 
@@ -44,5 +45,3 @@ Language taxonomy settings are saved in term metas ( need WP 4.4 ) and a new "la
 Thanks for your contribution.
 
 M.
-
-Note : I hope to be present at next [WPinLille](https://www.meetup.com/WPinLille/events/249152515/)
