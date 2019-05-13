@@ -4,7 +4,7 @@ Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.9
 Tested up to: 5.2
-Stable tag: 2.23.01
+Stable tag: 2.23.04
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/plugins/xili-language/#developers) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.22.10 =
-* Last Updated 2017-11-24
+= Version 2.23.04 =
+* Last Updated 2019-05-13
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/plugins/xili-language/#developers/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -38,6 +38,7 @@ xili-language lets you create and manage multilingual WP site in several languag
 * A **localizable theme** : Every themes with **localization** (or translation-ready like twentyfourteen) can be easily used (and improved) for realtime multilingual sites.
 * A tool to translate .po files of the theme and built .mo files (poEdit or better xili-dictionary - *see below* ).
 * see [this page in wiki.xiligroup.org](http://wiki.xiligroup.org/index.php/Xili-language:_Getting_started,_prerequisites).
+* Php 7.2.
 
 = What to prepare before and during installation before activating =
 * verify that your theme is translation-ready. Collect .po files of theme for target languages.
@@ -319,9 +320,12 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 
 Also read latest news (and infos) on this [multilingual website](http://2014.extend.xiligroup.org/en/category/news/).
 
-= future version =
-* (2017-11-24)  in [github repository](https://github.com/dev-xiligroup/) and visible [here](http://2017.extend.xiligroup.org).
+= version 2.23.04 =
+* (2019-05-13) Rewriting source code with WordPress Standards PHP Code Sniffer is quite achieved. Compatibility is improved with latest PHP 5.2. and latest bundled themes. Previous files are splitted. More echoing secure functions are introduced. Today, use of Classic Editor is recommanded.
+
+* Sources in [github repository](https://github.com/dev-xiligroup/) and visible [here](http://2017.wp.xiligroup.org) or . [here](http://2019.wp.xiligroup.org)
 * first tests with twentyseventeen bundled theme [2017-xili](https://github.com/dev-xiligroup/twentyseventeen-xili)
+* first tests with twentynineteen bundled theme [2019-xili](https://github.com/dev-xiligroup/twentynineteen-xili)
 
 = version 2.22.10 =
 * deeper tests with 4.9
@@ -362,7 +366,7 @@ See [changelog.txt](https://plugins.svn.wordpress.org/xili-language/trunk/change
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 2017-07-18 - MS - dev.xiligroup.com
+© 2019-05-13 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.
@@ -426,4 +430,4 @@ See also the [dev.xiligroup Forum](http://dev.xiligroup.com/?forum=xili-language
 
 * Tags from previous readme : theme, post, plugin,posts,page,category,admin, bilingual, dictionary,.po file, widget,international, i18n, l10n, WP network, multisite, blogroll, japanese, khmer, rtl, translation-ready, bbpress, jetpack, polylang
 
-© 2008-2017 - MS - dev.xiligroup.com
+© 2008-2019 - MS - dev.xiligroup.com
