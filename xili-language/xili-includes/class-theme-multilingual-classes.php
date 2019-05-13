@@ -655,7 +655,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 			// section #3 - widgets
 			if ( $this->customize_clone_widget_containers ) {
 
-				add_settings_section( 'xili_option_section_3', __( 'Sidebars', 'xili-language' ), array( $this, 'xili_display_one_section'), $this->settings_name );
+				add_settings_section( 'xili_option_section_3', __( 'Sidebars', 'xili-language' ), array( $this, 'xili_display_one_section' ), $this->settings_name );
 
 				foreach ( $wp_registered_sidebars as $one_key => $one_sidebar ) {
 					if ( false === strpos( $one_key, '_' ) ) {
@@ -665,12 +665,12 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 						$field_args = array(
 							'option_name' => $this->settings_name,
 							/* translators: */
-							'title'		=> sprintf( xl_esc_html__( 'Instancing widget named %s:', 'xili-language' ) , '<strong> ' . $one_sidebar['name'] . '</strong>' ),
+							'title'     => sprintf( xl_esc_html__( 'Instancing widget named %s:', 'xili-language' ), '<strong> ' . $one_sidebar['name'] . '</strong>' ),
 							'type'      => 'checkbox',
 							'id'        => $indice,
 							'name'      => $indice,
 							/* translators: */
-							'desc'      => sprintf( xl_esc_html__( 'Instantiation widget named %s for each language.', 'xili-language' ) , '<strong> ' . $one_sidebar['name'] . '</strong>' ),
+							'desc'      => sprintf( xl_esc_html__( 'Instantiation widget named %s for each language.', 'xili-language' ), '<strong> ' . $one_sidebar['name'] . '</strong>' ),
 							'std'       => 'sidebar_clone',
 							'label_for' => $indice,
 							'class'     => 'css_class',
@@ -730,7 +730,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 					'id' => 'no_header_image',
 					'name' => 'no_header_image',
 					/* translators: */
-					'desc' => xl__( 'This theme does not contains header image !', $this->admin_ui_domain ) . '<br />' . sprintf( xl__( 'The images must be uploaded (and cropped) in the %1$sheader settings%2$s page.', $this->admin_ui_domain), '<a href="' . $header_setting_url . '">' ,'</a>' ),
+					'desc' => xl__( 'This theme does not contains header image !', $this->admin_ui_domain ) . '<br />' . sprintf( xl__( 'The images must be uploaded (and cropped) in the %1$sheader settings%2$s page.', $this->admin_ui_domain ), '<a href="' . $header_setting_url . '">', '</a>' ),
 
 					'label_for' => 'no_header_image',
 					'class' => 'css_class',
@@ -767,7 +767,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 						'type'      => 'checkbox',
 						'id'        => 'perma_ok',
 						'name'      => 'perma_ok',
-						'desc'      => xl_esc_html__( 'If checked, xili-language incorporate language in permalinks... (premium services for donators, see docs)', $this->admin_ui_domain),
+						'desc'      => xl_esc_html__( 'If checked, xili-language incorporate language in permalinks... (premium services for donators, see docs)', $this->admin_ui_domain ),
 						'std'       => '1', // like via customizer
 						'label_for' => 'perma_ok',
 						'class'     => 'css_class permalinks-set',
@@ -784,7 +784,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 
 			switch ( $section['id'] ) {
 				case 'xili_option_section_1':
-					echo '<p><span class="triangle"></span>' . __( 'Some settings for visitors..', 'xili-language' ) . '</p>';
+					echo '<p><span class="triangle"></span>' . esc_html__( 'Some settings for visitors..', 'xili-language' ) . '</p>';
 					break;
 				case 'xili_option_section_2':
 						/* translators: */
@@ -821,7 +821,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 			switch ( $type ) {
 
 				case 'message':
-					echo ( $desc != '' ) ? "<span class='description'>$desc</span>" : '...';
+					echo ( '' != $desc) ? "<span class='description'>$desc</span>" : '...';
 					break;
 
 				case 'text':
@@ -849,7 +849,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 
 					foreach ( $option_values as $value => $content ) {
 
-						echo "<option value='$value' " . selected ( $set , $value , false) . ">$content</option>";
+						echo "<option value='$value' " . selected( $set, $value , false ) . ">$content</option>";
 					}
 
 					echo '</select>';
@@ -934,7 +934,7 @@ if ( ! class_exists( 'xili_language_theme_options_admin' ) ) {
 			echo "<option value='' >" . xl__( 'Select language...', $this->admin_ui_domain ) . '</option>';
 			foreach ( $option_values as $value => $language ) {
 
-				echo "<option value='$value' " . selected ( $set , $value , false) . '>' . $language->description . "</option>";
+				echo "<option value='$value' " . selected( $set, $value, false ) . '>' . $language->description . "</option>";
 			}
 			echo '</select>';
 			echo ( '' != $desc ) ? "<br /><span class='description'>$desc</span>" : '';
