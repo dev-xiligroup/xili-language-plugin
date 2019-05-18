@@ -15,8 +15,10 @@ The other files are available for comments or fixes. Only the version in [WordPr
 
 ## Master Branch
 
-Since 2019-05-10, master branch contains dev version 2.23.x +. Contains latest dev with rewritten sources code with [WP Coding Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards). 
-**REQUIRES PHP 7.2+ !** 
+Since 2019-05-10, master branch contains dev version 2.23.x +. Contains latest dev with rewritten sources code with [WP Coding Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
+ 
+**REQUIRES PHP 7.1+ !**
+
 **pre-tested with WP 5.2**
 
 Since 2016-12-14, master branch contains dev version 2.22.1+ with some futures new features and fixes for WP 4.6 to now (April 2018) WP 4.9.5.
