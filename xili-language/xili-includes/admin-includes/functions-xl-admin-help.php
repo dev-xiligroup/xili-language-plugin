@@ -1,6 +1,6 @@
 <?php
 /**
- * XL Admin class help adn pointer functions
+ * XL Admin class help and pointer functions
  *
  * @package Xili-Language
  * @subpackage admin
@@ -210,10 +210,12 @@ function xl_create_library_of_alert_messages( &$admin_messages, $wikilink = '#' 
 function xl_localize_admin_js( $case_news, $news_id, &$xili_language_admin ) {
 	$about = esc_attr__( 'Docs about xili-language', 'xili-language' );
 
-	//$pointer_Offset = '';
 	$pointer_edge = '';
 	$pointer_at = '';
 	$pointer_my = '';
+	$pointer_div = '';
+	$pointer_dismiss = '';
+
 	switch ( $case_news ) {
 
 		case 'xl_new_version':
@@ -370,7 +372,6 @@ function xl_localize_admin_js( $case_news, $news_id, &$xili_language_admin ) {
 		'pointerEdge' => ( '' == $pointer_edge ) ? 'top' : $pointer_edge,
 		'pointerAt' => ( '' == $pointer_at ) ? 'left top' : $pointer_at,
 		'pointerMy' => ( '' == $pointer_my ) ? 'left top' : $pointer_my,
-		// 'pointerOffset' => $pointer_Offset, deprecated
 		'newsID' => $news_id,
 	);
 }

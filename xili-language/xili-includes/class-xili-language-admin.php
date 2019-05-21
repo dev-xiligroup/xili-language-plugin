@@ -1111,7 +1111,7 @@ class Xili_Language_Admin extends Xili_Language {
 									/* translators: */
 									esc_html__( 'Development until this version (%1$s) are documented here %2$s and inside sources.', 'xili-language' ),
 									XILILANGUAGE_VER,
-									'<a href="' . $this->repositorylink . 'changelog/" title="' . $this->changelog . '" >'.$this->changelog . '</a>'
+									'<a href="' . $this->repositorylink . 'changelog/" title="' . $this->changelog . '" >' . $this->changelog . '</a>'
 								);
 								?>
 								</p>
@@ -2674,7 +2674,7 @@ class Xili_Language_Admin extends Xili_Language {
 				<p class="width23 boldtext">
 				<?php
 				/* translators: */
-				printf( esc_html__( 'This tab is added to help aware webmaster to find WP core MO files from %1$s Automattic SVN server %2$s or %3$s GlotPress server%2$s. <br />Be aware that files are not always available for the current WP version (%4$s).<br /> So, the rules for Automattic SVN are set to find the most recent version equal or below the current (exp. 3.5.x or 3.4.x for 3.6). Only check the wished files if language is used in dashboard or default theme (2011, 2012,… ).', 'xili-language' ), '<a href="http://svn.automattic.com/wordpress-i18n/" target="_blank">', '</a>', '<a href="http://translate.wordpress.org/projects/wp" target="_blank">', $wp_version );
+				printf( __( 'This tab is added to help aware webmaster to find WP core MO files from %1$s Automattic SVN server %2$s or %3$s GlotPress server%2$s. <br />Be aware that files are not always available for the current WP version (%4$s).<br /> So, the rules for Automattic SVN are set to find the most recent version equal or below the current (exp. 3.5.x or 3.4.x for 3.6). Only check the wished files if language is used in dashboard or default theme (2011, 2012,… ).', 'xili-language' ), '<a href="http://svn.automattic.com/wordpress-i18n/" target="_blank">', '</a>', '<a href="http://translate.wordpress.org/projects/wp" target="_blank">', $wp_version );
 				echo '<br />' . esc_html__( 'In GlotPress, if nothing found in known versions, the /dev/ subfolder will be explored.', 'xili-language' );
 				echo '<br /><strong>' . esc_html__( 'Be aware that choosen files will be downloaded in Core or Theme languages sub-folder. Verify folder rights !', 'xili-language' ) . '</strong>';
 
