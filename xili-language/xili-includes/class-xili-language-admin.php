@@ -81,7 +81,7 @@ class Xili_Language_Admin extends Xili_Language {
 	public $news_case = array();
 	public $admin_messages = array(); //set in #491
 	public $user_locale = 'en_US';
-	public $embedded_themes = array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfourteen', 'twentyfifteen', 'twentysixteen' ); // bundled themes
+	public $embedded_themes = array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfourteen', 'twentyfifteen', 'twentysixteen', 'twentyseventeen', 'twentynineteen' ); // bundled themes
 
 	public $subpage_titles = array(); // see add_menu_settings_pages
 	public $xl_tabs = array();
@@ -2492,7 +2492,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 						</li><li>
 							<label title="<?php echo $language->name; ?>" class="menu-item-title menu-item-title-ok">
-								<input type="checkbox" class="menu-item-checkbox menu-check-ok" name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-object-id]" value="-1">&nbsp;&nbsp;<?php _e('Check before adding to menu'); ?>
+								<input type="checkbox" class="menu-item-checkbox menu-check-ok" name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-object-id]" value="-1">&nbsp;&nbsp;<?php _e( 'Check before adding to menu' ); ?>
 							</label>
 							<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-type]" value="custom">
 							<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $_nav_menu_placeholder; ?>][menu-item-title]" value="<?php echo $this->insertion_point_box_title_menu; ?>">
