@@ -4416,6 +4416,8 @@ class Xili_Language {
 					$new_lang_menu_item->menu_item_parent = $menu_object->menu_item_parent;
 					$new_lang_menu_item->db_id = $menu_object->db_id;
 					$new_lang_menu_item->target = $menu_object->target;
+					$new_lang_menu_item->xfn = $menu_object->xfn; // 2.23
+					$new_lang_menu_item->current = $menu_object->current; // 2.23
 
 					$new_lang_menu_item->classes = array_merge( $menu_object->classes, explode( ' ', $class ) );
 
@@ -4532,7 +4534,8 @@ class Xili_Language {
 							$new_lang_menu_item->menu_item_parent = $menu_object->menu_item_parent;
 							$new_lang_menu_item->db_id = $menu_object->db_id;
 							$new_lang_menu_item->target = $menu_object->target;
-
+							$new_lang_menu_item->xfn = $menu_object->xfn; // 2.23
+							$new_lang_menu_item->current = $menu_object->current; // 2.23
 							$new_lang_menu_item->classes = array_merge( $menu_object->classes, explode( ' ', $class ) );
 
 							$new_sorted_menu_items[] = $new_lang_menu_item;
