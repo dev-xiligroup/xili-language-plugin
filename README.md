@@ -1,11 +1,21 @@
 # xili-language-plugin
-multilingual plugin for WordPress since 2009
-The first using custom taxonomy introduced in WP 2.3 (here named language).
+multilingual plugin for WordPress since 2009.
+
+The first wp plugin based on custom taxonomy introduced in WP 2.3 (here named language).
+
+This version 2.23+ contains new features to describe and use languages. Language is now an object (defined in class Xili-Language-Term ) containing all properties of a language as native name or ISO series and more and more (*).
+
+As projected from the beginning (2009), it is now possible **to assign multiple languages** to an article or a page. Very useful when making a documentary website with articles containing quotes in another language. **xili-language is the only one to offer this feature**!
+
+Basically, xili-language use ISO / WP locale (as fr_FR ou en_US)  as slug in links and queries. **xili-language is the only one to offer alias feature** and you can create your alias per language.
+
+**Gutenberg** introduced considerable upheaval in WP 5+. It was necessary to wait for the version 5.1+ to regain stability and consider updating the plugins. Now, with Classic Editor, you will find the same comfort of use as before. 
+
 
 The readme file is now one of the files of plugin opened for GitHub contributors to improve this content in english.
 When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-language/), the text is divided in tabs.
 
-The other files are available for comments or fixes. Only the version in [WordPress xili-language repository](https://wordpress.org/plugins/xili-language/) is for use.
+The other files are available for comments or fixes. Only the version in [WordPress xili-language repository](https://wordpress.org/plugins/xili-language/) is for use with previous features.
 
 ## Latest notes 
 ### 20190430 - Customizer, in admin side, to work well, needs two settings : 
