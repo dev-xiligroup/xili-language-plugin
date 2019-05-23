@@ -365,11 +365,18 @@ class Xili_Language {
 					$this->xili_settings['show_page_on_front_array'] = array(); // 2.21
 				}
 			}
-			// 2.22
-			if ( version_compare( $this->xili_settings['version'], '2.23', '<' ) ) {
-				$this->xili_settings['language_objects_list'] = array();
-				$this->xili_settings['multiple_lang'] = '';
-				$this->xili_settings['version'] = '2.23';
+			// lastest version
+			$latest_xl_version = XILILANGUAGE_VER;
+
+			if ( version_compare( $this->xili_settings['version'], $latest_xl_version, '<' ) ) {
+				if ( ! isset( $this->xili_settings['language_objects_list'] ) ) {
+					$this->xili_settings['language_objects_list'] = array();
+				}
+				if ( ! isset( $this->xili_settings['multiple_lang'] ) ) {
+					$this->xili_settings['multiple_lang'] = '';
+				}
+				$this->xili_settings['specific_widget'] = $this->xili_widgets; // class renaming
+				$this->xili_settings['version'] = $latest_xl_version;
 				$this->update_new_term_metas = true;
 				set_transient( '_xl_activation_redirect', 2, 30 ); // 2.21 - 2 - 2 = updated
 			}
@@ -377,7 +384,7 @@ class Xili_Language {
 				update_option( 'xili_language_settings', $this->xili_settings );
 			}
 			// redundant !
-			if ( $this->xili_settings['version'] !== '2.23' ) {
+			if ( $latest_xl_version != $this->xili_settings['version'] ) {
 				// repair or restart from new
 				$this->xili_settings = $this->initial_settings(); // 2.22
 				update_option( 'xili_language_settings', $this->xili_settings );
@@ -601,7 +608,7 @@ class Xili_Language {
 	private function initial_settings() {
 		return array(
 			'taxonomy'                 => 'language',
-			'version'                  => '2.23',
+			'version'                  => XILILANGUAGE_VER,
 			'reqtag'                   => 'lang', // query_var
 			'browseroption'            => '',
 			'authorbrowseroption'      => '',

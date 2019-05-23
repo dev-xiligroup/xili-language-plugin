@@ -271,6 +271,10 @@ class XL_Permalinks_Rules {
 	 */
 	public function insert_lang_tag_root( $url, $path, $orig_scheme, $blog_id ) {
 
+		if ( ! isset( $xili_language->xili_settings['multilingual_custom_post'] ) ) {
+			return $url;
+		}
+
 		if ( true === apply_filters( 'xili_json_dont_insert_lang_tag_root', false, $url, $path, $orig_scheme, $blog_id ) ) {
 			return $url; // for JSON REST API 2.16.5
 		}
@@ -315,7 +319,6 @@ class XL_Permalinks_Rules {
 			$tax_base_slash[] = '\/' . $base . '\/';
 		}
 		$pattern_tax = '/(' . implode( '|', $tax_base_slash ) . ')/'; // add / around
-
 
 		if ( class_exists( 'bbpress' ) ) {
 
