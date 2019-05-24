@@ -1007,7 +1007,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 		$this->changelog = __( 'Changelog tab of xili-language', 'xili-language' );
 
-		wp_register_style( 'xl_welcome_stylesheet', $this->plugin_url . '/xili-css/xl-welcome-style.css' );
+		wp_register_style( 'xl_welcome_stylesheet', $this->plugin_url . '/xili-css/xl-welcome-style.css', XILILANGUAGE_VER );
 		$transient = get_transient( '_xl_activation_redirect' );
 		if ( ! $transient || is_network_admin() || isset( $_GET['activate-multi'] ) ) {
 			return;
@@ -2280,33 +2280,35 @@ class Xili_Language_Admin extends Xili_Language {
 	}
 
 	// prepares javascript to modify the languages list menu item
+	// modified for block - 2019-05-24
 	public function admin_enqueue_menu_script() {
 		$screen = get_current_screen();
-		if ( 'nav-menus' != $screen->base ) {
-			return;
-		}
-
 		$suffix = defined( 'WP_DEBUG' ) && WP_DEBUG ? '.dev' : '.min';
-		wp_enqueue_script( 'xllist_nav_menu', plugin_dir_url( XILILANGUAGE_PLUGIN_FILE ) . 'js/nav-menu' . $suffix . '.js', array( 'jquery' ), XILILANGUAGE_VER );
+		if ( $this->is_block_editor_active( true ) ) {
+				wp_enqueue_script( 'xl-block-editor', plugin_dir_url( XILILANGUAGE_PLUGIN_FILE ) . 'js/xili-block-editor' . $suffix . '.js', array( 'wp-api-fetch' ), XILILANGUAGE_VER );
+		} elseif ( 'nav-menus' == $screen->base ) {
 
-		$data = array();
-		$data['strings'][0] = $this->insertion_point_box_title;
-		$data['strings'][1] = esc_js( __( 'The languages list will be inserted here and :', 'xili-language' ) );
-		$data['strings'][2] = esc_js( __( ' (Hidden input items below will be used for live menu generating.)', 'xili-language' ) );
+			wp_enqueue_script( 'xllist_nav_menu', plugin_dir_url( XILILANGUAGE_PLUGIN_FILE ) . 'js/nav-menu' . $suffix . '.js', array( 'jquery' ), XILILANGUAGE_VER );
 
-		$data['strings'][3] = $this->insertion_point_box_title_page;
-		$data['strings'][4] = esc_js( __( 'The list of a sub-selection of pages will be inserted here according current language of webpage.', 'xili-language' ) );
-		$data['strings'][5] = esc_js( __( 'This is an experimental feature.', 'xili-language' ) );
+			$data = array();
+			$data['strings'][0] = $this->insertion_point_box_title;
+			$data['strings'][1] = esc_js( __( 'The languages list will be inserted here and :', 'xili-language' ) );
+			$data['strings'][2] = esc_js( __( ' (Hidden input items below will be used for live menu generating.)', 'xili-language' ) );
 
-		$data['strings'][6] = $this->insertion_point_box_title_menu;
-		$data['strings'][7] = esc_js( __( 'One menu from this list of menus will be inserted here according current language of displayed webpage.', 'xili-language' ) );
-		$data['strings'][8] = esc_js( __( 'This is an experimental powerful feature for dynamic menus.', 'xili-language' ) );
-		$data['strings'][9] = $this->menu_slug_sep; // 2.12.2
-		foreach ( $this->langs_ids_array as $slug => $id ) {
-			$data['strings'][10][ $id ] = $slug;
+			$data['strings'][3] = $this->insertion_point_box_title_page;
+			$data['strings'][4] = esc_js( __( 'The list of a sub-selection of pages will be inserted here according current language of webpage.', 'xili-language' ) );
+			$data['strings'][5] = esc_js( __( 'This is an experimental feature.', 'xili-language' ) );
+
+			$data['strings'][6] = $this->insertion_point_box_title_menu;
+			$data['strings'][7] = esc_js( __( 'One menu from this list of menus will be inserted here according current language of displayed webpage.', 'xili-language' ) );
+			$data['strings'][8] = esc_js( __( 'This is an experimental powerful feature for dynamic menus.', 'xili-language' ) );
+			$data['strings'][9] = $this->menu_slug_sep; // 2.12.2
+			foreach ( $this->langs_ids_array as $slug => $id ) {
+				$data['strings'][10][ $id ] = $slug;
+			}
+			// send all these data to javascript
+			wp_localize_script( 'xllist_nav_menu', 'xili_data', $data );
 		}
-		// send all these data to javascript
-		wp_localize_script( 'xllist_nav_menu', 'xili_data', $data );
 
 	}
 
@@ -3831,7 +3833,7 @@ class Xili_Language_Admin extends Xili_Language {
 
 		<fieldset class="box"><legend><?php esc_html_e( 'Translation domains settings', 'xili-language' ); ?></legend><p>
 			<?php esc_html_e( 'For experts in multilingual CMS: Choose the rule to modify domains switching.', 'xili-language' ); ?><br />
-			<em><?php /* translators: */ printf( __( 'Some plugins are well built to be translation ready. On front-end side, xili-language is able to switch the text_domain of the good plugin file or to the local theme_domain. So, if terms (and translations) are available in these .mo files, these terms are displayed in the right language. Rule for plugins without front-end text don’t need to be changed. Others need modification of php source via a customized filter (add_action).<br />More infos in sources and perhaps soon in <a href=\"%s\">wiki</a>.', 'xili-language' ), $this->wikilink ); ?>
+			<em><?php /* translators: */ printf( __( 'Some plugins are well built to be translation ready. On front-end side, xili-language is able to switch the text_domain of the good plugin file or to the local theme_domain. So, if terms (and translations) are available in these .mo files, these terms are displayed in the right language. Rule for plugins without front-end text don’t need to be changed. Others need modification of php source via a customized filter (add_action).<br />More infos in sources and perhaps soon in <a href="%s">wiki</a>.', 'xili-language' ), $this->wikilink ); ?>
 			<br /><?php esc_html_e( 'Sometime languages sub-folder (Domain Path) containing .mo files is not well defined in plugin source header. So, after looking inside plugin folder, insert the good one between / !', 'xili-language' ); ?><br />
 			</em><br /><br />
 			<table class="widefat trans-domain"><thead>
@@ -5218,7 +5220,7 @@ class Xili_Language_Admin extends Xili_Language {
 		}
 		// build now default style
 		if ( $this->exists_style_ext && ( $this->style_folder != $this->plugin_url ) ) {
-			wp_register_style( 'xili_language_stylesheet', $this->style_folder . '/xili-css/xl-style.css' );
+			wp_register_style( 'xili_language_stylesheet', $this->style_folder . '/xili-css/xl-style.css', XILILANGUAGE_VER );
 		}
 	}
 
@@ -5396,7 +5398,7 @@ class Xili_Language_Admin extends Xili_Language {
 			$language_name = '<span class="lang-iso"><abbr class="abbr_name" title="' . $language->description . '">' . $language->name . '</abbr></span>';
 
 			$checkline = '<label title="' . $language->description . '" class="checklang" for="xili_language_check_' . $language->slug . '" class="selectit"></label>
-			<input type="radio" id="xili_language_check_' . $language->slug . '" title="' . $language->description . '" name="xili_language_set" value="' . $language->slug . '"  ' . $checked . ' />
+			<input class="main-language" type="radio" id="xili_language_check_' . $language->slug . '" title="' . $language->description . '" name="xili_language_set" value="' . $language->slug . '"  ' . $checked . ' />
 			&nbsp;&nbsp;' . $language_name;
 
 			$hiddeninput = '<input class="inputid" id="xili_language_' . QUETAG . '-' . $language->slug . '" name="xili_language_' . QUETAG . '-' . $language->slug . '" value="" />
@@ -5513,8 +5515,12 @@ class Xili_Language_Admin extends Xili_Language {
 			} else { // no linked post
 
 				if ( in_array( $post->post_status, array( 'draft', 'pending', 'future', 'publish', 'private' ) ) && '' != $postlang ) {
-
-					$search = '<a class="hide-if-no-js" onclick="findPosts.open( \'lang[]\',\'' . $language->slug . '\' );return false;" href="#the-list" title="' . esc_attr__( 'Search linked post', 'xili-language' ) . '"> ' . esc_html__( 'Search' ) . '</a>';
+					// Block editor in WP 5.0+
+					if ( $this->is_block_editor_active( true ) ) {
+						$search = ''; // findPosts dont work !
+					} else {
+						$search = '&nbsp;|&nbsp;<a class="hide-if-no-js" onclick="findPosts.open( \'lang[]\',\'' . $language->slug . '\' );return false;" href="#the-list" title="' . esc_attr__( 'Search linked post', 'xili-language' ) . '"> ' . esc_html__( 'Search' ) . '</a>';
+					}
 
 					echo '<tr' . $tr_class . '><th>' . $checkline . '</th>';
 					if ( $this->multiple_lang ) {
@@ -5525,7 +5531,7 @@ class Xili_Language_Admin extends Xili_Language {
 					/* translators: */
 					. sprintf( esc_html__( 'not yet translated in %s', 'xili-language' ), $language->description )
 					/* translators: */
-					. '&nbsp;&nbsp;' . sprintf( '<a href="%s" title="%s">' . $creation_edit . '</a>', 'post.php?post=' . $post_id . '&action=edit&xlaction=transcreate&xllang=' . $language->slug, sprintf( esc_html__( 'For create a linked draft translation in %s', 'xili-language' ), $language->name ) ) . '&nbsp;|&nbsp;' . $search
+					. '&nbsp;&nbsp;' . sprintf( '<a href="%s" title="%s">' . $creation_edit . '</a>', 'post.php?post=' . $post_id . '&action=edit&xlaction=transcreate&xllang=' . $language->slug, sprintf( esc_html__( 'For create a linked draft translation in %s', 'xili-language' ), $language->name ) ) . $search
 					. '</td><td>&nbsp;</td><td>'
 					. '&nbsp;'
 					. '</td></tr>';
@@ -5568,6 +5574,31 @@ class Xili_Language_Admin extends Xili_Language {
 	}
 
 	/**
+	 * test if bloc editor is active
+	 *
+	 * @since 2.23
+	 *
+	 * @param  $test_post_type true if need to test custom post type
+	 */
+	public function is_block_editor_active( $test_post_type = false ) {
+		$screen = get_current_screen();
+		if ( empty( $screen ) ) {
+			return false;
+		}
+		$post_type_valid = false;
+		$custompoststype_keys = array_keys( $this->authorized_custom_post_type() );
+		if ( $test_post_type && ! empty( $screen->post_type ) && in_array( $screen->post_type, $custompoststype_keys ) ) {
+			$post_type_valid = true;
+		}
+		// Block editor in WP 5.0+
+		if ( $post_type_valid && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * display or not multiple language checkbox
 	 *
 	 * @since 2.22
@@ -5591,7 +5622,7 @@ class Xili_Language_Admin extends Xili_Language {
 		$checked = checked( $state, 1, false );
 		$title = ( $checked ) ? '' : sprintf( 'title="%s"', __( 'check to add a secondary language', 'xili-language' ) );
 		// create box
-		$cell_content .= '<input ' . $readonly . $title . ' ' . $checked . ' type="checkbox" name="multi_lang_' . $lang_slug . '" value="' . $lang_slug . '">';
+		$cell_content .= '<input class="other-language" ' . $readonly . $title . ' ' . $checked . ' type="checkbox" name="multi_lang_' . $lang_slug . '" value="' . $lang_slug . '">';
 
 		$cell_content .= '</td>';
 		return $cell_content;
@@ -5617,7 +5648,7 @@ class Xili_Language_Admin extends Xili_Language {
 		}
 		?>
 		</p>
-		<label for="xili_language_check" class="selectit"><?php esc_html_e( 'set post to:', 'xili-language' ); ?>&nbsp;<input id="xili_language_check" name="xili_language_set" type="radio" value="undefined" <?php checked( $notundefinedlang, '', true ); ?> />&nbsp;<?php esc_html_e( 'undefined', 'xili-language' ); ?><?php echo $un_id; ?></label>
+		<label for="xili_language_check" class="selectit"><?php esc_html_e( 'set post to:', 'xili-language' ); ?>&nbsp;<input class="main-language" id="xili_language_check" name="xili_language_set" type="radio" value="undefined" <?php checked( $notundefinedlang, '', true ); ?> />&nbsp;<?php esc_html_e( 'undefined', 'xili-language' ); ?><?php echo $un_id; ?></label>
 		<?php
 	}
 
@@ -6016,7 +6047,7 @@ class Xili_Language_Admin extends Xili_Language {
 						wp_remove_object_terms( $post_id, $onelang, TAXONAME );
 					}
 				}
-				$this->multiple_language_update_meta( $post_id, $sellang, 0, 'delete' );
+				$this->multiple_language_update_meta( $post_id, $sellang, 0, $mode );
 			} elseif ( 'delete' == $mode ) {
 				if ( ! isset( $_POST[ 'multi_lang_' . $sellang ] ) && ! isset( $_POST[ 'xili_language_' . QUETAG . '-' . $sellang ] ) ) {
 					wp_remove_object_terms( $post_id, $sellang, TAXONAME );
@@ -6080,9 +6111,12 @@ class Xili_Language_Admin extends Xili_Language {
 				}
 				return update_post_meta( $post_id, '_multiple_lang', $lang_array );
 			}
-		} elseif ( 'delete' == $mode ) {
+		} elseif ( 'delete' == $mode || 'undefine' == $mode ) {
 			$key = array_search( $lang_slug, $lang_array );
-			$new_lang_post = $this->get_post_language( $post_id );
+			$new_lang_post = '';
+			if ( 'delete' == $mode ) {
+				$new_lang_post = $this->get_post_language( $post_id );
+			}
 			if ( '' == $new_lang_post ) {
 				// ?? delete other secondary language ???
 				delete_post_meta( $post_id, '_multiple_lang' );
