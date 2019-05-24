@@ -372,7 +372,7 @@ class Xili_Language_Admin extends Xili_Language {
 			if ( '' != $translation_state && false !== strpos( $translation_state, 'initial' ) ) {
 				$perma = ( get_option( 'permalink_structure' ) ) ? __( '(permalink)', 'xili-language' ) : '';
 				?>
-				<p><label for="xl_permalink_option" class="selectit"><input name="xl_permalink_option" type="checkbox" id="xl_permalink_option" value="slug" /> <?php /* translators: */ printf( esc_html__( 'Renew slug %s with title', 'xili-language' ), $perma ); ?></label></p>
+				<p><label for="xl_permalink_option" class="selectit"><input class="renew-perma" name="xl_permalink_option" type="checkbox" id="xl_permalink_option" value="slug" /> <?php /* translators: */ printf( esc_html__( 'Renew slug %s with title', 'xili-language' ), $perma ); ?></label></p>
 				<?php
 			}
 		}
@@ -5564,6 +5564,11 @@ class Xili_Language_Admin extends Xili_Language {
 		?>
 		</tbody>
 		</table>
+		<?php
+			if ( $this->is_block_editor_active( true ) ) {
+				$this->post_submit_permalink_option();
+			}
+		?>
 		<div id="ajax-response"></div>
 			<?php
 			// ajax form

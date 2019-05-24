@@ -39,7 +39,7 @@ function getCurrentLanguage() {
  */
 jQuery( document ).ready(function( $ ) {
 	// savePost after changing the post's language and reload page for refreshing post translated data
-	$( '.main-language, .other-language' ).change(function() {
+	$( '.main-language, .other-language, .renew-perma' ).change(function() {
 		const select = wp.data.select;
 		const dispatch = wp.data.dispatch;
 		const subscribe = wp.data.subscribe;
