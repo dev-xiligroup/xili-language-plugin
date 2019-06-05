@@ -4,7 +4,7 @@ Donate link: http://dev.xiligroup.com/
 Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.9
 Tested up to: 5.2
-Stable tag: 2.23.11
+Stable tag: 2.23.12
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
@@ -27,8 +27,8 @@ xili-language lets you create and manage multilingual WP site in several languag
 * xili-language plugin works on Wordpress installation for WebApp with JSON REST API - see [changelog](https://wordpress.org/plugins/xili-language/#developers) because [WP JSON REST API](https://wordpress.org/plugins/json-rest-api/) 1.2.1 in under full development but yet powerful.
 * As *educational plateform* in constant changing since 2009, xili-language trilogy tries to use most of the WordPress Core functions and features (Custom taxonomy, API, metabox, pointer, help, pomo libraries, ...). The options are adjustable.
 
-= Version 2.23.04 =
-* Last Updated 2019-05-13
+= Version 2.23.12 =
+* Last Updated 2019-06-05
 * W A R N I N G - see [tab and chapters in changelog](https://wordpress.org/plugins/xili-language/#developers/)
 
 > For bbPress users, xili xl-bbp-addon plugin is no more a plugin. Components are optionally (if bbPress active) included. An option is also added in Experts tab of settings.
@@ -320,6 +320,8 @@ Since 2.8.8, xili-language is able to help you to download admin translation fil
 
 Also read latest news (and infos) on this [multilingual website](http://2014.extend.xiligroup.org/en/category/news/).
 
+= version 2.23.12 =
+* (2019-06-05) Big classes splitted in traits to organize functions...
 = version 2.23.04 =
 * (2019-05-13) Rewriting source code with WordPress Standards PHP Code Sniffer is quite achieved. Compatibility is improved with latest PHP 5.2. and latest bundled themes. Previous files are splitted. More echoing secure functions are introduced. Today, use of Classic Editor is recommanded.
 
@@ -366,7 +368,7 @@ See [changelog.txt](https://plugins.svn.wordpress.org/xili-language/trunk/change
 * …
 = 0.9.0 (2009-02-28) = first public release (beta)
 
-© 2019-05-13 - MS - dev.xiligroup.com
+© 2019-06-03 - MS - dev.xiligroup.com
 
 == Upgrade Notice ==
 Please read the readme.txt before upgrading.

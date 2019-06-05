@@ -5,12 +5,13 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.23.11
+Version: 2.23.12
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 190523 - 2.23.12 - traits introduced to split big classes
 # updated 190523 - 2.23.10 - rewritten - improvments in course
 # updated 190430 - 2.23.01 - begin php files rewritting - new files required
 
@@ -70,27 +71,17 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define( 'XILILANGUAGE_VER', '2.23.11' ); /* used in admin UI*/
+define( 'XILILANGUAGE_VER', '2.23.12' ); /* used in admin UI*/
 define( 'XILILANGUAGE_WP_VER', '4.9' ); /* minimal version - used in error - see at end */
 define( 'XILILANGUAGE_PHP_VER', '7.1.0' ); /* used in error - see at end */
 define( 'XILILANGUAGE_PREV_VER', '2.22.1' );
 define( 'XILILANGUAGE_WP_TESTED', '4.9 Tipton' ); /* 2.17.1 - used in version pointer infos */
 define( 'XILILANGUAGE_PLL_TESTED', '1.7.9' ); /* 2.20.3 - newest PLL tested */
 define( 'XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
-define( 'XILILANGUAGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'XILILANGUAGE_PLUGIN_URL', plugins_url( '', __FILE__ ) );
+define( 'XILILANGUAGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) ); /* with / at end */
+define( 'XILILANGUAGE_PLUGIN_URL', plugins_url( '', __FILE__ ) ); /* without / at end */
 define( 'XILILANGUAGE_PLUGIN_FILE', __FILE__ );
 
-/********************* the CLASS **********************/
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/class-xili-language.php';
-
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/functions-xl-taxonomies.php';
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/functions-xl-menus.php';
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/functions-xl-languages.php';
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/functions-xl-date-time.php';
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/functions-xl-permalinks.php';
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/functions-xl-compat.php';
-require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/class-xl-wp-locale.php';
 
 /**
  * instantiation of xili_language class
@@ -108,14 +99,38 @@ function xili_language_start() {
 		add_action( 'admin_notices', 'xili_language_need_31' );
 		return;
 	} else {
+
+		// TRAITS
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-flags.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-shortcodes.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-menus.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-taxinomies.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-comments.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-themes.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-links.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-head.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-widgets.php';
+
+		// Main class
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/class-xili-language.php';
+
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/class-xl-wp-locale.php';
+
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/xili-language-widgets.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/class-theme-multilingual-classes.php'; // since 2.20.0
+
+		// functions for devs...
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/functions-xl-taxonomies.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/functions-xl-menus.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/functions-xl-languages.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/functions-xl-date-time.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/functions-xl-compat.php';
+
 		// 2.21.2
 		if ( version_compare( $wp_version, 4.4, '>=' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'xili-includes/class-xili-language-term.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/class-xili-language-term.php';
 		}
 
-		// new sub-folder since 2.6
-		require_once plugin_dir_path( __FILE__ ) . 'xili-includes/xili-language-widgets.php';
-		require_once plugin_dir_path( __FILE__ ) . 'xili-includes/class-theme-multilingual-classes.php'; // since 2.20.0
 		/**
 		 * instantiation of xili_language class
 		 *
@@ -126,14 +141,30 @@ function xili_language_start() {
 		 * @param locale_method (true for cache compatibility... in current tests with johan.eenfeldt@kostdoktorn.se)
 		 * @param future version
 		 */
-
 		$xili_language = new Xili_Language( false, false );
 
 		if ( is_admin() ) {
-			$plugin_path = dirname( __FILE__ ); // w/o / at end
-			require $plugin_path . '/xili-includes/admin-includes/functions-xl-admin-help.php';
-			require $plugin_path . '/xili-includes/admin-includes/functions-xl-admin-pomo.php';
-			require $plugin_path . '/xili-includes/class-xili-language-admin.php';
+
+			// TRAITS
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-languages-settings.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-frontend-settings.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-expert-settings.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-language-files-settings.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-authoring-rules-settings.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-support.php';
+
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-page-sideboxes.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-menus-builder.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-language-links-settings.php';
+
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-post-edit-language.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-edit.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-media-settings.php';
+
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-pomo.php';
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/admin-includes/trait-xili-admin-help.php';
+			// core admin
+			require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/class-xili-language-admin.php';
 			$xili_language_admin = new Xili_Language_Admin( $xili_language );
 		}
 
@@ -157,6 +188,7 @@ function xili_language_start() {
  * xili-language is constructed only via plugins_loaded - not when plugin file is loaded
  *
  */
+require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/functions-xl-permalinks.php';
 add_action( 'plugins_loaded', 'xili_permalink_init', 1 );
 add_action( 'plugins_loaded', 'xili_language_start', 13 ); // before xili-dictionary (20) and xili_tidy_tags (15) - 2.7.1
 

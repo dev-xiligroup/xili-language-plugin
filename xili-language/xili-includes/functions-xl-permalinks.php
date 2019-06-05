@@ -13,7 +13,7 @@
 function xili_permalink_init() {
 	if ( get_option( 'permalink_structure' ) ) {
 
-		require_once XILILANGUAGE_PLUGIN_DIR . '/xili-includes/xili-permalinks-class.php';
+		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/xili-permalinks-class.php';
 
 		add_action( 'init', 'xl_permalinks_theme', 1 );
 	}
