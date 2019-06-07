@@ -243,7 +243,7 @@ trait Xili_Admin_Menus_Builder {
 					<?php } else { ?>
 						<li>
 							<label class="menu-item-title">
-								<?php esc_html__e( 'No menu is available. We must create them without assigning a theme location', 'xili-language' ); ?>
+								<?php esc_html_e( 'No menu is available. We must create them without assigning a theme location', 'xili-language' ); ?>
 							</label>
 						</li>
 					<?php } ?>

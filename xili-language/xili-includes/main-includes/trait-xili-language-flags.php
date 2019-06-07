@@ -2,7 +2,7 @@
 namespace Xili_Main;
 
 /**
- * @package class-xili-language-admin
+ * @package class-xili-language
  * functions for flags in front
  */
 trait Xili_Language_Flags {
