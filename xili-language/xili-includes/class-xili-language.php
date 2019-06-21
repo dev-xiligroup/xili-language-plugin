@@ -2466,6 +2466,7 @@ class Xili_Language {
 	 * @since 0.9.0
 	 * @updated 0.9.7.1 - 1.1.9 - 1.5.2 wpmu - 1.8.9.1 (domain select) - 2.8.3 (WP 3.5)
 	 * @updated 2.13.1 - thanks to Edouard
+	 * @updated 2.23.13 - thanks to Guy R. (review priority rules)
 	 * call by function xiliml_language_wp()
 	 * @param $curlang .
 	 */
@@ -2478,8 +2479,7 @@ class Xili_Language {
 			$themetextdomain = 'ttd-not-defined';
 		}
 		$langfolder = $this->xili_settings['langs_folder'];
-
-		$langfolder = ( '' == $langfolder ) ? '' : $langfolder;
+		//$langfolder = ( '' == $langfolder ) ? '' : $langfolder;
 
 		$filename = '';
 		if ( '' != $curlang ) {
@@ -2489,7 +2489,12 @@ class Xili_Language {
 		}
 
 		if ( '' != $filename ) {
-			$filename .= '.mo'; // xx_YY.mo
+			$filename .= '.mo';
+			$theme_local_mofile = str_replace( '//', '/', $this->get_template_directory . $langfolder . '/local-' . $filename );
+
+			$lang_dir_local_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-local-{$filename}";
+			$lang_dir_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
+			$lang_dir_parent_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
 
 			$mofile = $this->get_template_directory . $langfolder . "/$filename"; // only child or parent subfolder
 			$parent_mofile = ( is_child_theme() ) ? $this->get_parent_theme_directory . $this->xili_settings['parent_langs_folder'] . "/$filename" : '';
@@ -2502,50 +2507,66 @@ class Xili_Language {
 					load_textdomain( $themetextdomain, $wpmu_curdir . "/$filename" );
 				}
 			}
-
-			// local has ever priority
-			// 2.12.1 - now able to search in WP_LANG_DIR/themes/
-			if ( ! load_textdomain( $themetextdomain, $this->get_template_directory . $langfolder . '/local-' . $filename ) ) { // here to be the last value
-				$local_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-local-{$filename}";
-				load_textdomain( $themetextdomain, $local_mofile );
-			}
-
-			// if merging method with child theme set - 2.8.8
-			// parent mo downloaded with priority
-			if ( $parent_mofile && 'parent-priority' == $this->xili_settings['mo_parent_child_merging'] ) {
-				if ( ! load_textdomain( $themetextdomain, $parent_mofile ) ) {
-					// now same rules for parent file if not in parent theme dir // 2.16.0
-					$parent_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
-					load_textdomain( $themetextdomain, $parent_mofile );
-				}
-			}
-
-			// **** new files place since WP 3.5 = wp-content/languages/ and domain-xx_YY.mo **** //
-			// I10n.php says : Load the textdomain from the Theme provided location, or theme directory first
-			// $mofile = "{$path}/{$locale}.mo";
-			// if ( $loaded = load_textdomain($domain, $mofile) )
-			//		return $loaded;
-
-			// Else, load textdomain from the Language directory
-			// $mofile = WP_LANG_DIR . "/themes/{$domain}-{$locale}.mo";
-			// return load_textdomain($domain, $mofile);
-
-			// XL will follow the same way - if not, will try in WP_LANG_DIR - 2.8.3
-
-			if ( ! load_textdomain( $themetextdomain, $mofile ) ) {
-				$mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
-				if ( ! load_textdomain( $themetextdomain, $mofile ) ) {
-					// unload default language as admin - 2.22
-					unload_textdomain( $themetextdomain );
-				}
-			}
-			// parent mo downloaded without priority
-			if ( $parent_mofile && 'child-priority' == $this->xili_settings['mo_parent_child_merging'] ) {
-				if ( ! load_textdomain( $themetextdomain, $parent_mofile ) ) { // now same rules for parent file if not in parent theme dir // 2.16.0
-					$parent_mofile = WP_LANG_DIR . "/themes/{$themetextdomain}-{$filename}";
+			// child theme and priority
+			// @since 2.23.13 - rewritten (Thanks to Guy R.)
+			if ( is_child_theme() ) {
+				if ( 'child-priority' == $this->xili_settings['mo_parent_child_merging'] ) {
+					// unload_textdomain( $themetextdomain );
+					// LOCAL
+					if ( ! load_textdomain( $themetextdomain, $theme_local_mofile ) ) {
+						load_textdomain( $themetextdomain, $lang_dir_local_mofile );
+					}
+					// child
+					if ( ! load_textdomain( $themetextdomain, $mofile ) ) {
+						load_textdomain( $themetextdomain, $lang_dir_mofile );
+					}
+					// parent
 					if ( ! load_textdomain( $themetextdomain, $parent_mofile ) ) {
-						// unload default language as admin - 2.22
-						unload_textdomain( $themetextdomain );
+						// now same rules for parent file if not in parent theme dir // 2.16.0
+						load_textdomain( $themetextdomain, $lang_dir_parent_mofile );
+					}
+				} elseif ( 'parent-priority' == $this->xili_settings['mo_parent_child_merging'] ) {
+					// unload_textdomain( $themetextdomain );
+					// local
+					if ( ! load_textdomain( $themetextdomain, $theme_local_mofile ) ) {
+						// here to be the last value
+						load_textdomain( $themetextdomain, $lang_dir_local_mofile );
+					}
+					// parent
+					if ( ! load_textdomain( $themetextdomain, $parent_mofile ) ) {
+						// now same rules for parent file if not in parent theme dir // 2.16.0
+						load_textdomain( $themetextdomain, $lang_dir_parent_mofile );
+					}
+					// child
+					if ( ! load_textdomain( $themetextdomain, $mofile ) ) {
+						load_textdomain( $themetextdomain, $lang_dir_mofile );
+					}
+				} else {
+					// child in child langs subfolder
+					if ( ! load_textdomain( $themetextdomain, $mofile ) ) {
+						if ( ! load_textdomain( $themetextdomain, $lang_dir_mofile ) ) {
+							xili_xl_error_log( '# ' . __LINE__ . ' - this file is not found : ' . $mofile );
+						}
+					}
+					// and no priority for local
+					if ( ! load_textdomain( $themetextdomain, $theme_local_mofile ) ) {
+						// here to be the last value
+						load_textdomain( $themetextdomain, $lang_dir_local_mofile );
+					}
+				}
+			} else {
+				// theme w/o child
+				// local has no priority
+				// 2.12.1 - now able to search in WP_LANG_DIR/themes/
+
+				if ( ! load_textdomain( $themetextdomain, $theme_local_mofile ) ) {
+					// here to be the last value
+					load_textdomain( $themetextdomain, $lang_dir_local_mofile );
+				}
+
+				if ( ! load_textdomain( $themetextdomain, $mofile ) ) {
+					if ( ! load_textdomain( $themetextdomain, $lang_dir_mofile ) ) {
+						xili_xl_error_log( '# ' . __LINE__ . ' - this file is not found : ' . $mofile );
 					}
 				}
 			}

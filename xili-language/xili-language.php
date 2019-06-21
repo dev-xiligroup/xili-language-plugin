@@ -5,18 +5,19 @@ Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.23.12
+Version: 2.23.13
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
 */
 
+# updated 190620 - 2.23.13 - some fixes or format fixes
 # updated 190523 - 2.23.12 - traits introduced to split big classes
 # updated 190523 - 2.23.10 - rewritten - improvments in course
 # updated 190430 - 2.23.01 - begin php files rewritting - new files required
 
-# updated 190418 - 2.22.12 - tests wp5.11 - add 2019 bundled theme
-# updated 171208 - 2.22.11 - test wp4.9.1 - fixes live locale changing
+# updated 190418 - 2.22.12 - tests wp 5.11 - add 2019 bundled theme
+# updated 171208 - 2.22.11 - test wp 4.9.1 - fixes live locale changing
 # updated 170822 - 2.22.10 - fixes permalinks query_tags, add flags in assets (2017), pre-test wp4.9-alpha
 # updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
 # updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
@@ -71,7 +72,7 @@ Domain Path: /languages/
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-define( 'XILILANGUAGE_VER', '2.23.12' ); /* used in admin UI*/
+define( 'XILILANGUAGE_VER', '2.23.13' ); /* used in admin UI*/
 define( 'XILILANGUAGE_WP_VER', '4.9' ); /* minimal version - used in error - see at end */
 define( 'XILILANGUAGE_PHP_VER', '7.1.0' ); /* used in error - see at end */
 define( 'XILILANGUAGE_PREV_VER', '2.22.1' );
