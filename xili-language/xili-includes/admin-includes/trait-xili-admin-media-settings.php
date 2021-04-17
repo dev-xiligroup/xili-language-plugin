@@ -186,6 +186,11 @@ trait Xili_Admin_Media_Settings {
 		add_meta_box( 'xili_flag_as_attachment', __( 'Multilingual informations', 'xili-language' ), array( &$this, 'media_multilingual_infos_box' ), 'attachment', 'side', 'low' );
 	}
 
+	/**
+	 * Function media_multilingual_infos_box [to do].
+	 *
+	 * @param    <type> $post The post.
+	 */
 	public function media_multilingual_infos_box( $post ) {
 		$context = get_post_meta( $post->ID, '_wp_attachment_context', true );
 		$attachment_post_language = get_cur_language( $post->ID, 'slug' );
