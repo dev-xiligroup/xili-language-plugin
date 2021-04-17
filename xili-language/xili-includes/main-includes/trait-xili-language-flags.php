@@ -173,6 +173,18 @@ trait Xili_Language_Flags {
 				$default['css_li_a'] = 'display:inline-block; text-indent:-9998px; width:30px; background:transparent no-repeat center 13px; margin:0;';
 				$default['css_li_a_hover'] = 'background: no-repeat center 21px !important;';
 				break;
+			case 'twentytwenty': // 2.23.14
+				$default['css_ul_nav_menu'] = 'ul.primary-menu';
+				$default['css_li_hover'] = 'background-color:#f5f5f5;';
+				$default['css_li_a'] = 'display:inline-block; text-indent:-9998px; width:30px; background:transparent no-repeat center 1px; margin:0;';
+				$default['css_li_a_hover'] = 'background: no-repeat center 2px !important;';
+				break;
+			case 'twentytwentyone': // 2.23.14
+				$default['css_ul_nav_menu'] = 'ul.menu-wrapper';
+				$default['css_li_hover'] = 'background-color:#d1e4dd;';
+				$default['css_li_a'] = 'display:inline-block; text-indent:-9998px; width:30px; background:transparent no-repeat center 13px; margin:0;';
+				$default['css_li_a_hover'] = 'background: no-repeat center 15px !important;';
+				break;
 			case 'twentyfourteen':
 			default:
 		}
@@ -208,14 +220,18 @@ trait Xili_Language_Flags {
 
 	// when theme activated (after setup)
 	// 2.15.1
+	// 2.23.15 add 2020 2021.
+	/**
+	 * [bundled_themes_support_flag description]
+	 */
 	public function bundled_themes_support_flag() {
 		$current_parent_theme = get_option( 'template' );
 		$current_theme = get_option( 'stylesheet' );
-		if ( in_array( $current_parent_theme, array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen', 'twentyseventeen', 'twentynineteen' ) ) ) {
-			add_theme_support( 'custom_xili_flag' ); // same name as used in context of image
+		if ( in_array( $current_parent_theme, array( 'twentyten', 'twentyeleven', 'twentytwelve', 'twentythirteen', 'twentyfifteen', 'twentysixteen', 'twentyseventeen', 'twentynineteen', 'twentytwenty', 'twentytwentyone' ) ) ) {
+			add_theme_support( 'custom_xili_flag' ); // same name as used in context of image.
 		}
 
-		if ( in_array( $current_theme, array( 'twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili', 'twentyseventeen-xili', 'twentynineteen-xili' ) ) ) {
+		if ( in_array( $current_theme, array( 'twentyfourteen-xili', 'twentyfifteen-xili', 'twentysixteen-xili', 'twentyseventeen-xili', 'twentynineteen-xili', 'twentytwenty-xili', 'twentytwentyone-xili' ) ) ) {
 
 			remove_theme_support( 'custom_xili_flag' );
 			$args = array();
@@ -223,7 +239,7 @@ trait Xili_Language_Flags {
 
 			foreach ( $listlanguages as $one_language ) {
 				$path_root = get_stylesheet_directory();
-				$assets = ( in_array( $current_theme, array( 'twentyseventeen-xili', 'twentynineteen-xili' ) ) ) ? '/assets' : '';
+				$assets = ( in_array( $current_theme, array( 'twentyseventeen-xili', 'twentynineteen-xili', 'twentytwenty-xili', 'twentytwentyone-xili' ) ) ) ? '/assets' : '';
 				$path = '%2$s' . $assets . '/images/flags/' . $one_language->slug . '.png';
 
 				if ( file_exists( sprintf( $path, '', $path_root ) ) ) {
@@ -275,21 +291,21 @@ trait Xili_Language_Flags {
 							'lang' => $slug,
 							'src' => 1,
 						)
-					); // return size values
+					); // return size values.
 					$i++;
 				}
 				$url = do_shortcode( "[xili-flag lang={$slug}]" );
 				if ( ! $url ) {
-					// temporary search a file in plugin itself
+					// temporary search a file in plugin itself.
 					$url = $this->plugin_url . '/xili-css/flags/' . $slug . '.png';
 					if ( ! file_exists( $this->plugin_path . 'xili-css/flags/' . $slug . '.png' ) ) {
-						$url = $this->plugin_url . '/xili-css/flags/xx_xx.png'; // show a dummy image
+						$url = $this->plugin_url . '/xili-css/flags/xx_xx.png'; // show a dummy image.
 					}
 				}
 				$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a {background-image: url('{$url}') }\n";
 				$loop_style_lines .= '.xililanguagelist ' . "li.lang-{$slug} a:hover {background-image: url('{$url}') !important;}\n";
 			}
-			// common lines
+			// common lines.
 			$style_lines .= '.xililanguagelist li[class*="lang-"]:hover {background-color:#f5f5f5;}' . "\n";
 			$style_lines .= '.xililanguagelist li[class*="lang-"] a {background:transparent no-repeat center 1px; margin:0 1px;}' . "\n";
 			if ( $img_infos ) {
@@ -298,7 +314,7 @@ trait Xili_Language_Flags {
 				$style_lines .= '.xililanguagelist li[class*="lang-"] a {width:18px; height:13px;}' . "\n";
 			}
 			$style_lines .= '.xililanguagelist li[class*="lang-"] a:hover {background:transparent no-repeat; }' . "\n";
-			// loop lines after
+			// loop lines after.
 			$style_lines .= $loop_style_lines;
 
 			$style_lines .= '</style>';

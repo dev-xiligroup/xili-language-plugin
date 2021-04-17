@@ -374,10 +374,10 @@ trait Xili_Language_Themes {
 			} else {
 				$checked = checked( $language->slug, $this->curlang, false );
 			}
-			$a .= $before . '<input onClick="if(this.form.clear.checked) { this.form.clear.checked = false; }" type="radio" name="' . QUETAG . '" value="' . $language->slug . '" id="' . QUETAG . '-' . $language->slug . '" ' . $checked . ' />' . xl_esc_attr_x( $language->description, 'searchform', $this->thetextdomain ) . '&nbsp;' . $after;
+			$a .= $before . '<input onClick="if(this.form.clear.checked) { this.form.clear.checked = false; }" type="radio" name="' . QUETAG . '" value="' . $language->slug . '" id="' . QUETAG . '-' . $language->slug . '" ' . $checked . ' /><label for="' . QUETAG . '-' . $language->slug . '" >' . xl_esc_attr_x( $language->description, 'searchform', $this->thetextdomain ) . '</label>' . $after;
 		}
 		// new javascript to uncheck radio buttons	on form named searchform form.
-		$a .= $before . '<input type="radio" name="clear" onClick="for (var i=0; i < this.form.' . QUETAG . '.length ; i++) { if(this.form.' . QUETAG . '[i].checked) { this.form.' . QUETAG . '[i].checked = false; } };" />&nbsp;' . xl__( 'All', $this->thetextdomain ) . $after;
+		$a .= $before . '<input type="radio" name="clear" onClick="for (var i=0; i < this.form.' . QUETAG . '.length ; i++) { if(this.form.' . QUETAG . '[i].checked) { this.form.' . QUETAG . '[i].checked = false; } };" />&nbsp;<label for="clear" >' . xl__( 'All', $this->thetextdomain ) . '</label>' . $after;
 		// this to all lang query
 
 		if ( $echo ) {

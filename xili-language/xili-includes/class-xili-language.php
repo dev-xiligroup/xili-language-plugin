@@ -2466,7 +2466,7 @@ class Xili_Language {
 	 * @since 0.9.0
 	 * @updated 0.9.7.1 - 1.1.9 - 1.5.2 wpmu - 1.8.9.1 (domain select) - 2.8.3 (WP 3.5)
 	 * @updated 2.13.1 - thanks to Edouard
-	 * @updated 2.23.13 - thanks to Guy R. (review priority rules)
+	 * @updated 2.23.13 - thanks to Guy R. (review priority rules) - since 4.6.0 The core function now tries to load the .mo file from the languages directory first.
 	 * call by function xiliml_language_wp()
 	 * @param $curlang .
 	 */
@@ -2509,6 +2509,8 @@ class Xili_Language {
 			}
 			// child theme and priority
 			// @since 2.23.13 - rewritten (Thanks to Guy R.)
+			// in xl - first search in theme folder because child and parent share the same theme-domain
+			// when testing, priority can be defined
 			if ( is_child_theme() ) {
 				if ( 'child-priority' == $this->xili_settings['mo_parent_child_merging'] ) {
 					// unload_textdomain( $themetextdomain );
@@ -2614,7 +2616,7 @@ class Xili_Language {
 	}
 
 	/**
-	 * default rules - set curlang for wp action
+	 * Default rules - set curlang for wp action.
 	 *
 	 * @since 1.7.0 - new mechanism for front-page
 	 * @updated 1.8.9.1 - better category case
@@ -2645,13 +2647,14 @@ class Xili_Language {
 
 			if ( $condition ) { /* every pages !is_front_page() */
 				$curlangdir = $this->get_cur_language( $post->ID );
-				$curlang = $curlangdir[ QUETAG ]; /* the first post give the current lang*/
 				if ( false == $curlangdir ) {
-					$curlang = $this->choice_of_browsing_language(); //$this->default_slug; /* no more constant - wpmu - can be changed if use hook */
+					$curlang = $this->choice_of_browsing_language(); // $this->default_slug; no more constant - wpmu - can be changed if use hook.
+				} else {
+					$curlang = $curlangdir[ QUETAG ]; /* the first post give the current lang*/
 				}
 				if ( is_page() ) {
 					if ( isset( $wp_query->query_vars[ QUETAG ] ) ) {
-						$curlang = $this->lang_qv_slug_trans( $wp_query->query_vars[ QUETA ] );
+						$curlang = $this->lang_qv_slug_trans( $wp_query->query_vars[ QUETAG ] );
 					}
 				} elseif ( is_search() ) {
 					if ( isset( $wp_query->query_vars[ QUETAG ] ) ) {

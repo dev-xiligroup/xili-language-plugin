@@ -1,62 +1,65 @@
 <?php
-/*
+/**
 Plugin Name: xili-language
 Plugin URI: http://dev.xiligroup.com/xili-language/
 Description: This plugin modify on the fly the translation of the theme depending the language of the post or other blog elements - a way to create a real multilanguage site (cms or blog). Numerous template tags and three widgets are included. It introduce a new taxonomy - here language - to describe posts and pages. To complete with tags, use also xili-tidy-tags plugin. To include and set translation of .mo files use xili-dictionary plugin. Includes add-on for multilingual bbPress forums.
 Author: dev.xiligroup.com - MS
 Author URI: http://dev.xiligroup.com
-Version: 2.23.13
+Version: 2.23.15
 License: GPLv2
 Text Domain: xili-language
 Domain Path: /languages/
-*/
+ */
 
-# updated 190620 - 2.23.13 - some fixes or format fixes
-# updated 190523 - 2.23.12 - traits introduced to split big classes
-# updated 190523 - 2.23.10 - rewritten - improvments in course
-# updated 190430 - 2.23.01 - begin php files rewritting - new files required
+// updated 210407 - 2.23.15 - some fixes and 2020 et 2021 theme added.
+// updated 190630 - 2.23.14 - some fixes or format fixes
+// updated 190620 - 2.23.13 - some fixes or format fixes - set mofile rewritten
+// updated 190523 - 2.23.12 - traits introduced to split big classes
+// updated 190523 - 2.23.10 - rewritten - improvments in course
+// updated 190430 - 2.23.01 - begin php files rewritting - new files required
 
-# updated 190418 - 2.22.12 - tests wp 5.11 - add 2019 bundled theme
-# updated 171208 - 2.22.11 - test wp 4.9.1 - fixes live locale changing
-# updated 170822 - 2.22.10 - fixes permalinks query_tags, add flags in assets (2017), pre-test wp4.9-alpha
-# updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
-# updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
-# updated 170523 - 2.22.6 - fixes alias creation or update in xili-language-term
-# updated 170504 - 2.22.5 - updates locales.php (Jetpack 4.9)
-# updated 170421 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language) - bulk actions
-# updated 170310 - 2.22.3 - fixes for 4.6 & 4.7 / notices fixes when changing theme
+// updated 190418 - 2.22.12 - tests wp 5.11 - add 2019 bundled theme
+// updated 171208 - 2.22.11 - test wp 4.9.1 - fixes live locale changing
+// updated 170822 - 2.22.10 - fixes permalinks query_tags, add flags in assets (2017), pre-test wp4.9-alpha
+// updated 170622 - 2.22.8 - fixes, jetpack settings compatibility (json)
+// updated 170607 - 2.22.7 - updates locales.php (Jetpack 5.0) - new language added - preview of language properties
+// updated 170523 - 2.22.6 - fixes alias creation or update in xili-language-term
+// updated 170504 - 2.22.5 - updates locales.php (Jetpack 4.9)
+// updated 170421 - 2.22.4 - updates comment forms - finalize multiple languages per post (custom field _multiple_language) - bulk actions
+// updated 170310 - 2.22.3 - fixes for 4.6 & 4.7 / notices fixes when changing theme
 
-# updated 161213 - 2.22.1 - fixes for 4.6 & 4.7
-# updated 160810 - 2.22.0 - language taxonomy settings are saved in term metas ( need WP 4.4 )
-# updated 160805 - 2.21.3 - locale file updated (JetPack 4.1.1) - links selection improved
-# updated 160728 - 2.21.2 - verified with 4.5.3 and tested with 4.6-rc1 - introduces new taxonomy language class (WP 4.4+)
+// updated 161213 - 2.22.1 - fixes for 4.6 & 4.7
+// updated 160810 - 2.22.0 - language taxonomy settings are saved in term metas ( need WP 4.4 )
+// updated 160805 - 2.21.3 - locale file updated (JetPack 4.1.1) - links selection improved
+// updated 160728 - 2.21.2 - verified with 4.5.3 and tested with 4.6-rc1 - introduces new taxonomy language class (WP 4.4+)
 
-# updated 151104 - 2.21.1 - default mo behaviour (parent) - 2016 infos
-# updated 150927 - 2.21.0 - includes detection of previous PLL install - source cleaned and improved
-# updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
-# updated 150914 - 2.20.2 - updated language list (Jetpack 3.7) - updated commun messages (pointer)
-# updated 150903 - 2.20.1 - fixes error "/theme-multilingual-classes.php on line 1014"
-# updated 150820 - 2.20.0 - WP 4.3 is finally shipped - add "alternate x-default" - includes now files and functions from 201x-xili themes examples - pre-tests with twentysixteen
-# updated 150818 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
-# updated 150717 - 2.19.2 - add show in REST param
-# updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
-# updated 150705 - 2.19.0 - Stable version
-# updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1, ready to translate theme_mod values
-# updated 150601 - 2.18.1 - fixes, improves media editing page (cloning part, admin side)
-# updated 150508 - 2.18.0 - integration of xl-bbp-addon, fixes/adds menu-item-has-children class in menus selector, fixes propagation options
+// updated 151104 - 2.21.1 - default mo behaviour (parent) - 2016 infos
+// updated 150927 - 2.21.0 - includes detection of previous PLL install - source cleaned and improved
+// updated 150917 - 2.20.3 - new option to add widget visibility rules according language // fixes admin side taxonomy translation
+// updated 150914 - 2.20.2 - updated language list (Jetpack 3.7) - updated commun messages (pointer)
+// updated 150903 - 2.20.1 - fixes error "/theme-multilingual-classes.php on line 1014"
+// updated 150820 - 2.20.0 - WP 4.3 is finally shipped - add "alternate x-default" - includes now files and functions from 201x-xili themes examples - pre-tests with twentysixteen
+// updated 150818 - 2.19.3 - latest tests with WP 4.3 RC2 and WooCommerce 2.4.4 (multilingual kit)
+// updated 150717 - 2.19.2 - add show in REST param
+// updated 150707 - 2.19.1 - fixes admin add_local_text_domain_file (3pepe3)
+// updated 150705 - 2.19.0 - Stable version
+// updated 150618 - 2.18.2 - fixes, add link in post edit, add shortcode linked post, pre-tests with WP 4.3-beta1, ready to translate theme_mod values
+// updated 150601 - 2.18.1 - fixes, improves media editing page (cloning part, admin side)
+// updated 150508 - 2.18.0 - integration of xl-bbp-addon, fixes/adds menu-item-has-children class in menus selector, fixes propagation options
 
-# updated 150424 - 2.17.1 - fixes after final WP 4.2 Release
-# updated 150418 - 2.17.0 - is_rtl() replaces get_bloginfo - 4.2-RC1 - stickies improved with JSON REST API - deleting multisite install improved
+// updated 150424 - 2.17.1 - fixes after final WP 4.2 Release
+// updated 150418 - 2.17.0 - is_rtl() replaces get_bloginfo - 4.2-RC1 - stickies improved with JSON REST API - deleting multisite install improved
 
-# updated 150401 - 2.16.5 - WP JSON REST API compatibility - fixes is_main_query and option stickies -
-# updated 150323 - 2.16.4 - custom_xili_flag for admin side - search in theme/images/flags - better selection of active widgets - improved permalinks class
-# updated 150306 - 2.16.3 - fixes warning of archives link w/o perma - widget archives filtered if curlang - add xili_Widget_Categories class (need registering by author)
-# updated 150228 - 2.16.2 - fixes warning if dropdown categories, some rewritten lines
+// updated 150401 - 2.16.5 - WP JSON REST API compatibility - fixes is_main_query and option stickies -
+// updated 150323 - 2.16.4 - custom_xili_flag for admin side - search in theme/images/flags - better selection of active widgets - improved permalinks class
+// updated 150306 - 2.16.3 - fixes warning of archives link w/o perma - widget archives filtered if curlang - add xili_Widget_Categories class (need registering by author)
+// updated 150228 - 2.16.2 - fixes warning if dropdown categories, some rewritten lines
 
-# less than 2.16…
-# see readme text for these intermediate versions for WP 2.15. or visit other previous versions (2.15).
-# updated 090228 - Class and OOP - see 0.9.7 in comments of functions below - only for WP 2.7.x
+// less than 2.16…
+// see readme text for these intermediate versions for WP 2.15. or visit other previous versions (2.15).
+// updated 090228 - Class and OOP - see 0.9.7 in comments of functions below - only for WP 2.7.x
 
+/**
 # This plugin is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -70,9 +73,9 @@ Domain Path: /languages/
 # You should have received a copy of the GNU Lesser General Public
 # License along with this plugin; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 
-
-define( 'XILILANGUAGE_VER', '2.23.13' ); /* used in admin UI*/
+define( 'XILILANGUAGE_VER', '2.23.15' ); /* used in admin UI*/
 define( 'XILILANGUAGE_WP_VER', '4.9' ); /* minimal version - used in error - see at end */
 define( 'XILILANGUAGE_PHP_VER', '7.1.0' ); /* used in error - see at end */
 define( 'XILILANGUAGE_PREV_VER', '2.22.1' );
@@ -89,7 +92,6 @@ define( 'XILILANGUAGE_PLUGIN_FILE', __FILE__ );
  *
  * @since 1.8.8 to verify that WP 3.0 is installed
  * @updated for 1.8.9, 2.3.1, 2.7.1 (function)
- *
  */
 function xili_language_start() {
 	global $wp_version, $xili_language, $xili_language_admin;
@@ -101,7 +103,7 @@ function xili_language_start() {
 		return;
 	} else {
 
-		// TRAITS
+		// TRAITS.
 		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-flags.php';
 		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-shortcodes.php';
 		require_once XILILANGUAGE_PLUGIN_DIR . 'xili-includes/main-includes/trait-xili-language-menus.php';
