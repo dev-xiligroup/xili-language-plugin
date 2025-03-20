@@ -18,6 +18,7 @@ When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-lan
 The other files are available for comments or fixes. Only the version in [WordPress xili-language repository](https://wordpress.org/plugins/xili-language/) is for use with previous features.
 
 ## Latest notes 
+### 20250320 - Sanitize tests
 ### 20200804 - First tests with WP 5.5RC1
 XILI-LANGUAGE 2.23.14 shows good return from tests with WP 5.5RC1 - both in classic or block editing…
 ### 20190430 - Customizer, in admin side, to work well, needs two settings : 
