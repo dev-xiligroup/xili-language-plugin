@@ -20,20 +20,8 @@ trait Xili_Admin_Help {
 		echo '<div class="error"><p>' . esc_html__( 'WARNING: With xili-language, language taxonomy is now ready to be imported from XML file generated here (All content choice). <br />So, before to import in a new website, be sure that xili-language plugins trilogy is active in this target site.', 'xili-language' ) . '</p>'
 		. '<p>' . esc_html__( 'Therefore, before importing, verify that custom post types are registered in this new clean install.', 'xili-language' ) . '</p></div>';
 	}
-	/**
-	 * Function add_help_text [to do].
-	 *
-	 * @param    <type> $contextual_help The contextual help.
-	 * @param    <type> $screen_id       The screen identifier.
-	 * @param    <type> $screen          The screen.
-	 */
-	// public function add_help_text( $contextual_help, $screen_id, $screen ) {
 
-	/**
-	 * Function add_help_text since 2021-04.
-	 */
-	public function add_help_text() {
-		$screen = get_current_screen();
+	public function add_help_text( $contextual_help, $screen_id, $screen ) {
 		if ( 'nav-menus' == $screen->id ) { // 2.8.8
 			$wikilink = $this->wikilink . '/index.php/Xili-language:_languages_list_insertion_in_nav_menu';
 			$to_remember =
@@ -79,7 +67,7 @@ trait Xili_Admin_Help {
 			);
 
 		}
-		if ( ( 'attachment' ) == $screen->id ) { // 2.18.1 and 2021-04
+		if ( 'attachment' == $screen->id ) { // 2.18.1
 			$more_infos =
 				'<p><strong>' . esc_html__( 'About multilingual features:', 'xili-language' ) . '</strong></p>' .
 				'<ul>' .
@@ -184,7 +172,7 @@ trait Xili_Admin_Help {
 				)
 			);
 		}
-		// return $contextual_help;
+		return $contextual_help;
 	}
 
 	/**

@@ -303,11 +303,11 @@ trait Xili_Admin_Menus_Builder {
 	* called by /js/nav-menu.xxx.js when displaying results in nav menu settings
 	* @since 2.9.20
 	*
-	* @updated 2.12.2
+	* @updated 2.12.2 - 2.23.14 20250320 sanitize
 	*/
 	public function ajax_get_menu_infos() {
 
-		$menu_slug = ( isset( $_POST['menu_slug'] ) && ! empty( $_POST['menu_slug'] ) ) ? $_POST['menu_slug'] : 'no-xl-menu';
+		$menu_slug = ( isset( $_POST['menu_slug'] ) && ! empty( $_POST['menu_slug'] ) ) ? sanitize_text_field($_POST['menu_slug']) : 'no-xl-menu';
 
 		$term_data = term_exists( $menu_slug, 'nav_menu' );
 		$menu_id = ( is_array( $term_data ) ) ? $term_data['term_id'] : 0;

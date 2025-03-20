@@ -77,7 +77,7 @@ Domain Path: /languages/
 
 define( 'XILILANGUAGE_VER', '2.23.15' ); /* used in admin UI*/
 define( 'XILILANGUAGE_WP_VER', '4.9' ); /* minimal version - used in error - see at end */
-define( 'XILILANGUAGE_PHP_VER', '7.1.0' ); /* used in error - see at end */
+define( 'XILILANGUAGE_PHP_VER', '7.4.2' ); /* used in error - see at end */
 define( 'XILILANGUAGE_PREV_VER', '2.22.1' );
 define( 'XILILANGUAGE_WP_TESTED', '4.9 Tipton' ); /* 2.17.1 - used in version pointer infos */
 define( 'XILILANGUAGE_PLL_TESTED', '1.7.9' ); /* 2.20.3 - newest PLL tested */

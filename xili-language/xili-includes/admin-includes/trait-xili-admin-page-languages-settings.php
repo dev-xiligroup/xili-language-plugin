@@ -319,7 +319,7 @@ trait Xili_Admin_Page_Languages_Settings {
 					<h4><a href="<?php echo $this->repositorylink; ?>" title="xili-language page and docs" target="_blank" style="text-decoration:none" >
 							<img style="vertical-align:bottom; margin-right:10px" src="<?php echo plugins_url( 'images/xililang-logo-32.png', XILILANGUAGE_PLUGIN_FILE ); ?>" alt="xili-language logo"/>
 						</a>&nbsp;&nbsp;&nbsp;©&nbsp;
-						<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php esc_attr_e( 'Author' ); ?>" >xiligroup.com</a>™ - msc 2007-2019 - v. <?php echo XILILANGUAGE_VER; ?>
+						<a href="<?php echo $this->devxililink; ?>" target="_blank" title="<?php esc_attr_e( 'Author' ); ?>" >xiligroup.com</a>™ - msc 2007-2025 - v. <?php echo XILILANGUAGE_VER; ?>
 					</h4>
 
 				</div>

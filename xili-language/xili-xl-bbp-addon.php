@@ -105,7 +105,7 @@ class Xili_Xl_Bbp_Addon {
 		}
 
 		//display contextual help
-		//add_action( 'contextual_help', array( &$this, 'add_help_text' ), 10, 3 ); /* 2.8.4.3 */
+		add_action( 'contextual_help', array( &$this, 'add_help_text' ), 10, 3 ); /* 2.8.4.3 */
 	}
 
 	/**
@@ -425,9 +425,7 @@ class Xili_Xl_Bbp_Addon {
 	 *
 	 * @since 1.2.2
 	 */
-	// public function add_help_text( $contextual_help, $screen_id, $screen ) {
-	public function add_help_text() {
-		$screen = get_current_screen();
+	public function add_help_text( $contextual_help, $screen_id, $screen ) {
 		$more_infos =
 			'<p><strong>' . __( 'For more information:' ) . '</strong></p>' .
 			'<p>' . __( '<a href="http://wiki.xiligroup.org" target="_blank">Xili Plugins Documentation and WIKI</a>', 'xili-language' ) . '</p>' .
@@ -462,7 +460,7 @@ class Xili_Xl_Bbp_Addon {
 			);
 
 		}
-		// return $contextual_help;
+		return $contextual_help;
 	}
 
 } //End Class

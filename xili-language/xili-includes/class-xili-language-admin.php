@@ -201,8 +201,8 @@ class Xili_Language_Admin extends Xili_Language {
 		add_action( 'after_plugin_row', array( &$this, 'more_plugin_row' ), 10, 3 ); // class WP_Plugins_List_Table
 
 		// Dashboard menu and settings pages
-		add_action( 'admin_init', array( &$this, 'admin_redirects' ) ); // 2.20 for welcome screen
-		add_action( 'admin_menu', array( &$this, 'admin_welcome' ), 10 ); // 2.20
+		//add_action( 'admin_init', array( &$this, 'admin_redirects' ) ); // 2.20 for welcome screen
+		//add_action( 'admin_menu', array( &$this, 'admin_welcome' ), 10 ); // 2.20
 		add_action( 'admin_menu', array( &$this, 'add_menu_settings_pages' ), 10 );
 		add_action( 'admin_menu', array( &$this, 'admin_sub_menus_hide' ), 12 ); //
 
@@ -219,7 +219,6 @@ class Xili_Language_Admin extends Xili_Language {
 		add_action( 'admin_init', array( &$this, 'add_language_nav_menu_meta_boxes' ) );
 		add_action( 'admin_init', array( &$this, 'add_sub_select_page_nav_menu_meta_boxes' ) );
 		add_action( 'admin_init', array( &$this, 'add_sub_select_nav_menu_meta_boxes' ) );
-		add_action( 'admin_head-nav-menus.php', array( &$this, 'add_help_text' ) );
 
 		// Edit Post Page
 		add_action( 'admin_init', array( &$this, 'admin_init' ) ); // styles registering
@@ -251,14 +250,12 @@ class Xili_Language_Admin extends Xili_Language {
 		add_action( 'save_post', array( &$this, 'xili_language_add' ), 10, 2 );
 		add_action( 'save_post', array( &$this, 'fixes_post_slug' ), 11, 2 ); // 2.5
 
-		// Edit Attachment Media.
+		// Edit Attachment Media
 		add_filter( 'attachment_fields_to_edit', array( &$this, 'add_language_attachment_fields' ), 10, 2 ); // 2.6.3
 		add_filter( 'attachment_fields_to_save', array( &$this, 'set_attachment_fields_to_save' ), 10, 2 ); // 2.6.3
 		add_action( 'delete_attachment', array( &$this, 'if_cloned_attachment' ) ); // 2.6.3
 		add_filter( 'wp_delete_file', array( &$this, 'if_file_cloned_attachment' ) ); // 2.6.3
-		add_action( 'admin_head-post.php', array( &$this, 'add_help_text' ) ); // post.php because attachment don't work 2021-04 !
-
-		// Flag media.
+		// Flag media
 		add_action( 'attachment_submitbox_misc_actions', array( &$this, 'attachment_submitbox_flag_metadata' ) ); // 2.15
 		add_filter( 'display_media_states', array( &$this, 'add_display_media_states' ) );
 		add_action( 'edit_attachment', array( &$this, 'update_attachment_context' ) ); // 2.15
@@ -347,8 +344,7 @@ class Xili_Language_Admin extends Xili_Language {
 		// infos in xml export
 		add_action( 'export_filters', 'message_export_limited' ); // 2.12.1
 		//display contextual help
-
-		//add_action( 'contextual_help', array( &$this, 'add_help_text' ), 10, 3 ); /* 1.7.0 */
+		add_action( 'contextual_help', array( &$this, 'add_help_text' ), 10, 3 ); /* 1.7.0 */
 
 		xili_xl_error_log( '# ADMIN ' . __LINE__ . ' ************* only_construct = ' . __CLASS__ );
 	}
@@ -1151,7 +1147,6 @@ class Xili_Language_Admin extends Xili_Language {
 
 		add_action( 'load-' . $this->thehook, array( &$this, 'on_load_page' ) );
 
-
 		$this->xl_tabs = array(
 			'language_page' => array(
 				'label' => __( 'Languages list', 'xili-language' ),
@@ -1209,13 +1204,12 @@ class Xili_Language_Admin extends Xili_Language {
 		add_action( 'load-' . $this->thehook3, array( &$this, 'on_load_page_support' ) );
 		$hooks[] = $this->thehook3;
 
-		// Fudge the highlighted subnav item when on a XL admin page - 2.8.2.
+		// Fudge the highlighted subnav item when on a XL admin page - 2.8.2
 		foreach ( $hooks as $hook ) {
 			add_action( "admin_head-$hook", array( &$this, 'modify_menu_highlight' ) );
-			add_action( 'load-' . $hook, array( &$this, 'add_help_text' ) ); // new since 2021-04.
 		}
 
-		$this->insert_news_pointer( 'xl_new_version' ); // pointer in menu for updated version.
+		$this->insert_news_pointer( 'xl_new_version' ); // pointer in menu for updated version
 
 		add_action( 'admin_print_footer_scripts', array( &$this, 'print_the_pointers_js' ) );
 
@@ -2032,59 +2026,55 @@ class Xili_Language_Admin extends Xili_Language {
 	 * Return list of linked posts
 	 * used in edit list
 	 *
-	 * @param    <type> $post_id   The post identifier.
-	 * @param    string $mode      The mode.
-	 * @param    string $type      The type.
-	 * @param    string $separator The separator.
+	 * @param: mode = array to customize list
+	 * @since 2.5
 	 *
-	 * @return   array 	list.
 	 */
 	public function translated_in( $post_id, $mode = 'link', $type = 'post', $separator = ' ' ) {
 
-		$curlang = $this->get_cur_language( $post_id ); // array !
+		$curlang = $this->get_cur_language( $post_id ); // array
 		$listlanguages = $this->get_listlanguages();
 		$trans = array();
-		if ( array() != $curlang ) { // 2021-04.
-			foreach ( $listlanguages as $language ) {
-				if ( $language->slug != $curlang[ QUETAG ] ) {
-					$otherpost = $this->linked_post_in( $post_id, $language->slug );
-					if ( $otherpost ) {
-						$linepost = $this->temp_get_post( $otherpost );
-						if ( $linepost ) {
-							switch ( $mode ) {
-								case 'link':
-									$detail = false;
-									$title_type = $type;
-									if ( 'post' == $type || 'edit_attachment' == $type ) {
-										$link = 'post.php?post=' . $linepost->ID . '&action=edit';
-										if ( 'edit_attachment' == $type ) {
-											$detail = true;
-										}
-										if ( 'edit_attachment' == $type ) {
-											$title_type = 'attachment';
-										}
-									} elseif ( 'attachment' == $type ) {
-										$link = 'media.php?attachment_id=' . $linepost->ID . '&action=edit'; // not used (small settings screen) !
+		foreach ( $listlanguages as $language ) {
+			if ( $language->slug != $curlang[ QUETAG ] ) {
+				$otherpost = $this->linked_post_in( $post_id, $language->slug );
+				if ( $otherpost ) {
+					$linepost = $this->temp_get_post( $otherpost );
+					if ( $linepost ) {
+						switch ( $mode ) {
+							case 'link':
+								$detail = false;
+								$title_type = $type;
+								if ( 'post' == $type || 'edit_attachment' == $type ) {
+									$link = 'post.php?post=' . $linepost->ID . '&action=edit';
+									if ( 'edit_attachment' == $type ) {
+										$detail = true;
 									}
-									$a_content = ( $detail ) ? $language->description . ' (' . $language->name . ')' : $language->name;
-									/* translators: */
-									$title = sprintf( __( 'link to edit %1$s %3$d in %2$s', 'xili-language' ), $title_type, $language->description, $linepost->ID );
-									$trans[] = sprintf( '<a href="%1$s" title="%2$s" class="lang-%4$s" >%3$s</a>', $link, $title, $a_content, $language->slug ); // no localization 2.18.1 !
-									break;
-								case 'array':
-									$trans[ $language->slug ] = array(
-										'post_ID' => $linepost->ID,
-										'name' => $language->name,
-										'description' => $language->description,
-									);
-									break;
+									if ( 'edit_attachment' == $type ) {
+										$title_type = 'attachment';
+									}
+								} elseif ( 'attachment' == $type ) {
+									$link = 'media.php?attachment_id=' . $linepost->ID . '&action=edit'; // not used (small settings screen)
+								}
+								$a_content = ( $detail ) ? $language->description . ' (' . $language->name . ')' : $language->name;
+								/* translators: */
+								$title = sprintf( __( 'link to edit %1$s %3$d in %2$s', 'xili-language' ), $title_type, $language->description, $linepost->ID );
+								$trans[] = sprintf( '<a href="%1$s" title="%2$s" class="lang-%4$s" >%3$s</a>', $link, $title, $a_content, $language->slug ); // no localization 2.18.1
+								break;
+							case 'array':
+								$trans[ $language->slug ] = array(
+									'post_ID' => $linepost->ID,
+									'name' => $language->name,
+									'description' => $language->description,
+								);
+								break;
 
-							}
 						}
 					}
 				}
 			}
 		}
+
 		if ( 'array' == $mode ) {
 			return $trans;
 		}

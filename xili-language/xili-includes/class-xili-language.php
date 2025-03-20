@@ -2616,7 +2616,7 @@ class Xili_Language {
 	}
 
 	/**
-	 * Default rules - set curlang for wp action.
+	 * default rules - set curlang for wp action
 	 *
 	 * @since 1.7.0 - new mechanism for front-page
 	 * @updated 1.8.9.1 - better category case
@@ -2647,14 +2647,13 @@ class Xili_Language {
 
 			if ( $condition ) { /* every pages !is_front_page() */
 				$curlangdir = $this->get_cur_language( $post->ID );
+				$curlang = $curlangdir[ QUETAG ]; /* the first post give the current lang*/
 				if ( false == $curlangdir ) {
-					$curlang = $this->choice_of_browsing_language(); // $this->default_slug; no more constant - wpmu - can be changed if use hook.
-				} else {
-					$curlang = $curlangdir[ QUETAG ]; /* the first post give the current lang*/
+					$curlang = $this->choice_of_browsing_language(); //$this->default_slug; /* no more constant - wpmu - can be changed if use hook */
 				}
 				if ( is_page() ) {
 					if ( isset( $wp_query->query_vars[ QUETAG ] ) ) {
-						$curlang = $this->lang_qv_slug_trans( $wp_query->query_vars[ QUETAG ] );
+						$curlang = $this->lang_qv_slug_trans( $wp_query->query_vars[ QUETA ] );
 					}
 				} elseif ( is_search() ) {
 					if ( isset( $wp_query->query_vars[ QUETAG ] ) ) {
