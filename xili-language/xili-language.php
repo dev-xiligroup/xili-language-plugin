@@ -79,7 +79,7 @@ define( 'XILILANGUAGE_VER', '2.23.15' ); /* used in admin UI*/
 define( 'XILILANGUAGE_WP_VER', '4.9' ); /* minimal version - used in error - see at end */
 define( 'XILILANGUAGE_PHP_VER', '7.4.2' ); /* used in error - see at end */
 define( 'XILILANGUAGE_PREV_VER', '2.22.1' );
-define( 'XILILANGUAGE_WP_TESTED', '4.9 Tipton' ); /* 2.17.1 - used in version pointer infos */
+define( 'XILILANGUAGE_WP_TESTED', '6.7.1' ); /* 2.17.1 - used in version pointer infos */
 define( 'XILILANGUAGE_PLL_TESTED', '1.7.9' ); /* 2.20.3 - newest PLL tested */
 define( 'XILILANGUAGE_DEBUG', false ); /* used in dev step UI - xili_xl_error_log () if WP_DEBUG is true */
 define( 'XILILANGUAGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) ); /* with / at end */
