@@ -440,7 +440,7 @@ trait Xili_Admin_Edit {
 	 */
 	public function save_bulk_edit_language() {
 		// get our variables
-		$post_ids = ( isset( $_POST['post_ids'] ) && ! empty( $_POST['post_ids'] ) ) ? sanitize_text_field($_POST['post_ids']) : array();
+		$post_ids = ( isset( $_POST['post_ids'] ) && ! empty( $_POST['post_ids'] ) ) ? sanitize_text_field( wp_unslash( $_POST['post_ids'] ) ) : array();
 		$assigned_lang = ( isset( $_POST['assigned_lang'] ) && ! empty( $_POST['assigned_lang'] ) ) ? $_POST['assigned_lang'] : null;
 		// if everything is in order
 		if ( ! empty( $post_ids ) && is_array( $post_ids ) && ! empty( $assigned_lang ) ) {

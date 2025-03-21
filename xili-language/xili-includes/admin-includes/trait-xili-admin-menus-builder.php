@@ -307,7 +307,7 @@ trait Xili_Admin_Menus_Builder {
 	*/
 	public function ajax_get_menu_infos() {
 
-		$menu_slug = ( isset( $_POST['menu_slug'] ) && ! empty( $_POST['menu_slug'] ) ) ? sanitize_text_field($_POST['menu_slug']) : 'no-xl-menu';
+		$menu_slug = ( isset( $_POST['menu_slug'] ) && ! empty( $_POST['menu_slug'] ) ) ? sanitize_text_field( wp_unslash( $_POST['menu_slug'] ) ) : 'no-xl-menu';
 
 		$term_data = term_exists( $menu_slug, 'nav_menu' );
 		$menu_id = ( is_array( $term_data ) ) ? $term_data['term_id'] : 0;
