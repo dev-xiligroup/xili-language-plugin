@@ -18,6 +18,7 @@ When displayed, in [WordPress repository](https://wordpress.org/plugins/xili-lan
 The other files are available for comments or fixes. Only the version in [WordPress xili-language repository](https://wordpress.org/plugins/xili-language/) is for use with previous features.
 
 ## Latest notes 
+### Version not compatible with php 8+ - maxi php7.4.33
 ### 20250320 - Sanitize tests
 XILI-LANGUAGE 2.23.15 shows good return with WP 6.7 using old way of multilingual themes with .mo files
 ### 20200804 - First tests with WP 5.5RC1

@@ -5,11 +5,13 @@ Tags: multilingual, taxonomy, language, .mo file, localization
 Requires at least: 4.9
 Requires PHP: 7.4.2
 Tested up to: 6.7.1
-Stable tag: 2.23.15
+Stable tag: 2.23.14
 License: GPLv2
 xili-language lets you create and manage multilingual WP site in several languages with yours or most famous localizable themes. Ready for CMS design.
 
 == Description ==
+
+**Version not compatible with php 8+ - maxi php7.4.33
 
 **xili-language provides for a bilingual (or multilingual) website an automatic selection of language (.mo) in theme according to the language of current post(s) or page. Theme's behaviour can be fully personalized through settings, hooks and api. Ready for CMS developers and designers.**
 
