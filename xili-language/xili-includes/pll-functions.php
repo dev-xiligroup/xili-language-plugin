@@ -50,7 +50,7 @@ function clean_pll_languages_list( $result = false ) {
 					);
 					$pll_languages[ $xl_alias ] = $slug;
 				} else {
-					$inserted = $this->safe_insert_in_language_group( $term_data, 0 );
+					$inserted = $xili_language->safe_insert_in_language_group( $term_data, 0 );
 				}
 			}
 		}
